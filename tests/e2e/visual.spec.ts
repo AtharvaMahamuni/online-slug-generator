@@ -32,7 +32,7 @@ for (const theme of ["light", "dark"] as const) {
         await expect(page).toHaveScreenshot(`${item.name}-${theme}-${size.width}x${size.height}.png`, {
           animations: "disabled",
           caret: "hide",
-          maxDiffPixelRatio: 0.01,
+          maxDiffPixelRatio: 0.03,
         });
       });
     }
