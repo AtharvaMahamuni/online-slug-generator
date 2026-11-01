@@ -1,0 +1,57 @@
+# Online Slug Generator
+
+> Free static URL slug tool. Slugs are computed in the browser. This file only lists real pages. Google has said llms.txt does not help or hurt Google Search.
+
+Author: Atharva (https://x.com/athmatwt)
+Published: 2026-11-01
+Contact: https://onlinesluggenerator.com/contact
+
+## Pages
+
+- [URL slug generator](https://onlinesluggenerator.com/): Turn one title into a clean URL slug. Example: “How to Prune Roses in June” becomes how-to-prune-roses-in-june.
+- [Bulk URL slug generator](https://onlinesluggenerator.com/bulk-slug-generator): Paste a list or a CSV and keep the other columns. A repeated slug gains a numeric suffix.
+- [Guides](https://onlinesluggenerator.com/guides): Five references. They are HTML and do not need the tool script.
+- [What is a URL slug?](https://onlinesluggenerator.com/guides/what-is-a-url-slug): Definition, examples, and what a slug does not do.
+- [How to create a URL slug](https://onlinesluggenerator.com/guides/how-to-create-url-slugs): Case, hyphens, stop words, length, and numbers.
+- [Hyphens vs underscores](https://onlinesluggenerator.com/guides/hyphens-vs-underscores-in-urls): What Google said in April 2024, and when not to migrate.
+- [Unicode and URL slugs](https://onlinesluggenerator.com/guides/unicode-and-international-urls): Latin accent folding and scripts that stay.
+- [Bulk URL slug generation](https://onlinesluggenerator.com/guides/bulk-url-slug-generation): Files, duplicate suffixes, and exports.
+- [About](https://onlinesluggenerator.com/about): What the site refuses to do. No company biography.
+- [Privacy](https://onlinesluggenerator.com/privacy): Titles and files are not uploaded. The host can still see ordinary requests.
+- [Contact](https://onlinesluggenerator.com/contact): GitHub issues only. No email form.
+
+### Multilingual versions
+
+- [Español — Generador de Slugs](https://onlinesluggenerator.com/es): Versión en español con soporte para palabras vacías en español y mapeo de ampersand a 'y'.
+- [Español — Slugs en Lote](https://onlinesluggenerator.com/es/bulk-slug-generator): Procesamiento en lote para listas y archivos en español.
+- [Deutsch — URL-Slug-Generator](https://onlinesluggenerator.com/de): Deutsche Version mit Umlautersetzung (ä/ö/ü zu ae/oe/ue, ß zu ss) und deutschen Stoppwörtern.
+- [Deutsch — Massen-Generator](https://onlinesluggenerator.com/de/bulk-slug-generator): Massenverarbeitung für deutsche Listen und CSV-Dateien.
+- [Français — Générateur de Slug](https://onlinesluggenerator.com/fr): Version française avec mots vides français et perluète convertie en 'et'.
+- [Français — Slugs en Masse](https://onlinesluggenerator.com/fr/bulk-slug-generator): Traitement par lots de titres et fichiers en français.
+- [Português — Gerador de Slugs](https://onlinesluggenerator.com/pt): Versão em português com remoção de stopwords em português e ampersand como 'e'.
+- [Português — Slugs em Massa](https://onlinesluggenerator.com/pt/bulk-slug-generator): Processamento em lote de listas e arquivos em português.
+
+## Identity files
+
+These describe the site. They are not extra articles, and they are not in the sitemap.
+
+- [llms-full.txt](https://onlinesluggenerator.com/llms-full.txt): A longer summary of the same pages.
+- [llm.txt](https://onlinesluggenerator.com/llm.txt): A short pointer to this file.
+- [llms.html](https://onlinesluggenerator.com/llms.html): This summary as HTML. noindex.
+- [ai.txt](https://onlinesluggenerator.com/ai.txt): Crawler policy in words. robots.txt is authoritative.
+- [ai.json](https://onlinesluggenerator.com/ai.json): The same policy as JSON.
+- [robots-ai.txt](https://onlinesluggenerator.com/robots-ai.txt): The same Allow and Disallow groups as robots.txt.
+- [brand.txt](https://onlinesluggenerator.com/brand.txt): How to write the name, and the author accounts.
+- [faq-ai.txt](https://onlinesluggenerator.com/faq-ai.txt): Short answers. Not FAQPage markup.
+- [identity.json](https://onlinesluggenerator.com/identity.json): Organization and Person JSON-LD. No street address.
+
+## Facts a summary can quote
+
+- A slug is the readable end of a URL, such as how-to-prune-roses.
+- Processing stays in the browser, including CSV files. They are not uploaded.
+- The default separator is a hyphen. Lower case is on. Latin accents fold. Stop-word removal is off until someone turns it on.
+- Readable URL keeps “How to Prune Roses in June” as how-to-prune-roses-in-june. Short permalink makes how-prune-roses-june.
+- “Café au lait, 12 oz” becomes cafe-au-lait-12-oz. “AT&T fiber plans” becomes at-and-t-fiber-plans when the ampersand rule is on.
+- Привет and 東京 are kept. There is no transliteration dictionary.
+- A shorter slug is not presented as a ranking method. This site does not show an SEO score.
+- Training crawlers are disallowed in robots.txt. Search crawlers are allowed. User-triggered fetchers may ignore robots.txt.

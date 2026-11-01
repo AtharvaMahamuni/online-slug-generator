@@ -1,0 +1,22 @@
+---
+import { REPO } from "../lib/site";
+import type { SupportedLocale } from "../lib/slug";
+import { DEFAULT_LOCALE } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  locale?: SupportedLocale;
+}
+
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<footer class="site-footer">
+  <p>{t("footer.note")}</p>
+  <nav aria-label="Footer">
+    <a href="/privacy">{t("nav.privacy")}</a>
+    <a href="/contact">{t("nav.contact")}</a>
+    <a href={REPO}>GitHub</a>
+  </nav>
+</footer>

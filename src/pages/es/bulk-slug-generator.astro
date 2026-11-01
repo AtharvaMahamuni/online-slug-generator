@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolBulk from "../../components/ToolBulk.astro";
+import { canonical } from "../../lib/site";
+
+const title = "Generador de Slugs en Lote — Crear Slugs URL";
+const description =
+  "Convierte listas de títulos en slugs URL limpios. Importa archivos TXT o CSV locales con detección de duplicados sin subir tus datos a servidores.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: canonical("/es") },
+    { "@type": "ListItem", position: 2, name: "Lote", item: canonical("/es/bulk-slug-generator") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/es/bulk-slug-generator" kind="tool" locale="es">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Genera slugs para una lista de títulos</h1>
+    <div class="intro-row">
+      <p class="definition">Un título por línea o abre un archivo CSV o TXT. El archivo permanece en este dispositivo.</p>
+      <a class="button-secondary mode-jump" href="/es" data-tip="Crear slug para un solo título">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="2" width="10" height="12" rx="1.5"></rect>
+          <line x1="6" y1="6" x2="10" y2="6"></line>
+          <line x1="6" y1="9" x2="10" y2="9"></line>
+        </svg>
+        <span>Un título</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolBulk locale="es" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Pega una lista de títulos o abre directamente un archivo CSV de inventario o catálogo. Si aparecen nombres duplicados, el sistema añadirá automáticamente sufijos numéricos incrementales (por ejemplo <code>telefono-movil-2</code>) conservando todas las demás columnas del archivo.
+      </p>
+    </header>
+
+    <h2>Ventajas del generador masivo</h2>
+    <p>
+      A diferencia de otras soluciones, esta herramienta conserva las columnas originales de tus hojas de cálculo (identificadores, precios, categorías) y añade una nueva columna con el slug calculado. La exportación final puede descargarse en formato CSV o TXT.
+    </p>
+    <p>
+      Si solo necesitas procesar un único título, regresa a la <a href="/es">herramienta individual de slugs</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

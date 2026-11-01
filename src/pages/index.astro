@@ -1,0 +1,204 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Byline from "../components/Byline.astro";
+import ExampleTable from "../components/ExampleTable.astro";
+import JsonLd from "../components/JsonLd.astro";
+import QuickAnswers from "../components/QuickAnswers.astro";
+import ToolSingle from "../components/ToolSingle.astro";
+import { canonical, PERSON_ID, SITE_NAME } from "../lib/site";
+
+const title = "URL Slug Generator — Single and Bulk";
+const description =
+  "Paste one title or a whole list and copy clean URL slugs. Processing stays in your browser, including CSV files you do not upload.";
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: canonical("/"),
+    },
+    {
+      "@type": "WebApplication",
+      name: SITE_NAME,
+      url: canonical("/"),
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Requires JavaScript for the tool.",
+      description,
+      author: { "@id": PERSON_ID },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/" kind="tool">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Turn text into a clean URL slug</h1>
+    <div class="intro-row">
+      <p class="definition">A slug is the readable end of a URL, such as <code>how-to-prune-roses</code>.</p>
+      <a class="button-secondary mode-jump" id="open-bulk" href="/bulk-slug-generator" data-tip="Open the bulk tool. The text in the title goes with you, and it stays in this browser.">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="2" y1="4" x2="14" y2="4"></line>
+          <line x1="2" y1="8" x2="14" y2="8"></line>
+          <line x1="2" y1="12" x2="14" y2="12"></line>
+        </svg>
+        <span>Bulk list</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolSingle />
+  </div>
+  <div data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Paste one title in the box above. The slug is generated instantly in your browser. For example, “How to Prune Roses in June” becomes <code>how-to-prune-roses-in-june</code>. A whole list or CSV file belongs on the bulk screen.
+      </p>
+    </header>
+    <QuickAnswers
+      title="URL Slug FAQs &amp; Best Practices"
+      description="In-depth, technically authoritative answers on RFC 3986 standards, server routing, and search engine guidelines."
+      items={[
+        {
+          question: "What is a URL slug? (Definition and RFC 3986 Anatomy)",
+          answer:
+            "Under web networking standards (RFC 3986), a URL slug is the human-readable trailing segment of a URI path that specifically identifies a single document or page resource. In an address such as https://onlinesluggenerator.com/guides/what-is-a-url-slug, the slug is the exact string what-is-a-url-slug. It stands apart from the URI scheme (https://), the domain authority (onlinesluggenerator.com), hierarchical parent directories (/guides/), query parameters (?sort=asc), or fragment anchors (#top). High-quality slugs use lowercase alphanumeric words separated by single hyphens to ensure reliable rendering across diverse browsers, chat applications, and terminal curl requests.",
+        },
+        {
+          question: "Does this upload what I paste? (Privacy & Browser Execution)",
+          answer:
+            "No network transmission takes place. The entire slug generation engine is executed locally inside your client browser thread via pure JavaScript. Whether you type a headline, paste confidential draft titles, or import a 10,000-row CSV file on the bulk screen using the HTML5 File API, zero bytes are transmitted to any remote server or third-party cloud. You can disconnect your device from the internet or inspect your browser DevTools Network tab to verify that no HTTP POST, analytics ping, or tracking telemetry is dispatched.",
+        },
+        {
+          question: "Should I use a hyphen or an underscore? (Search Engine Guidelines)",
+          answer:
+            "For all newly created pages, hyphens (-) are standard web practice. Google Search Central documentation and public statements from Google Search Relations engineer Gary Illyes indicate that Google's indexing systems treat hyphens as natural word boundaries (parsing how-to-prune-roses into distinct search terms), whereas underscores historically concatenate strings into compound tokens (reading how_to_prune_roses as one unit). Crucially, if you manage an established legacy website where URLs already rank with underscores, you should retain them: changing live URLs solely for separator cosmetics risks indexing volatility, crawl delays, and unnecessary 301 redirect chains.",
+        },
+        {
+          question: "Why is lowercase enforced across generated slugs?",
+          answer:
+            "Unix and Linux server architectures (including Nginx, Apache, Caddy, and static CDN edge workers) mount case-sensitive file systems and URI routing tables. Consequently, /Product-Page and /product-page are interpreted as two separate resources. If an unnormalized uppercase URL is published, it introduces duplicate content risks, dilutes backlink equity, and causes 404 errors when visitors manually enter lowercase URLs on mobile devices. Normalizing every slug to lowercase ensures deterministic, cross-platform compatibility.",
+        },
+        {
+          question: "How are foreign alphabets, umlauts, and accents processed?",
+          answer:
+            "Under the default 'Readable URL' preset, Latin diacritics are decomposed through Unicode normalization (converting characters like é to e and ñ to n). When using the German language tool, umlauts expand into their correct phonological two-letter equivalents (ä/ö/ü become ae/oe/ue, and ß becomes ss). Selecting the 'Keep' setting retains accented UTF-8 characters without modification. Furthermore, non-Latin writing systems—such as Cyrillic, Japanese Kanji, Arabic, and Devanagari—are preserved in their native character sets rather than being silently stripped or mangled.",
+        },
+        {
+          question: "Does a shorter slug directly improve search rankings?",
+          answer:
+            "A concise URL slug is not a direct algorithmic ranking boost in Google Search. Search engines evaluate topical relevance, helpfulness, and search intent over slug length. However, shorter slugs provide meaningful indirect benefits: they avoid ellipsis cutoff in search result display snippets, fit cleanly within shared social cards or printed collateral, and make technical documentation easier to reference. The 'Short permalink' configuration selectively filters high-frequency stop words and applies a 60-character ceiling to support these publishing needs.",
+        },
+      ]}
+    />
+    <section>
+      <h2>Worked examples and transformations</h2>
+      <p>
+        Here is how different title structures convert under the standard Readable URL and Short permalink configurations. Punctuation, commas, and invalid URL characters are stripped, while product model numbers and version digits remain intact:
+      </p>
+      <ExampleTable
+        caption="Real-world titles and their generated slug outputs"
+        headers={["Title", "Readable URL", "Short permalink"]}
+        rows={[
+          ["How to Prune Roses in June", "how-to-prune-roses-in-june", "how-prune-roses-june"],
+          ["Café au lait, 12 oz", "cafe-au-lait-12-oz", "cafe-au-lait-12-oz"],
+          ["AT&T fiber plans & pricing", "at-and-t-fiber-plans-and-pricing", "fiber-plans-pricing"],
+          ["Sony WH-1000XM5: Active Noise Cancelling", "sony-wh-1000xm5-active-noise-cancelling", "sony-wh-1000xm5-active-noise-cancelling"],
+        ]}
+      />
+      <p>
+        The Readable URL preset is the default setting. It retains essential descriptive words like “to” and “in,” folds Latin diacritics to ASCII characters, and preserves numbers. Short permalink is ideal for character-constrained environments or minimal URL structures, dropping high-frequency stop words and wrapping at word boundaries.
+      </p>
+      <p>
+        In programming terminology, this casing convention is known as kebab-case: lowercase words separated by hyphens. In web publishing, URL slugs also incorporate rules for character encoding, duplicate disambiguation, and query parameter handling.
+      </p>
+    </section>
+    <section>
+      <h2>Privacy and client-side processing</h2>
+      <p>
+        Paste any article headline, product name, or draft sentence into the tool. The slug field updates reactively as you type. You can edit the resulting slug manually at any time. When you modify the title afterwards, your manual edits are safeguarded, and a prompt offers “Update slug from title” if you wish to re-synchronize.
+      </p>
+      <p>
+        All processing operates locally in memory: trimming whitespace, cleaning invisible zero-width characters, stripping HTML tags, lowercasing, and normalizing punctuation. No tracking pixels, third-party analytics scripts, or telemetry trackers are loaded on this website. Your theme preference and tool settings are stored locally in your browser via localStorage keys.
+      </p>
+      <p>
+        When you process batch files on the bulk screen, the browser’s native FileReader API streams the contents directly into local memory. The file is never transmitted across the network, providing complete data privacy for internal catalogs, draft articles, and unpublished product roadmaps.
+      </p>
+    </section>
+    <section>
+      <h2>When to use the Bulk Slug Tool</h2>
+      <p>
+        While this page is optimized for single titles, large e-commerce catalogs and document repositories belong on the <a href="/bulk-slug-generator">Bulk Slug Generator</a>. You can paste lists of up to 10,000 lines or upload CSV and TXT files up to 5 MB in size.
+      </p>
+      <p>
+        Importing a CSV retains all existing columns (such as SKU, price, and category) and appends a clean <code>slug</code> column. When identical titles occur, duplicate detection automatically increments a numeric suffix (e.g. <code>galaxy-s26-2</code>) to ensure URL uniqueness without manual inspection.
+      </p>
+    </section>
+    <section>
+      <h2>Slug settings and normalization rules</h2>
+      <p>
+        The Separator setting toggles between hyphens (recommended for SEO) and underscores. Lowercase conversion follows standard English rules while respecting non-cased scripts. The Letters option enables you to choose between ASCII folding (converting letters like &eacute; to e, &oslash; to o, and &szlig; to ss) or preserving original international characters for localized CMS platforms.
+      </p>
+      <p>
+        Maximum length limits the slug length while preventing truncated half-words by cutting at separator boundaries. Advanced options allow automatic replacement of ampersands (&amp;) with the word “and” (so AT&amp;T becomes <code>at-and-t</code>), stop word filtering, and a live full URL preview with custom domain prefixes.
+      </p>
+    </section>
+    <section>
+      <h2>Helpful guides and technical references</h2>
+      <ul class="guide-cards">
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/what-is-a-url-slug">
+            <span class="guide-card-title">What is a URL slug? <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">Comprehensive definition, position in the URL hierarchy, and common webmaster misconceptions.</span>
+          </a>
+        </li>
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/how-to-create-url-slugs">
+            <span class="guide-card-title">How to create a URL slug <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">Step-by-step best practices covering case, hyphens, stop words, optimal length, and product numbers.</span>
+          </a>
+        </li>
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/hyphens-vs-underscores-in-urls">
+            <span class="guide-card-title">Hyphens vs underscores in URLs <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">Official Google statements from Gary Illyes, crawling implications, and migration rules.</span>
+          </a>
+        </li>
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/unicode-and-international-urls">
+            <span class="guide-card-title">International characters in URL slugs <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">ASCII folding versus keeping native UTF-8 scripts, percent-encoding, and CMS compatibility.</span>
+          </a>
+        </li>
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/bulk-url-slug-generation">
+            <span class="guide-card-title">How to generate slugs in bulk <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">Processing large CSV exports, preserving product IDs, and automated duplicate resolution.</span>
+          </a>
+        </li>
+      </ul>
+      <p>
+        Visit our <a href="/about">About page</a> to read about our privacy commitments and design philosophy, or view the <a href="/privacy">Privacy Policy</a> for complete details on browser security boundaries.
+      </p>
+    </section>
+    <section>
+      <h2>Transformation Inspector</h2>
+      <details class="change-log">
+        <summary>What changed in the latest slug</summary>
+        <dl>
+          <dt>Original</dt>
+          <dd id="wc-original">Type a title to see the steps.</dd>
+          <dt>Cleaned</dt>
+          <dd id="wc-cleaned">Waiting for a title.</dd>
+          <dt>Slug</dt>
+          <dd id="wc-slug">Waiting for a title.</dd>
+          <dt>Notes</dt>
+          <dd id="wc-notes">No destructive options are on.</dd>
+        </dl>
+      </details>
+    </section>
+  </div>
+  <JsonLd data={schema} />
+</BaseLayout>

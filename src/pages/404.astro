@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ISSUES } from "../lib/site";
+
+const title = "Page not found · Online Slug Generator";
+const description =
+  "The page you requested could not be found. Return to the single or bulk slug generator tools, or explore our reference guides.";
+---
+
+<BaseLayout title={title} description={description} path="/404" kind="document">
+  <meta slot="head" name="robots" content="noindex" />
+  <article class="prose">
+    <p class="crumbs"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>404 Not Found</span></p>
+
+    <div class="error-illustration" aria-hidden="true">
+      <span class="error-badge">HTTP 404</span>
+      <span class="error-path">onlinesluggenerator.com/<span class="error-missing">[missing-slug]</span></span>
+    </div>
+
+    <h1>Page not found</h1>
+
+    <p>
+      The address you navigated to does not match an active page on Online Slug Generator. Because this site is statically hosted, requests with a trailing slash (such as <code>/about/</code> instead of <code>/about</code>), a mistyped URL, or an outdated external bookmark can cause this not-found response.
+    </p>
+
+    <div class="error-actions">
+      <a href="/" class="button-primary error-btn">Single Slug Tool &rarr;</a>
+      <a href="/bulk-slug-generator" class="button-secondary error-btn">Bulk Generator</a>
+      <a href="/guides" class="button-secondary error-btn">Reference Guides</a>
+    </div>
+
+    <h2>Where to go next</h2>
+    <ul class="guide-cards">
+      <li class="guide-card-item">
+        <a class="guide-card" href="/">
+          <span class="guide-card-title">Single Slug Generator <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+          <span class="guide-card-desc">Type or paste a title, article headline, or name to convert it into a clean, lowercased URL slug.</span>
+        </a>
+      </li>
+      <li class="guide-card-item">
+        <a class="guide-card" href="/bulk-slug-generator">
+          <span class="guide-card-title">Bulk Slug Generator <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+          <span class="guide-card-desc">Process multiple titles at once. Paste lists or upload CSV and TXT files with column mapping and duplicate detection.</span>
+        </a>
+      </li>
+      <li class="guide-card-item">
+        <a class="guide-card" href="/guides">
+          <span class="guide-card-title">Technical Guides <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+          <span class="guide-card-desc">Explore the five core reference articles on URL slug anatomy, hyphen standards, and UTF-8 handling.</span>
+        </a>
+      </li>
+      <li class="guide-card-item">
+        <a class="guide-card" href="/about">
+          <span class="guide-card-title">About the Tool <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+          <span class="guide-card-desc">Read about our browser-only architecture, zero tracking policies, and open-source principles.</span>
+        </a>
+      </li>
+    </ul>
+
+    <h2>Need help or found a broken link?</h2>
+    <p>
+      If a link within this website brought you here, please let us know by filing an issue on our <a href={ISSUES}>GitHub issue tracker</a>. All titles and data remain local to your browser and are never uploaded.
+    </p>
+  </article>
+</BaseLayout>

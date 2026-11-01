@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="Online Slug Generator">
+  <defs>
+    <linearGradient id="osg-brand" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff5e13"/>
+      <stop offset="100%" stop-color="#d04200"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Badge with soft radius and top subtle hairline -->
+  <rect width="32" height="32" rx="8" fill="url(#osg-brand)"/>
+  <line x1="8" y1="2" x2="24" y2="2" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1" stroke-linecap="round"/>
+  <!-- Two Slug Tokens Connected by a Hyphen Divider -->
+  <rect x="4.5" y="10.5" width="9.5" height="11" rx="3" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <rect x="18" y="10.5" width="9.5" height="11" rx="3" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <!-- Central Hyphen Divider -->
+  <line x1="12" y1="16" x2="20" y2="16" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

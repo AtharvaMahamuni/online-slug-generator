@@ -1,0 +1,44 @@
+---
+interface Item {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: Item[];
+  title?: string;
+  description?: string;
+}
+
+const {
+  items,
+  title = "Frequently Asked Questions",
+  description = "Common questions about URL slugs, hyphens vs underscores, stop words, and SEO best practices.",
+} = Astro.props;
+---
+
+<section class="qa-container" aria-label="Frequently asked questions">
+  <div class="qa-header">
+    <h2 class="qa-heading">{title}</h2>
+    {description && <p class="qa-subheading">{description}</p>}
+  </div>
+  <div class="qa">
+    {
+      items.map((item) => (
+        <details class="qa-item">
+          <summary class="qa-summary">
+            <span class="qa-question">{item.question}</span>
+            <span class="qa-chevron" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6l4 4 4-4"></path>
+              </svg>
+            </span>
+          </summary>
+          <div class="qa-body">
+            <p>{item.answer}</p>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>

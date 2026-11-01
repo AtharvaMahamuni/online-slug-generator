@@ -1,0 +1,30 @@
+---
+interface Props {
+  caption: string;
+  headers: string[];
+  rows: string[][];
+  mono?: boolean;
+}
+
+const { caption, headers, rows, mono = true } = Astro.props;
+---
+
+<table class="example">
+  <caption>{caption}</caption>
+  <thead>
+    <tr>
+      {headers.map((header) => <th scope="col">{header}</th>)}
+    </tr>
+  </thead>
+  <tbody>
+    {
+      rows.map((row) => (
+        <tr>
+          {row.map((cell, index) =>
+            index === 0 ? <th scope="row">{cell}</th> : <td>{mono ? <code>{cell}</code> : cell}</td>,
+          )}
+        </tr>
+      ))
+    }
+  </tbody>
+</table>

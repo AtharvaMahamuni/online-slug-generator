@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolSingle from "../../components/ToolSingle.astro";
+import { canonical, PERSON_ID, SITE_NAME } from "../../lib/site";
+
+const title = "Online Slug Generator — Saubere URL Slugs erstellen";
+const description =
+  "Kostenloser URL-Slug-Generator im Browser. Wandelt Titel direkt in saubere, suchmaschinenfreundliche Permalinks um. Sicher, werbefrei und ohne Server.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: canonical("/de"),
+      inLanguage: "de",
+    },
+    {
+      "@type": "WebApplication",
+      name: SITE_NAME,
+      url: canonical("/de"),
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Erfordert JavaScript für die interaktive Generierung.",
+      description,
+      inLanguage: "de",
+      author: { "@id": PERSON_ID },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/de" kind="tool" locale="de">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Text in einen sauberen URL-Slug umwandeln</h1>
+    <div class="intro-row">
+      <p class="definition">Ein Slug ist das lesbare Ende einer Webadresse, wie <code>rosen-schneiden-im-juni</code>.</p>
+      <a class="button-secondary mode-jump" id="open-bulk" href="/de/bulk-slug-generator" data-tip="Öffne das Massentool. Der Text im Titel wird direkt mitgenommen.">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="2" y1="4" x2="14" y2="4"></line>
+          <line x1="2" y1="8" x2="14" y2="8"></line>
+          <line x1="2" y1="12" x2="14" y2="12"></line>
+        </svg>
+        <span>Massentool</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolSingle locale="de" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Ein URL-Slug ist der lesbare Teil am Ende einer Webadresse, der den Seiteninhalt für Besucher und Suchmaschinen klar verständlich zusammenfasst (z. B. <code>/artikel/rosen-schneiden-im-juni</code>).
+      </p>
+    </header>
+
+    <h2>Deutsche Umlaute und Sonderzeichen</h2>
+    <p>
+      Im deutschen Sprachraum werden Umlaute standardmäßig lesbar aufgelöst: <code>ä</code> wird zu <code>ae</code>, <code>ö</code> zu <code>oe</code>, <code>ü</code> zu <code>ue</code> und <code>ß</code> zu <code>ss</code>. Das kaufmännische Und-Zeichen <code>&amp;</code> wird automatisch zu <code>und</code> umgewandelt.
+    </p>
+
+    <h2>Vollständiger Datenschutz im Browser</h2>
+    <p>
+      Alle Berechnungen finden direkt in Ihrem Browser statt. Es werden keine Daten an externe Server gesendet oder zwischengespeichert.
+    </p>
+    <p>
+      Für ganze Tabellen oder CSV-Dateien nutzen Sie den <a href="/de/bulk-slug-generator">Massen-Slug-Generator</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

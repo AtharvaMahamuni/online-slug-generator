@@ -1,0 +1,115 @@
+---
+import SettingsControls from "./SettingsControls.astro";
+import type { SupportedLocale } from "../lib/slug";
+import { DEFAULT_LOCALE } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  locale?: SupportedLocale;
+}
+
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section id="tool" class="panel" data-tool="bulk" data-locale={locale} aria-label="Bulk slug tool" tabindex="-1">
+  <div class="switch" role="tablist" aria-label="Input method">
+    <button type="button" id="tab-paste" role="tab" aria-selected="true" aria-controls="panel-paste" data-tip="Type or paste one title per line">{t("bulk.tabPaste")}</button>
+    <button type="button" id="tab-import" role="tab" aria-selected="false" aria-controls="panel-import" data-tip="Read a TXT or CSV file on this device. It is not uploaded.">{t("bulk.tabImport")}</button>
+  </div>
+  <div class="bulk-surface">
+    <div id="panel-paste" role="tabpanel">
+      <label class="sr-only" for="bulk-input">Titles, one per line</label>
+      <textarea id="bulk-input" class="bulk-input" placeholder={t("bulk.placeholder")} autocomplete="off"></textarea>
+    </div>
+    <div id="panel-import" role="tabpanel" hidden>
+      <div id="drop" class="drop">
+        <p>Drop a TXT or CSV file here, or browse.</p>
+        <p class="file-privacy">This file is read on your device. It is not uploaded.</p>
+        <label for="file">Browse for a TXT or CSV file</label>
+        <input id="file" type="file" accept=".txt,.csv,text/plain,text/csv" />
+      </div>
+      <div id="file-bar" class="file-bar" hidden>
+        <p id="file-name" class="status-line"></p>
+        <button type="button" class="button-secondary" id="file-replace" data-tip="Choose a different file">Replace file</button>
+        <button type="button" class="button-secondary" id="file-clear" data-tip="Remove this file and its rows">Remove file</button>
+      </div>
+      <div id="csv-controls" class="file-bar" hidden>
+        <label class="check"><input id="has-headers" type="checkbox" /> This file has headers</label>
+        <label class="max" for="column">Title column <select id="column"></select></label>
+      </div>
+      <div id="file-error" class="file-error" role="alert" hidden>
+        <h2 id="file-error-title" tabindex="-1">File not read</h2>
+        <p id="file-error-body"></p>
+        <ul id="file-error-list"></ul>
+      </div>
+      <p id="file-status" class="status-line" role="status"></p>
+    </div>
+    <p id="skipped" class="status-line" hidden></p>
+    <div class="results" id="results" tabindex="0" aria-label="Slug results">
+      <table id="result-table">
+        <caption class="sr-only">Generated slugs. Drag a column edge, click it, or use the arrow keys to change the width.</caption>
+        <colgroup>
+          <col id="col-row" style="width: 64px" />
+          <col id="col-source" />
+          <col id="col-slug" />
+          <col id="col-state" style="width: 112px" />
+          <col id="col-copy" style="width: 88px" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">
+              Row
+              <span class="col-resize" data-col="col-row" role="slider" tabindex="0" aria-orientation="horizontal" aria-valuemin="72" aria-valuemax="640" aria-valuenow="64" aria-label="Row column width" data-tip="Drag to resize. Click widens, Shift-click narrows, and the arrow keys work too."></span>
+            </th>
+            <th scope="col">
+              Source
+              <span class="col-resize" data-col="col-source" role="slider" tabindex="0" aria-orientation="horizontal" aria-valuemin="72" aria-valuemax="640" aria-valuenow="240" aria-label="Source column width" data-tip="Drag to resize. Click widens, Shift-click narrows, and the arrow keys work too."></span>
+            </th>
+            <th scope="col">
+              Slug
+              <span class="col-resize" data-col="col-slug" role="slider" tabindex="0" aria-orientation="horizontal" aria-valuemin="72" aria-valuemax="640" aria-valuenow="240" aria-label="Slug column width" data-tip="Drag to resize. Click widens, Shift-click narrows, and the arrow keys work too."></span>
+            </th>
+            <th scope="col">
+              State
+              <span class="col-resize" data-col="col-state" role="slider" tabindex="0" aria-orientation="horizontal" aria-valuemin="72" aria-valuemax="640" aria-valuenow="112" aria-label="State column width" data-tip="Drag to resize. Click widens, Shift-click narrows, and the arrow keys work too."></span>
+            </th>
+            <th scope="col">Copy</th>
+          </tr>
+        </thead>
+        <tbody id="result-body"></tbody>
+      </table>
+      <p id="empty-results" class="status-line">Slugs will show here.</p>
+    </div>
+  </div>
+  <div class="pager">
+    <button type="button" class="button-secondary" id="page-prev" data-tip="Show the previous 100 rows">Previous</button>
+    <p id="page-status" class="status-line">Showing 0 of 0</p>
+    <button type="button" class="button-secondary" id="page-next" data-tip="Show the next 100 rows">Next</button>
+  </div>
+  <div class="action-bar">
+    <div class="action-group">
+      <button type="button" class="button-primary" id="copy-all" data-tip="Copy every slug, one per line">{t("bulk.copyAll")}</button>
+    </div>
+    <div class="action-group">
+      <button type="button" class="button-secondary" id="export-csv" data-tip="Download a CSV that keeps your other columns">{t("bulk.downloadCsv")}</button>
+      <button type="button" class="button-secondary" id="export-txt" data-tip="Download the slugs as a plain text file">{t("bulk.downloadTxt")}</button>
+      <button type="button" class="button-secondary" id="copy-tsv" data-tip="Copy the source and the slug, separated by a tab">{t("bulk.copyTable")}</button>
+    </div>
+  </div>
+  <SettingsControls locale={locale} />
+  <p id="live" class="sr-only" role="status" aria-live="polite"></p>
+  <p id="assertive" class="sr-only" role="alert"></p>
+  <noscript><p>Requires JavaScript for the tool. The explanation below this workspace is still readable.</p></noscript>
+</section>
+<dialog id="confirm-dialog" aria-labelledby="confirm-title">
+  <h2 id="confirm-title" class="confirm-copy">Clear these rows?</h2>
+  <p id="confirm-body">This removes the titles currently loaded on this page.</p>
+  <div class="sheet-actions">
+    <button type="button" class="button-primary" id="confirm-yes" data-tip="Remove the loaded rows">Clear</button>
+    <button type="button" class="button-secondary" id="confirm-no" data-tip="Keep the loaded rows">Cancel</button>
+  </div>
+</dialog>
+<script>
+  import "../scripts/tool.ts";
+</script>

@@ -1,0 +1,74 @@
+---
+import type { SupportedLocale } from "../lib/slug";
+import { DEFAULT_LOCALE } from "../i18n/ui";
+
+interface Props {
+  locale?: SupportedLocale;
+}
+
+const { locale = DEFAULT_LOCALE } = Astro.props;
+
+const ampersandText: Record<SupportedLocale, string> = {
+  en: 'Replace & with “and”',
+  es: 'Reemplazar & por “y”',
+  de: 'Ersetze & durch „und“',
+  fr: 'Remplacer & par « et »',
+  pt: 'Substituir & por “e”',
+};
+---
+
+<div class="settings-bar" id="settings-bar">
+  <div class="core-slot" id="core-slot">
+    <div class="core-settings" id="core-settings">
+      <div class="segment" role="group" aria-label="Separator">
+        <button type="button" data-separator="-" aria-pressed="true" aria-label="Hyphen" data-tip="Separate words with a hyphen">-</button>
+        <button type="button" data-separator="_" aria-pressed="false" aria-label="Underscore" data-tip="Separate words with an underscore">_</button>
+      </div>
+      <button type="button" class="press" id="lowercase" aria-pressed="true" aria-label="Lowercase" data-tip="Keep the slug in lower case">Aa</button>
+      <div class="segment" role="group" aria-label="Letters">
+        <button type="button" data-letters="latin-ascii" aria-pressed="true" aria-label="Latin accents to ASCII" data-tip="Fold Latin accents, so é becomes e">Latin</button>
+        <button type="button" data-letters="preserve" aria-pressed="false" aria-label="Keep original letters" data-tip="Keep letters in their original script">Keep</button>
+      </div>
+      <label class="max">
+        <span class="sr-only">Maximum length</span>
+        <span aria-hidden="true">Max</span>
+        <input id="max-length" inputmode="numeric" autocomplete="off" placeholder="None" aria-describedby="max-hint" />
+      </label>
+      <span id="max-hint" class="sr-only">Empty means no limit. The cut keeps a whole word when it can.</span>
+      <label class="preset">
+        <span class="sr-only">Preset</span>
+        <select id="preset">
+          <option value="readable">Readable URL</option>
+          <option value="short">Short permalink</option>
+          <option value="preserve">Keep original script</option>
+          <option value="custom">Custom</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <button type="button" class="button-secondary advanced-open" id="advanced-open" data-tip="Stop words, numbers, the ampersand rule, and a URL preview">Advanced</button>
+  <button type="button" class="button-secondary settings-open" id="settings-open" data-tip="Open separator, letters, length, and advanced options">Settings</button>
+  <p id="preset-warning" class="preset-warning" hidden>Stop words and shortening can drop words you may want.</p>
+  <div id="advanced-slot">
+    <div class="advanced-fields" id="advanced-fields" hidden>
+      <p id="destructive-note">Removing stop words or numbers deletes parts of the title. Shortening cuts at a word boundary when it can. Stop words and shortening can drop words you may want.</p>
+      <label class="check"><input id="stop-words" type="checkbox" /> Remove stop words</label>
+      <label class="check"><input id="remove-numbers" type="checkbox" /> Remove numbers</label>
+      <label class="check"><input id="ampersand" type="checkbox" checked /> {ampersandText[locale] ?? ampersandText.en}</label>
+      <label class="check"><input id="url-preview-toggle" type="checkbox" /> Show URL preview</label>
+      <label class="check" for="url-prefix">URL prefix
+        <input id="url-prefix" class="text-input" type="text" autocomplete="off" spellcheck="false" placeholder="https://example.com/blog" />
+      </label>
+      <div class="sheet-actions">
+        <button type="button" class="button-secondary" id="reset-settings" data-tip="Restore the default settings">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+<dialog class="settings-dialog" id="settings-sheet" aria-labelledby="sheet-title">
+  <div class="sheet-head">
+    <h2 id="sheet-title">Advanced</h2>
+    <button type="button" class="button-secondary" id="sheet-close" data-tip="Close settings">Close</button>
+  </div>
+  <div id="sheet-mount"></div>
+</dialog>

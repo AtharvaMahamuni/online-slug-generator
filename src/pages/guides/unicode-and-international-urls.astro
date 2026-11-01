@@ -1,0 +1,124 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+
+const title = "Unicode and International URLs: Accents & Umlauts";
+const description =
+  "Accented letters can be folded to ASCII. Other scripts can stay as they are. Both are valid choices, and they suit different CMSs.";
+---
+
+<GuideLayout
+  title={title}
+  description={description}
+  path="/guides/unicode-and-international-urls"
+  h1="International characters in URL slugs"
+>
+  <p>
+    International characters in a slug are valid. This tool folds Latin accents to ASCII by default, so Café becomes <code>cafe</code>, and it keeps scripts that have no Latin equivalent, so 東京 stays 東京. A second setting, Keep, leaves the accents in place as well. Neither setting deletes Cyrillic, Greek, or Han characters.
+  </p>
+  <p>
+    Café au lait is the Latin example. The readable default produces <code>cafe-au-lait</code> once you ignore the size that a longer title might add. Keep original script produces <code>café-au-lait</code>, still lower case, still hyphenated. Привет becomes <code>привет</code> under both settings, because the letters are not Latin accents. 東京 is unchanged under both, because those characters have no case and no accent to strip.
+  </p>
+  <p>
+    The exception is a content system that rejects anything outside ASCII. A preserved 東京 is a correct slug and a failed save, if the CMS, the filesystem, or an old feed allows only <code>a-z</code>, digits, and hyphens. Folding Latin accents will not turn 東京 into a Latin word. This version does not ship a transliteration dictionary. If that CMS is a hard requirement, edit the slug by hand or transliterate upstream, and do not expect the Keep button to invent Latin letters.
+  </p>
+  <p>
+    Google’s ecommerce URL guide, updated 10 December 2025, recommends descriptive words rather than a bare id, and its example path is ASCII and hyphenated: <code>/product/black-t-shirt-with-a-white-collar</code>. It does not say that non-Latin paths are invalid. The page is <a href="https://developers.google.com/search/docs/specialty/ecommerce/designing-a-url-structure-for-ecommerce-sites">Designing a URL structure for ecommerce websites</a>. Percent-encoding and internationalized addresses are a browser and server concern. They are not a ranking recipe, and this site does not claim that an ASCII fold moves a page up a results list.
+  </p>
+
+  <h2>What is the difference between NFC and an ASCII fold?</h2>
+  <p>
+    Unicode can store the same accented letter in more than one way. <code>é</code> can be one code point, or an <code>e</code> followed by a combining acute accent. Those look the same and they are not the same string. A comparison, a unique index, or a naive “strip non-ASCII” pass can treat them as different words or can drop only the combining mark and leave a broken sequence.
+  </p>
+  <p>
+    The pipeline normalizes to NFC first, so an accented letter is the composed character when that composition exists. The Latin-to-ASCII policy then does a second, lossy step. It decomposes with NFKD, removes combining marks, and then applies a short exception map for letters that would otherwise be wrong or empty. Stripping the mark from <code>é</code> leaves <code>e</code>, which is what people expect. Stripping a mark is not enough for ß, æ, œ, ø, ł, đ, þ, or ð. Those are mapped on purpose: ß to ss, æ to ae, œ to oe, ø to o, ł to l, đ to d, þ to th, and ð to d. Straße becomes <code>strasse</code>. Ærø becomes a string that still contains letters, not a hole where the character used to be.
+  </p>
+  <p>
+    Keep original script skips that lossy step. It does not skip cleaning, lowercasing, or the separator. Café and café are the same slug after lowercasing. Café and cafe are different slugs, and on a case-sensitive, Unicode-aware host they can be two paths. Pick one policy per site and use it in the canonical URL.
+  </p>
+
+  <h2>Which letters does the fold miss on purpose?</h2>
+  <p>
+    Anything that is not a Latin accent and not in that small map. Привет is Cyrillic. It is not “Privet” unless a person or a dedicated transliterator writes it that way. 東京 is not “tokyo.” Greek letters stay Greek. An emoji is not in the map and is not a letter, so it disappears when the filter keeps only letters and numbers. A title that is only an emoji becomes an empty slug.
+  </p>
+  <p>
+    A large transliteration table would guess. Guesses differ by language. The same character can map differently in German and in Turkish, and a Han character can map differently in Mandarin and in Japanese. Loading a library that pretends one table is universal would also add a download to a tool that is supposed to stay small. V1 refuses that trade. The limit is documented here so a blank where you expected a Latin name is not a surprise.
+  </p>
+  <p>
+    If you need a Latin slug for a non-Latin title, write it. The output field is editable. On the single screen, an edit is kept until you press “Update slug from title,” so the next keystroke in the title does not throw the transliteration away. On the bulk screen, an edited cell is kept while the source text in that row stays the same. A new file, or a changed line, regenerates the unedited rows.
+  </p>
+
+  <h2>What is the difference between a character and a percent-encoded URL?</h2>
+  <p>
+    A slug is a sequence of characters. A URL on the wire is a sequence of bytes. Browsers percent-encode characters that the older URL grammar does not allow in a path. 東京 in a path often travels as a run of <code>%E6%9D%B1%E4%BA%AC</code> style bytes, UTF-8 encoded, while the address bar shows the characters. Both are the same URL if the server decodes them the same way. Copying the percent-encoded form into a slug field, and then letting the tool treat <code>%</code> as punctuation, will destroy it. Paste the title, not a URL you already encoded.
+  </p>
+  <p>
+    Internationalized domain names are a different layer. The host can be displayed as Unicode and registered as ASCII punycode starting with <code>xn--</code>. This tool does not build host names. It builds the last path segment. Do not paste a domain into the title field and expect a punycode conversion. You will get a slug of the words, with the dots turned into separators.
+  </p>
+  <p>
+    Some servers normalize paths and some do not. One host decodes percent-encoding and composes Unicode before it looks up the file. Another treats the encoded bytes and the characters as different keys. If you are unsure, publish one form, put that form in the canonical link and the sitemap, and do not advertise the other. This is the same discipline as mixed case, which Google’s ecommerce guide mentions for servers that treat case as identical: pick one spelling and use it everywhere.
+  </p>
+
+  <h2>Which preset should you use?</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>What each letter setting does to the same titles</caption>
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Latin accents to ASCII</th>
+          <th scope="col">Keep original script</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Café</td>
+          <td><code>cafe</code></td>
+          <td><code>café</code></td>
+        </tr>
+        <tr>
+          <td>Straße</td>
+          <td><code>strasse</code></td>
+          <td><code>straße</code></td>
+        </tr>
+        <tr>
+          <td>Привет</td>
+          <td><code>привет</code></td>
+          <td><code>привет</code></td>
+        </tr>
+        <tr>
+          <td>東京</td>
+          <td>東京</td>
+          <td>東京</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Readable URL is the default. It uses the Latin fold, a hyphen, lower case, no stop-word removal, and no length cap. Keep original script is the preset that switches only the letter policy. It still lowercases. Short permalink adds stop words and a 60-character cap on top of the Latin fold. Do not use Short permalink as a substitute for a transliterator. It will not turn 東京 into Latin, and it may drop English words you wanted in a mixed title.
+  </p>
+  <p>
+    Mixed titles are common and worth a look. “Café in 東京, 12” under the default becomes <code>cafe-in-tokyo</code> only if someone has already written “tokyo.” The tool does not. It becomes <code>cafe-in-東京-12</code>. That slug is honest about what the pipeline can see. If your CMS rejects it, edit the row. If your CMS accepts Unicode, ship it, and make the internal links use the same characters rather than a hand-built percent-encoded copy.
+  </p>
+
+  <h2>What goes wrong in a CMS?</h2>
+  <p>
+    Three failures show up more often than a search-engine objection. The editor rejects the save because a validator allows only ASCII. The editor accepts the save and then writes a different normalization, so the public path does not match the canonical tag you copied. The editor accepts the slug and a later plugin “cleans” it with a smaller library that drops unknown letters. The third one is how 東京 becomes an empty segment in production while the preview looked fine.
+  </p>
+  <p>
+    Test one page before you convert a catalogue. Publish a single Unicode slug, load it in the browser, view the source, and read the canonical link. If the canonical is percent-encoded and the sitemap is characters, check whether the host treats them as one URL. If a plugin emptied the segment, turn that plugin off for this content type or stay on the ASCII fold for Latin and hand-write the rest.
+  </p>
+  <p>
+    File names on a desktop are a weaker test. macOS and Windows have their own normalization habits. A slug that survived a laptop folder can still fail in a Linux deploy or in a zip file someone mailed. The CMS preview is the test that matters.
+  </p>
+
+  <h2>How does this interact with bulk files?</h2>
+  <p>
+    A CSV is bytes before it is rows. Save it as UTF-8. The parser accepts a leading byte-order mark and does not treat that mark as a character in the first header. If you save a spreadsheet as “CSV (Macintosh)” or as a national code page, accented letters can arrive as the wrong characters, and the fold will faithfully fold the wrong thing. Open the file in a plain editor and look at one Café row before you convert ten thousand of them.
+  </p>
+  <p>
+    The bulk tool reads the file on your device. It does not upload the catalogue, and it does not send titles to a translation API. There is no network step hiding inside the letter policy. That also means there is no server dictionary you can opt into. The <a href="/guides/bulk-url-slug-generation">bulk guide</a> covers columns, duplicate suffixes, and the export that keeps Product ID next to the slug. The <a href="/">single tool</a> is enough when you are deciding, on one title, whether Café should stay accented.
+  </p>
+  <p>
+    After you choose a policy, leave it for the batch. Mixing Keep and Latin inside one catalogue produces two conventions and a set of duplicates that differ only by an accent. The duplicate suffix compares the finished slug, so <code>cafe</code> and <code>café</code> are not duplicates. They are two addresses. That is sometimes what you want for two languages. It is rarely what you want for one language typed two ways.
+  </p>
+</GuideLayout>

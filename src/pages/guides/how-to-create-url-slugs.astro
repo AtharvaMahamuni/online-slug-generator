@@ -1,0 +1,117 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+
+const title = "How to Create a URL Slug: Rules & Best Practices";
+const description =
+  "Make a slug from a title: lowercase, hyphens, and what to do with accents, numbers, stop words, and very long headlines.";
+---
+
+<GuideLayout title={title} description={description} path="/guides/how-to-create-url-slugs" h1="How to create a URL slug">
+  <p>
+    Create a URL slug by taking the title, making it lower case, and joining the words with hyphens. Keep letters and numbers. Drop punctuation a path should not carry. “How to Prune Roses in June” becomes <code>how-to-prune-roses-in-june</code>. That is a readable path segment. It is not a ranking trick, and there is no magic character count.
+  </p>
+  <p>
+    The worked case is that rose title. Trim nothing by hand. The spaces become hyphens, the capitals fall to lower case, and the words “to” and “in” stay, because stop-word removal is off unless you turn it on. Copy the result into the content system that will publish the page. Do this before the URL is public, not after other sites have linked to a draft path.
+  </p>
+  <p>
+    The exception is a title you have already published. Creating a new slug does not move the old one. Visitors who have the old address need a redirect on the server that hosts the page. This tool cannot write that redirect. If the old slug is only in your draft and nowhere else, replace it freely.
+  </p>
+  <p>
+    Google’s ecommerce URL guide, updated 10 December 2025, says to add descriptive words in URL paths. The recommended shape is <code>/product/black-t-shirt-with-a-white-collar</code>. The shape it does not recommend is <code>/product/3243</code>. The same guide says that if the server treats upper and lower case as the same, you should still pick one case so Google can see that two URLs are one page. It does not publish a character limit. Read it at <a href="https://developers.google.com/search/docs/specialty/ecommerce/designing-a-url-structure-for-ecommerce-sites">Designing a URL structure for ecommerce websites</a>. In the April 2024 office hours, Gary Illyes said keywords in URLs barely contribute to rankings. The <a href="/guides/hyphens-vs-underscores-in-urls">hyphen guide</a> quotes that answer.
+  </p>
+
+  <h2>What are the steps, in order?</h2>
+  <p>
+    This site uses one pipeline. The order is fixed. Presets only set the switches. They do not rearrange the steps, and you should not rearrange them in a spreadsheet formula either, because an ampersand expanded after punctuation stripping is no longer an ampersand.
+  </p>
+  <ol>
+    <li>Start from one title. A list is one title per line. A CSV is the column you chose, not the whole file pasted into one string.</li>
+    <li>Clean the text. Trim the ends. Turn non-breaking spaces and other Unicode spaces into ordinary spaces. Remove zero-width characters. Collapse repeated spaces. If the string contains tags, keep the visible text and drop <code>script</code> and <code>style</code>. That extraction does not run the markup.</li>
+    <li>Normalize to Unicode NFC so an accented letter is one character before any later fold.</li>
+    <li>If the ampersand option is on, replace <code>&amp;</code> with the word “and”, with spaces around it. This is the default. AT&amp;T becomes the words “at and t”.</li>
+    <li>Apply the letter policy. “Latin” decomposes accents and then maps a few letters that do not decompose into a plain vowel: ß to ss, æ to ae, œ to oe, ø to o, ł to l, đ to d, þ to th, and ð to d. Other scripts stay. “Keep” skips this step.</li>
+    <li>Lowercase with an English locale rule when lowercase is on. Scripts that have no case stay as they are.</li>
+    <li>Keep letters and numbers. Turn every other run of characters into one separator. Number removal is off unless you enable it.</li>
+    <li>If stop words are on, drop the English list, unless that would leave no token at all. The list is a, an, and, as, at, but, by, for, from, in, into, nor, of, on, or, the, to, with. Numbers are not on it. “au” is not on it.</li>
+    <li>Collapse repeated separators and trim them from the ends.</li>
+    <li>If a maximum length is set, cut at the last separator that still fits. If the first word alone is longer than the cap, that word is cut. A trailing separator is not left behind.</li>
+    <li>In a batch, give later duplicates a numeric suffix. If the suffix makes the slug longer than the cap, keep the suffix and show a warning. Uniqueness inside the batch wins.</li>
+    <li>Copy or export. CSV keeps the other columns. TXT is the slug list.</li>
+  </ol>
+  <p>
+    You can slugify by hand with the same judgment: lowercase, hyphens, no punctuation, words a person would say. The tool exists so a long list does not drift from that judgment row by row. The verb people search for is slugify. There is no second URL on this site for that verb. The <a href="/">homepage tool</a> is the place.
+  </p>
+
+  <h2>Should the slug be lower case?</h2>
+  <p>
+    Yes for a new URL, unless the system you are publishing to already has a different rule and real pages already follow it. Lower case is the default here. “iPhone 17 Pro” becomes <code>iphone-17-pro</code>. The brand’s capitals are a typesetting choice in the title. They are a collision risk in the path, because <code>/iPhone-17-Pro</code> and <code>/iphone-17-pro</code> may or may not be the same resource.
+  </p>
+  <p>
+    Google’s ecommerce guide says that when the server treats case as the same, you should still convert URLs to one case so it is obvious they match. Pick lower case and use it in the sitemap, the canonical link, and the internal links. Mixed case in one of those three is how duplicates start.
+  </p>
+  <p>
+    The exception is a case-sensitive host that already published mixed-case paths. Do not lowercase the archive in a bulk run and call the result a cleanup. Those are new paths. New documents on that host can follow the old pattern, or you can start a new pattern and redirect. Those are publishing decisions. The toggle on the tool only changes the string.
+  </p>
+
+  <h2>Where do the hyphens go?</h2>
+  <p>
+    Put a hyphen where a space was, and nowhere else. Do not put a hyphen at the start or the end. Do not double them when the title had a comma or a slash. “Café au lait, 12 oz” becomes <code>cafe-au-lait-12-oz</code>, not <code>cafe-au-lait--12-oz</code>. The comma is a gap, and gaps collapse.
+  </p>
+  <p>
+    Underscores are the other separator this tool can emit. Use them when the destination site uses them. The comparison, and the reason not to migrate a working underscore site, is the subject of <a href="/guides/hyphens-vs-underscores-in-urls">Hyphens and underscores in URLs</a>.
+  </p>
+
+  <h2>Should you remove stop words?</h2>
+  <p>
+    Leave them in, unless you have a length budget that is real. Stop-word removal is off by default. “The Art of War” stays <code>the-art-of-war</code>. Turn the option on and it becomes <code>art-war</code>, which is shorter and less like the title a person remembers.
+  </p>
+  <p>
+    The English list is short on purpose. It is not a multilingual dictionary, and it is not a list you can edit in this version. “How” is not removed. “June” is not removed. “au” in “café au lait” is not removed, so the short preset and the readable preset produce the same slug for “Café au lait, 12 oz”: <code>cafe-au-lait-12-oz</code>. The dangerous cases are the ones that look like grammar. “AT&amp;T fiber plans” with stop words on becomes <code>t-fiber-plans</code>, because the ampersand was expanded to “and” and both “at” and “and” are stop words. That is a correct reading of the list and a bad permalink. The warning on the Short permalink preset says that stop words and shortening can drop words you may want.
+  </p>
+  <p>
+    One more guard: if every token is a stop word, the tool keeps them. A title that is only “The” does not become an empty slug. Empty slugs are reserved for titles that had no letters or numbers left.
+  </p>
+
+  <h2>How long should a slug be?</h2>
+  <p>
+    Long enough to name the page, and no longer than your content system allows. There is no character count in Google’s ecommerce URL guide, and this site will not invent one. The maximum-length field is empty by default, which means “do not cut.” The Short permalink preset sets 60 and cuts at a word boundary when it can.
+  </p>
+  <p>
+    A cut prefers the last hyphen that fits. A maximum of 12 on <code>the-cafe-and-co-17</code> stays <code>the-cafe-and</code>, because that is the last whole token inside the cap. If the first token itself is longer than the cap, that token is hard-cut, and the note under the slug says it was shortened. A hard cut can land in the middle of a word. That is a reason to raise the cap or rewrite the title, not a reason to pretend the cap is an SEO setting.
+  </p>
+  <p>
+    In a batch, a duplicate suffix is not removed to satisfy the cap. <code>hello-there-friend-2</code> can be longer than the maximum you typed. The row is marked so you can see the warning. Two identical slugs would be worse than one long one, because a content system will refuse the second save or, worse, overwrite the first page.
+  </p>
+
+  <h2>Do numbers stay?</h2>
+  <p>
+    Yes. “iPhone 17 Pro” stays <code>iphone-17-pro</code>. Years, sizes, model numbers, and version numbers are often the part that distinguishes one page from another. “12 oz” is not filler in “Café au lait, 12 oz.”
+  </p>
+  <p>
+    Number removal exists for the rare title where digits are noise, such as a tracking code someone pasted into a headline. It is off until you enable it in Advanced. Turning it on for a catalogue will merge products that differed only by a number. Read the duplicate column after a bulk run before you export. If many rows collapsed, turn the option off and run the file again. Edited cells are kept only while the source text for that row is unchanged, so a fresh run from the file is the clean way to undo a bad option.
+  </p>
+
+  <h2>What about accents and other scripts?</h2>
+  <p>
+    Fold Latin accents when the content system, the font stack, or a downstream ASCII-only feed requires it. Café becomes <code>cafe</code>. Keep the accent when the site is already Unicode and the word is wrong without it. The Keep control skips the fold. It still lowercases. Non-Latin scripts are kept either way, because this version does not ship a transliteration dictionary. That choice, and the difference between a character and a percent-encoded byte, is explained in the <a href="/guides/unicode-and-international-urls">Unicode guide</a>.
+  </p>
+
+  <h2>How do you change a slug that is already public?</h2>
+  <p>
+    Do not change it unless the old path is wrong in a way readers are already hitting, or the old path leaks something it should not. A slightly prettier slug is not that reason. If you do change it, publish the new path, redirect the old path with a permanent redirect, update internal links, and update the sitemap so it lists the new URL once. Search Console and Bing Webmaster Tools can tell you whether the old URL was getting impressions. This site does not include those tools. They are properties you add on the domain, not scripts in the page.
+  </p>
+  <p>
+    Check the new slug for collisions before you redirect. Two posts that both want <code>how-to-prune-roses</code> need different segments, or one of them needs a folder. The bulk tool’s suffix is a batch aid, not a look-up of your live site. It cannot see that <code>how-to-prune-roses</code> was published last year.
+  </p>
+  <p>
+    After the redirect is in place, leave it. Removing a redirect because the new URL “has been live for a while” is how old links start to 404. Printed material and emails do not update themselves.
+  </p>
+
+  <h2>What should you copy into the CMS?</h2>
+  <p>
+    Copy the slug, not the whole preview, unless the preview prefix is exactly the folder your CMS expects. A preview of <code>https://example.com/blog/how-to-prune-roses</code> is a convenience. Some editors want only <code>how-to-prune-roses</code> and will add the folder themselves. Pasting the full URL into a slug field produces a path with the protocol still in it, which is worse than the title you started with.
+  </p>
+  <p>
+    If the clipboard is blocked, the field is selected and the page tells you to copy it yourself. Nothing about that failure sends the title anywhere. The next page, if you have more than one title, is <a href="/guides/bulk-url-slug-generation">How to generate slugs in bulk</a>.
+  </p>
+</GuideLayout>

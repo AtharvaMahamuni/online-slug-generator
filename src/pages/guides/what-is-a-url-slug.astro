@@ -1,0 +1,124 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+
+const title = "What Is a URL Slug? A Clear Technical Guide";
+const description =
+  "A URL slug is the readable last part of an address. See a before-and-after, and which characters do not belong in the path.";
+---
+
+<GuideLayout title={title} description={description} path="/guides/what-is-a-url-slug" h1="What a URL slug is">
+  <p>
+    A URL slug is the readable end of a URL, the words after the last slash. In <code>https://example.com/guides/how-to-prune-roses</code> the slug is <code>how-to-prune-roses</code>. It names one page in a path a person can read aloud. A slug is not the domain, the protocol, or a query string.
+  </p>
+  <p>
+    Take the title “How to Prune Roses in June.” A readable slug for that title is <code>how-to-prune-roses-in-june</code>. The words stay in order. The spaces become hyphens. The capital letters become lower case. Someone who sees only the address still knows what the page is about.
+  </p>
+  <p>
+    The exception is a title that is already a public address. Changing <code>how_to_prune_roses</code> to a hyphenated form creates a second URL. The old one still needs a redirect, or visitors and any existing links land on an error. A cleaner shape is not a reason to abandon an address that already works.
+  </p>
+  <p>
+    Google’s ecommerce URL guide, updated 10 December 2025, says to add descriptive words in URL paths. Its recommended example is <code>/product/black-t-shirt-with-a-white-collar</code>, and the example it tells you to avoid is <code>/product/3243</code>. The words may help Google understand the page. That is not a promise that a particular slug length, or the removal of small words, will raise a ranking. The page is <a href="https://developers.google.com/search/docs/specialty/ecommerce/designing-a-url-structure-for-ecommerce-sites">Designing a URL structure for ecommerce websites</a>.
+  </p>
+
+  <h2>Where does the slug sit in a URL?</h2>
+  <p>
+    A full address has several parts, and only one of them is the slug. The scheme says how to fetch the page, usually <code>https</code>. The host is the site name, such as <code>example.com</code>. A path is everything after the host and before a question mark. The slug is the last path segment when a page is addressed that way. Some sites put a folder in front of it: <code>/guides/how-to-prune-roses</code> has a section, <code>guides</code>, and a slug, <code>how-to-prune-roses</code>.
+  </p>
+  <p>
+    A query string starts at <code>?</code> and carries parameters such as <code>color=green</code>. A fragment starts at <code>#</code> and points at a place inside the page. Google’s own ecommerce documentation says fragment identifiers are not used to tell one page from another: <code>/product/t-shirt#black</code> and <code>/product/t-shirt#white</code> are the same page to Google. Do not hide a different product in a fragment and call that fragment a slug.
+  </p>
+  <p>
+    Folders are not slugs either. <code>/blog/</code> names a collection. <code>/blog/how-to-prune-roses</code> names one post. The tool on this site builds the last segment. It does not invent your folders, and the optional URL preview only joins a prefix you type with the slug you just made. It does not check that the prefix exists.
+  </p>
+
+  <h2>What does a good slug look like?</h2>
+  <p>
+    A good slug is short enough to read, long enough to tell this page from the one next to it, and stable once it is public. “Black t-shirt with a white collar” becomes <code>black-t-shirt-with-a-white-collar</code> under the default settings here. The hyphen is the word gap. The letters are lower case. The words that a shopper would say are still there.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <caption>Titles and the readable slug this tool produces</caption>
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Slug</th>
+          <th scope="col">Why this shape</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>How to Prune Roses in June</td>
+          <td><code>how-to-prune-roses-in-june</code></td>
+          <td>Words stay, including the small ones, so the title is still recognizable.</td>
+        </tr>
+        <tr>
+          <td>Café au lait, 12 oz</td>
+          <td><code>cafe-au-lait-12-oz</code></td>
+          <td>The accent folds to ASCII. The size stays, because 12 is part of the name.</td>
+        </tr>
+        <tr>
+          <td>AT&amp;T fiber plans</td>
+          <td><code>at-and-t-fiber-plans</code></td>
+          <td>The ampersand is spoken as “and” before the other punctuation is removed.</td>
+        </tr>
+        <tr>
+          <td>iPhone 17 Pro</td>
+          <td><code>iphone-17-pro</code></td>
+          <td>The model number is kept. Removing it would collide with other iPhone pages.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    A weak slug is an internal id with no words, a sentence copied with the comma and the question mark still in it, or a different string every time the same title is saved. <code>/product/3243</code> may be unique in a database and still tell a person nothing. <code>how-to-prune-roses?</code> puts a character in the path that many systems will treat as the start of a query. <code>How-To-Prune</code> and <code>how-to-prune</code> can be two URLs on a server that treats case as significant, and one URL on a server that does not.
+  </p>
+
+  <h2>Which characters belong in the path?</h2>
+  <p>
+    Letters and numbers belong. A single hyphen between words belongs, unless the system you publish to already uses underscores. Everything else in a title is a candidate for removal or replacement: commas, quotes, exclamation marks, slashes, question marks, and emoji. Emoji are not letters in this pipeline. A title that is only emoji produces an empty slug and a warning, because there is nothing left to keep.
+  </p>
+  <p>
+    Spaces never belong in the finished slug. A space in a path has to be encoded as <code>%20</code> or as a plus in some query strings, and both are harder to read and easier to get wrong when a link is copied into a message. The tool turns a run of spaces into one separator.
+  </p>
+  <p>
+    Some letters need a decision rather than a deletion. <code>é</code> can stay, or it can fold to <code>e</code>. <code>ß</code> does not become a plain <code>s</code> by stripping a mark; the Latin-to-ASCII step maps it to <code>ss</code>, so Straße becomes <code>strasse</code>. Characters from other scripts are kept. Привет stays Cyrillic. 東京 stays Japanese. The <a href="/guides/unicode-and-international-urls">Unicode guide</a> is the page for that choice. This page only needs the rule that “non-Latin” is not the same thing as “invalid.”
+  </p>
+
+  <h2>What does a slug not do?</h2>
+  <p>
+    A slug does not redirect an old address. If you rename a public page, the new slug is only the new path. The old path still needs a server redirect, a content-management setting, or it will 404. This site has no server-side redirect feature and will not gain one in the browser.
+  </p>
+  <p>
+    A slug does not set the page title, the H1, or the meta description. Those can match the slug, and often they should be related, but they are separate fields. A slug does not prove that a page is original, fast, or useful. A slug does not manage canonical tags. Two URLs with different slugs can still be duplicates if the HTML says so, and two identical slugs in a folder can still be a collision if you publish both.
+  </p>
+  <p>
+    A slug is not an SEO score. Nothing on this site grades a slug, counts keyword density, or tells you that removing “the” and “of” will move a page up a results list. Google’s Gary Illyes, in the April 2024 Search Central office hours, said that keywords in URLs have barely any contribution to rankings. The hyphen guide quotes that answer and links the transcript. Use a readable slug because people and content systems have to live with the address, and because Google’s own ecommerce guide prefers descriptive words over a bare id.
+  </p>
+  <p>
+    A slug is also not a file you upload to this website. The <a href="/">single tool</a> and the <a href="/bulk-slug-generator">bulk tool</a> compute the string in your browser. The definition you are reading is ordinary HTML and does not need that script.
+  </p>
+
+  <h2>How is a slug different from a permalink?</h2>
+  <p>
+    People use the words loosely. A permalink is the address you intend to keep. A slug is the readable segment inside it. A permalink can include a date folder, an author folder, and a slug: <code>/2026/06/how-to-prune-roses</code>. Changing the slug changes the permalink. Changing the folder does too. “Short permalink” on this tool is only a preset name. It means stop words are removed and the segment is capped at 60 characters. It does not register a permalink with any host.
+  </p>
+  <p>
+    That preset can drop words you wanted. “How to Prune Roses in June” becomes <code>how-prune-roses-june</code> because “to” and “in” are on the English stop list. “AT&amp;T fiber plans” becomes <code>t-fiber-plans</code> because “at” and “and” are on that list after the ampersand has been expanded. The default preset, Readable URL, keeps those words. If the title is the thing a reader will scan in a list of addresses, the default is the safer one.
+  </p>
+
+  <h2>When should the slug stay ugly?</h2>
+  <p>
+    Leave a public slug alone when other sites link to it, when it is printed, or when a campaign has already gone out. A readable replacement is a new URL. Analytics will split. A redirect can repair the click, and it cannot repair a quote that was printed with the old path and no link.
+  </p>
+  <p>
+    Leave an underscore in place when the whole site already uses underscores and the server, the sitemap, and the internal links agree. The tool can emit underscores. Use that setting for new pages on that site. Do not run a one-time conversion of the archive unless you also plan the redirects and the internal links.
+  </p>
+  <p>
+    Leave a numeric id in place when it is the stable key and the words are allowed to change. Some catalogues use <code>/product/3243</code> on purpose, and put the words in the title element instead. Google’s guide prefers the words. A shop that already has the numeric URL in ads and packaging has a different problem than a blog that has not published yet. New pages can use words. Old pages need a migration plan, not a cleaner string in a text box.
+  </p>
+
+  <h2>What should you do next?</h2>
+  <p>
+    If you have one title, use the <a href="/">URL slug generator</a>. Paste the title, read the slug, and copy it. If you have a list or a spreadsheet, use <a href="/bulk-slug-generator">Generate slugs for a list</a> so the other columns survive. The steps, including case, hyphens, stop words, length, and what to do when a slug is already public, are on <a href="/guides/how-to-create-url-slugs">How to create a URL slug</a>.
+  </p>
+</GuideLayout>

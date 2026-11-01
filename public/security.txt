@@ -1,0 +1,6 @@
+Contact: https://github.com/AtharvaMahamuni/online-slug-generator/issues
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://onlinesluggenerator.com/.well-known/security.txt
+Policy: https://onlinesluggenerator.com/privacy
+Acknowledgments: https://github.com/AtharvaMahamuni/online-slug-generator

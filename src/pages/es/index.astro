@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolSingle from "../../components/ToolSingle.astro";
+import { canonical, PERSON_ID, SITE_NAME } from "../../lib/site";
+
+const title = "Generador de Slugs Online — Crear Slug URL";
+const description =
+  "Generador gratuito de slugs URL en el navegador. Convierte títulos y textos en enlaces limpios y legibles al instante sin cuentas ni servidores.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: canonical("/es"),
+      inLanguage: "es",
+    },
+    {
+      "@type": "WebApplication",
+      name: SITE_NAME,
+      url: canonical("/es"),
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Requiere JavaScript para la herramienta interactiva.",
+      description,
+      inLanguage: "es",
+      author: { "@id": PERSON_ID },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/es" kind="tool" locale="es">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Convierte texto en un slug URL limpio</h1>
+    <div class="intro-row">
+      <p class="definition">Un slug es la parte final y legible de una URL, como <code>como-podar-rosas</code>.</p>
+      <a class="button-secondary mode-jump" id="open-bulk" href="/es/bulk-slug-generator" data-tip="Abrir herramienta por lotes. El texto se traslada contigo en este navegador.">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="2" y1="4" x2="14" y2="4"></line>
+          <line x1="2" y1="8" x2="14" y2="8"></line>
+          <line x1="2" y1="12" x2="14" y2="12"></line>
+        </svg>
+        <span>En lote</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolSingle locale="es" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Un slug de URL es la sección final de una dirección web que describe el contenido de la página para personas y motores de búsqueda. Por ejemplo, en <code>https://ejemplo.com/articulos/como-podar-rosas</code>, el segmento final es el slug.
+      </p>
+    </header>
+
+    <h2>Cómo funciona la generación de slugs</h2>
+    <p>
+      Esta aplicación convierte títulos en minúsculas, sustituye espacios por guiones limpios y reemplaza acentos y diacríticos (como <code>á, é, í, ó, ú, ñ</code> a <code>a, e, i, o, u, n</code>). El ampersand <code>&amp;</code> se expande automáticamente a <code>y</code> en español.
+    </p>
+
+    <h2>Procesamiento 100% en su navegador</h2>
+    <p>
+      Todo el análisis y transformación ocurre localmente en su propio dispositivo mediante JavaScript. No se envía ninguna palabra o archivo a servidores remotos, garantizando total privacidad al trabajar con borradores confidenciales o catálogos de comercio electrónico.
+    </p>
+    <p>
+      Para procesar listas completas o archivos CSV, utilice nuestro <a href="/es/bulk-slug-generator">generador de slugs por lotes</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

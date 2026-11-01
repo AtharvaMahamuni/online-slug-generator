@@ -1,0 +1,79 @@
+# Online Slug Generator
+
+> Longer map of the same real pages listed in /llms.txt. Google has said files like this do not help or hurt Google Search. Do not treat a line here as a ranking claim.
+
+Author: Atharva (https://x.com/athmatwt)
+Published: 2026-11-01
+Website: https://onlinesluggenerator.com/
+Source: https://github.com/AtharvaMahamuni/online-slug-generator
+Contact: https://onlinesluggenerator.com/contact
+
+## URL slug generator
+
+https://onlinesluggenerator.com/
+
+One title in, one slug out. The work runs in the browser. “How to Prune Roses in June” becomes how-to-prune-roses-in-june under the default Readable URL preset. Copy sits on the slug row. Settings cover the separator, lower case, Latin accent folding, length, stop words, numbers, and the ampersand rule. There is no score.
+
+## Bulk URL slug generator
+
+https://onlinesluggenerator.com/bulk-slug-generator
+
+One title per line, or a TXT or CSV file of up to 5 MB and 10,000 data rows. Other columns stay in memory and come back in the CSV next to a slug column. Two identical results get a numeric suffix: samsung-galaxy-s26 and samsung-galaxy-s26-2. The file is read on the device. It is not uploaded.
+
+## Guides
+
+https://onlinesluggenerator.com/guides
+
+Index of five HTML references. They stay readable with JavaScript off.
+
+## What is a URL slug?
+
+https://onlinesluggenerator.com/guides/what-is-a-url-slug
+
+A slug is the readable last path segment, such as how-to-prune-roses in https://example.com/guides/how-to-prune-roses. It is not the domain, the scheme, a query string, or a fragment. Google’s ecommerce URL guide (updated 10 December 2025) prefers words in the path over an id such as /product/3243. That is not a promise about length or stop words.
+
+## How to create a URL slug
+
+https://onlinesluggenerator.com/guides/how-to-create-url-slugs
+
+Case, hyphens, stop words, length, and numbers, in the order the tool actually uses. Empty maximum length keeps the whole slug. A number cuts at a separator when it can. Changing a slug that is already public needs a redirect. A prettier slug is not a reason to do that.
+
+## Hyphens vs underscores
+
+https://onlinesluggenerator.com/guides/hyphens-vs-underscores-in-urls
+
+Gary Illyes, in Google’s April 2024 SEO office hours (updated 18 April 2024), said hyphens separate words more clearly and that keywords in the URL barely contribute to ranking. A site that already uses underscores should stay put unless every old path is redirected.
+
+## Unicode and URL slugs
+
+https://onlinesluggenerator.com/guides/unicode-and-international-urls
+
+Latin folding: Café becomes cafe, Straße becomes strasse. Keep leaves café and straße. Cyrillic and Han characters stay under both choices. Percent-encoding is explained. This version does not ship a transliteration dictionary.
+
+## Bulk URL slug generation
+
+https://onlinesluggenerator.com/guides/bulk-url-slug-generation
+
+Paste, CSV columns, the 5 MB and 10,000-row limits, duplicate suffixes, and an export that keeps a product id. JSON and Excel are not accepted.
+
+## About
+
+https://onlinesluggenerator.com/about
+
+Atharva publishes the site. There is no company, office, or invented team. The site does not upload titles, sell placements, or show an SEO score.
+
+## Privacy
+
+https://onlinesluggenerator.com/privacy
+
+Text, slugs, and opened files stay in the browser. Theme and settings use localStorage keys osg.theme and osg.settings. A handoff from the single screen to bulk uses sessionStorage key osg.handoff. GitHub Pages can still log an ordinary request. The page does not call the tool secure.
+
+## Contact
+
+https://onlinesluggenerator.com/contact
+
+GitHub issues on https://github.com/AtharvaMahamuni/online-slug-generator/issues. No email address. Issues are public, so a private catalogue does not belong there.
+
+## Policy
+
+robots.txt allows Googlebot, Bingbot, OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Applebot. It disallows GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, and CCBot. /ai.txt and /robots-ai.txt repeat that policy and do not replace robots.txt. User-triggered fetchers such as ChatGPT-User, Google-Agent, and Perplexity-User may ignore robots.txt.

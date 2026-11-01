@@ -1,0 +1,28 @@
+---
+import { AUTHOR, PUBLISHED, PUBLISHED_LABEL } from "../lib/site";
+---
+
+<div class="byline-card" aria-label="Article author and publishing details">
+  <div class="byline-author-badge" aria-hidden="true">AM</div>
+  <div class="byline-content">
+    <div class="byline-main">
+      <span class="byline-label">Author:</span>
+      <a class="byline-author" rel="author" href={AUTHOR.x} target="_blank" rel="noopener noreferrer">
+        <span class="byline-author-name">{AUTHOR.name} Mahamuni</span>
+        <span class="byline-x-handle">({AUTHOR.xHandle})</span>
+      </a>
+      <span class="byline-role-tag">SEO &amp; Web Systems</span>
+    </div>
+    <div class="byline-meta">
+      <span class="byline-date">
+        Published on <time datetime={PUBLISHED}>{PUBLISHED_LABEL}</time>
+      </span>
+      <span class="byline-dot" aria-hidden="true">&bull;</span>
+      <span class="byline-date">
+        Updated <time datetime={PUBLISHED}>{PUBLISHED_LABEL}</time>
+      </span>
+      <span class="byline-dot" aria-hidden="true">&bull;</span>
+      <span class="byline-pill">Client-Side Private</span>
+    </div>
+  </div>
+</div>

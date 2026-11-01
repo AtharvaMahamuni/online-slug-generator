@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolSingle from "../../components/ToolSingle.astro";
+import { canonical, PERSON_ID, SITE_NAME } from "../../lib/site";
+
+const title = "Générateur de Slug en Ligne — Créer un Slug URL";
+const description =
+  "Générateur gratuit de slugs URL dans votre navigateur. Transformez vos titres en liens propres et optimisés pour le web sans compte ni aucun serveur.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: canonical("/fr"),
+      inLanguage: "fr",
+    },
+    {
+      "@type": "WebApplication",
+      name: SITE_NAME,
+      url: canonical("/fr"),
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Nécessite JavaScript pour l'outil interactif.",
+      description,
+      inLanguage: "fr",
+      author: { "@id": PERSON_ID },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/fr" kind="tool" locale="fr">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Transformez du texte en un slug d'URL propre</h1>
+    <div class="intro-row">
+      <p class="definition">Un slug est la fin lisible d'une adresse web, telle que <code>tailler-les-rosiers-en-juin</code>.</p>
+      <a class="button-secondary mode-jump" id="open-bulk" href="/fr/bulk-slug-generator" data-tip="Ouvrir l'outil en masse. Le texte du titre est conservé.">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="2" y1="4" x2="14" y2="4"></line>
+          <line x1="2" y1="8" x2="14" y2="8"></line>
+          <line x1="2" y1="12" x2="14" y2="12"></line>
+        </svg>
+        <span>En masse</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolSingle locale="fr" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Un slug d'URL correspond à la section terminale d'une adresse internet, optimisée pour la lisibilité humaine et l'indexation par les moteurs de recherche.
+      </p>
+    </header>
+
+    <h2>Gestion des accents et caractères français</h2>
+    <p>
+      Les voyelles accentuées (comme <code>é, è, ê, à, ç</code>) sont automatiquement translittérées en caractères ASCII équivalents (<code>e, a, c</code>). Le caractère <code>&amp;</code> est quant à lui remplacé par <code>et</code>.
+    </p>
+
+    <h2>Confidentialité totale côté client</h2>
+    <p>
+      Toutes les opérations s'exécutent au sein de votre navigateur web. Aucun contenu n'est transmis à un serveur tiers.
+    </p>
+    <p>
+      Pour traiter des fichiers entiers, consultez notre <a href="/fr/bulk-slug-generator">générateur de slugs en masse</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

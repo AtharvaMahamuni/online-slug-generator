@@ -1,0 +1,12 @@
+# Online Slug Generator brand
+
+Name: Online Slug Generator
+Written: three words, each capitalized. Not OnlineSlugGenerator, not SlugGen.
+Website: https://onlinesluggenerator.com/
+Author: Atharva (https://x.com/athmatwt, https://www.linkedin.com/in/atharvamahamuni)
+Source: https://github.com/AtharvaMahamuni/online-slug-generator
+About: https://onlinesluggenerator.com/about
+Privacy: https://onlinesluggenerator.com/privacy
+Contact: https://onlinesluggenerator.com/contact
+
+There is no company, office, or street address. The publisher name is the site name until a legal entity exists.

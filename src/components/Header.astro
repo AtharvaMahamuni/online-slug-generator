@@ -1,0 +1,188 @@
+---
+import type { SupportedLocale } from "../lib/slug";
+import { DEFAULT_LOCALE, LOCALES } from "../i18n/ui";
+import { getLocalizedPath, useTranslations } from "../i18n/utils";
+
+interface Props {
+  path: string;
+  locale?: SupportedLocale;
+}
+
+const { path, locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
+const guides = path.includes("/guides");
+
+const links = [
+  {
+    href: getLocalizedPath("/", locale),
+    label: t("nav.single"),
+    current: path === getLocalizedPath("/", locale) || (locale === "en" && path === "/"),
+    tip: "Make one slug from a title",
+    icon: "single",
+  },
+  {
+    href: getLocalizedPath("/bulk-slug-generator", locale),
+    label: t("nav.bulk"),
+    current: path.includes("/bulk-slug-generator"),
+    tip: "Make slugs from a list or a file",
+    icon: "bulk",
+  },
+  {
+    href: "/guides",
+    label: t("nav.guides"),
+    current: guides,
+    desktop: true,
+    tip: "Read technical guides on URL slugs and SEO",
+    icon: "guides",
+  },
+  {
+    href: "/about",
+    label: t("nav.about"),
+    current: path === "/about",
+    desktop: true,
+    tip: "About the zero-upload architecture",
+    icon: "about",
+  },
+];
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="wordmark" href={getLocalizedPath("/", locale)}>
+      <span class="logo-wrap" aria-hidden="true">
+        <svg class="logo-svg" width="22" height="22" viewBox="0 0 32 32" fill="none" role="img" aria-hidden="true">
+          <defs>
+            <linearGradient id="nav-brand-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff5e13"></stop>
+              <stop offset="100%" stop-color="#d04200"></stop>
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="8" fill="url(#nav-brand-grad)"></rect>
+          <line x1="8" y1="2" x2="24" y2="2" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1" stroke-linecap="round"></line>
+          <rect x="4.5" y="10.5" width="9.5" height="11" rx="3" stroke="#ffffff" stroke-width="2" fill="none"></rect>
+          <rect x="18" y="10.5" width="9.5" height="11" rx="3" stroke="#ffffff" stroke-width="2" fill="none"></rect>
+          <line x1="12" y1="16" x2="20" y2="16" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"></line>
+        </svg>
+      </span>
+      <span class="wordmark-text">Online Slug Generator</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            aria-current={link.current ? "page" : undefined}
+            class={link.desktop ? "nav-desktop-only" : undefined}
+            data-tip={link.tip}
+          >
+            {link.icon === "single" && (
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="3.5" width="12" height="9" rx="2" />
+                <path d="M5.5 8h5" />
+              </svg>
+            )}
+            {link.icon === "bulk" && (
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h7" />
+              </svg>
+            )}
+            {link.icon === "guides" && (
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.5 3v10a1.5 1.5 0 0 0 1.5 1.5h9.5V2H4a1.5 1.5 0 0 0-1.5 1.5z" />
+                <path d="M6 5.5h5M6 8.5h4" />
+              </svg>
+            )}
+            {link.icon === "about" && (
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="8" cy="8" r="6" />
+                <path d="M8 5.25v.01M8 7.5v3.5" />
+              </svg>
+            )}
+            <span>{link.label}</span>
+          </a>
+        ))
+      }
+    </nav>
+    <button type="button" id="theme-toggle" class="icon-button" aria-label="Theme: system" data-tip="Cycle the theme: system, light, then dark">
+      <svg class="theme-icon theme-icon-system" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+        <circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+        <path d="M10 3a7 7 0 0 0 0 14V3z" fill="currentColor"></path>
+      </svg>
+      <svg class="theme-icon theme-icon-light" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+        <circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+        <path d="M10 2.5v2.2M10 15.3v2.2M2.5 10h2.2M15.3 10h2.2M4.4 4.4l1.6 1.6M14 14l1.6 1.6M15.6 4.4 14 6M6 14l-1.6 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+      </svg>
+      <svg class="theme-icon theme-icon-dark" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M14.5 12.2A5.6 5.6 0 0 1 8 4.8 5.8 5.8 0 1 0 14.5 12.2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+      </svg>
+      <span class="sr-only">Theme</span>
+    </button>
+    <details class="lang-menu">
+      <summary class="icon-button" aria-label={`Language: ${LOCALES[locale].name}`} data-tip="Switch language">
+        <svg class="lang-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span class="lang-code">{LOCALES[locale].label}</span>
+      </summary>
+      <div class="lang-menu-panel" role="menu">
+        {
+          (Object.keys(LOCALES) as SupportedLocale[]).map((loc) => (
+            <a
+              href={getLocalizedPath(path, loc)}
+              hreflang={loc}
+              aria-current={loc === locale ? "true" : undefined}
+              class="lang-option"
+            >
+              <span class="lang-option-code">{LOCALES[loc].label}</span>
+              <span class="lang-option-name">{LOCALES[loc].name}</span>
+            </a>
+          ))
+        }
+      </div>
+    </details>
+    <details class="nav-menu">
+      <summary data-tip="Open navigation menu">
+        <svg class="nav-menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <line x1="2.5" y1="4.5" x2="13.5" y2="4.5"></line>
+          <line x1="2.5" y1="8" x2="13.5" y2="8"></line>
+          <line x1="2.5" y1="11.5" x2="13.5" y2="11.5"></line>
+        </svg>
+        <span>{t("nav.menu")}</span>
+      </summary>
+      <div class="nav-menu-panel">
+        <a href="/guides" aria-current={guides ? "page" : undefined}>
+          <svg class="nav-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2.5 3v10a1.5 1.5 0 0 0 1.5 1.5h9.5V2H4a1.5 1.5 0 0 0-1.5 1.5z" />
+            <path d="M6 5.5h5M6 8.5h4" />
+          </svg>
+          <span>{t("nav.guides")}</span>
+        </a>
+        <a href="/about" aria-current={path === "/about" ? "page" : undefined}>
+          <svg class="nav-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="8" cy="8" r="6" />
+            <path d="M8 5.25v.01M8 7.5v3.5" />
+          </svg>
+          <span>{t("nav.about")}</span>
+        </a>
+        <div class="nav-menu-divider" aria-hidden="true"></div>
+        <div class="nav-menu-lang-header">Language</div>
+        <div class="nav-menu-lang-grid">
+          {
+            (Object.keys(LOCALES) as SupportedLocale[]).map((loc) => (
+              <a
+                href={getLocalizedPath(path, loc)}
+                hreflang={loc}
+                class="nav-menu-lang-link"
+                aria-current={loc === locale ? "true" : undefined}
+              >
+                {LOCALES[loc].name}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </details>
+  </div>
+</header>

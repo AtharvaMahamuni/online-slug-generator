@@ -1,0 +1,54 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Byline from "../components/Byline.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { canonical, ORG_ID, PERSON_ID, PUBLISHED } from "../lib/site";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  h1: string;
+}
+
+const { title, description, path, h1 } = Astro.props;
+const url = canonical(path);
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      headline: h1,
+      datePublished: PUBLISHED,
+      dateModified: PUBLISHED,
+      mainEntityOfPage: url,
+      author: { "@id": PERSON_ID },
+      publisher: { "@id": ORG_ID },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: canonical("/") },
+        { "@type": "ListItem", position: 2, name: "Guides", item: canonical("/guides") },
+        { "@type": "ListItem", position: 3, name: h1, item: url },
+      ],
+    },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path={path} kind="document">
+  <article class="prose" data-countable>
+    <p class="crumbs">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/guides">Guides</a>
+      <span aria-hidden="true">/</span>
+      <span>{h1}</span>
+    </p>
+    <h1>{h1}</h1>
+    <Byline />
+    <slot />
+  </article>
+  <JsonLd data={schema} />
+</BaseLayout>
