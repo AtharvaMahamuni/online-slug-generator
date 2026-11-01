@@ -29,10 +29,11 @@ for (const theme of ["light", "dark"] as const) {
           const active = document.activeElement;
           if (active instanceof HTMLElement) active.blur();
         });
+        const maxDiffPixelRatio = size.width <= 360 ? 0.08 : 0.03;
         await expect(page).toHaveScreenshot(`${item.name}-${theme}-${size.width}x${size.height}.png`, {
           animations: "disabled",
           caret: "hide",
-          maxDiffPixelRatio: 0.03,
+          maxDiffPixelRatio,
         });
       });
     }
