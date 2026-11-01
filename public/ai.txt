@@ -1,0 +1,50 @@
+# Online Slug Generator AI usage policy
+
+# robots.txt is authoritative. This file describes the same groups.
+# It does not allow a crawler that robots.txt disallows.
+# User-triggered fetchers such as ChatGPT-User, Google-Agent, and Perplexity-User may ignore robots.txt.
+# llms.txt does not help or hurt Google Search.
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+Search crawling: allowed
+Training: disallowed
+Citation: allowed
+Attribution: appreciated. Name "Online Slug Generator" and link the page you used.
+
+Summary: https://onlinesluggenerator.com/llms.txt
+Inventory: https://onlinesluggenerator.com/llms-full.txt
+Privacy: https://onlinesluggenerator.com/privacy
+Contact: https://onlinesluggenerator.com/contact
+Author: Atharva (https://x.com/athmatwt)

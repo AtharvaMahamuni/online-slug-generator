@@ -1,0 +1,147 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Byline from "../components/Byline.astro";
+import ExampleTable from "../components/ExampleTable.astro";
+import JsonLd from "../components/JsonLd.astro";
+import QuickAnswers from "../components/QuickAnswers.astro";
+import ToolBulk from "../components/ToolBulk.astro";
+import { canonical } from "../lib/site";
+
+const title = "Bulk URL Slug Generator — Convert Lists to URL Slugs";
+const description =
+  "Turn a pasted list or a CSV into slugs without dropping the other columns. Duplicates are marked. Files stay on your device.";
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: canonical("/") },
+    { "@type": "ListItem", position: 2, name: "Bulk", item: canonical("/bulk-slug-generator") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/bulk-slug-generator" kind="tool">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Generate slugs for a list</h1>
+    <div class="intro-row">
+      <p class="definition">One title per line, or a TXT or CSV file. The file stays on this device.</p>
+      <a class="button-secondary mode-jump" href="/" data-tip="Make one slug from a single title">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="2" width="10" height="12" rx="1.5"></rect>
+          <line x1="6" y1="6" x2="10" y2="6"></line>
+          <line x1="6" y1="9" x2="10" y2="9"></line>
+        </svg>
+        <span>One title</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolBulk />
+  </div>
+  <div data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Put one title on each line, or open a CSV file directly. For instance, “Samsung Galaxy S26” becomes <code>samsung-galaxy-s26</code>. If an identical name appears again in the batch, duplicate resolution automatically appends <code>samsung-galaxy-s26-2</code>. All existing spreadsheet columns remain intact in the downloaded export.
+      </p>
+    </header>
+    <QuickAnswers
+      title="Bulk Processing FAQs &amp; Data Workflows"
+      description="Architectural answers on RFC 4180 parsing, collision suffixing, and client-side data protection."
+      items={[
+        {
+          question: "How does the bulk generator preserve existing spreadsheet columns during CSV processing?",
+          answer:
+            "The bulk engine reads imported files through a standards-compliant RFC 4180 parsing engine executed directly within your browser. It parses quoted cells, multiline text, commas within fields, and UTF-8 Byte Order Marks (BOM) without mutating your data structures. When generating slugs, all existing product IDs, pricing tiers, categories, and inventory tags remain in their exact sequential order. A new column named slug is appended to every row. If your dataset already possesses a column named slug, the newly generated output is safely labeled slug_2 to prevent destructive overwriting.",
+        },
+        {
+          question: "How are naming collisions and duplicate slugs resolved in large lists?",
+          answer:
+            "In retail inventories and content archives, variant products often share identical titles (such as size or color options). The bulk tool uses a deterministic sequential deduplication algorithm: the initial record receives the clean base slug, while subsequent duplicates are assigned an incremental numerical suffix using your selected delimiter (e.g. merino-wool-sweater-2, merino-wool-sweater-3). Rows with duplicate values are highlighted with an audit badge in the data table, and manual cell adjustments trigger instant real-time collision recalculations.",
+        },
+        {
+          question: "Can confidential catalogs or enterprise data files be safely processed?",
+          answer:
+            "Yes. All file reading, text splitting, character mapping, and data table rendering take place strictly inside local browser memory via the HTML5 File API. No file contents, row counts, or text strings are uploaded to any server or recorded in any cloud database. Batches up to 5 MB containing up to 10,000 data rows are processed in fractions of a second without bandwidth constraints or corporate security compliance concerns.",
+        },
+      ]}
+    />
+    <section>
+      <h2>Paste titles or import a structured file</h2>
+      <p>
+        Pasting text is the default mode. Enter one title per line in the input area. Empty and whitespace-only lines are automatically skipped and tallied. The Import tab provides a drag-and-drop zone with a standard file selector for TXT and CSV files.
+      </p>
+      <p>
+        The CSV parsing engine supports RFC 4180 standard rules, including multiline quoted text, commas embedded within quotation marks, escaped quotes, and files with or without UTF-8 Byte Order Marks (BOM). If an unclosed quote is encountered, the specific line number is reported while preserving all valid rows.
+      </p>
+    </section>
+    <section>
+      <h2>Selecting the title column in spreadsheets</h2>
+      <p>
+        When you load a CSV, dedicated column controls appear automatically. If the first row contains unique column headers, it is treated as a header row. You can manually toggle header detection with the “This file has headers” checkbox.
+      </p>
+      <p>
+        The tool automatically identifies columns titled “name”, “title”, or “handle”. You can switch the target column at any time using the dropdown selector, instantly recalculating all slugs while leaving adjacent inventory, price, and category data untouched.
+      </p>
+    </section>
+    <section>
+      <h2>Automated duplicate resolution</h2>
+      <p>
+        In large inventories, multiple products frequently share similar or identical titles (such as color variants or refurbished models). Duplicate detection marks collisions and appends a numeric suffix so every generated URL path remains distinct and canonical.
+      </p>
+      <p>
+        Batch uniqueness takes precedence over maximum length restrictions: if adding a collision suffix pushes a slug past your character limit, the unique suffix is retained to prevent duplicate URL routes, and the state column flags the entry as Truncated.
+      </p>
+    </section>
+    <section>
+      <h2>Flexible export formats</h2>
+      <p>
+        Once your batch is processed, multiple export options are available. “Copy all” copies the complete list of slugs in sequential order to your clipboard. “Copy table” copies tab-separated values (TSV) for direct pasting into Google Sheets or Microsoft Excel.
+      </p>
+      <p>
+        “Download CSV” outputs a UTF-8 encoded file complete with a byte order mark so spreadsheet applications render accented and international characters correctly without encoding distortions. “Download TXT” exports a clean, line-delimited text list of slugs.
+      </p>
+    </section>
+    <section>
+      <h2>Catalog and documentation examples</h2>
+      <p>
+        Retail inventories typically require model and version numbers to survive. By default, digits are preserved so “Samsung Galaxy S26 Ultra” produces <code>samsung-galaxy-s26-ultra</code>. Documentation hierarchies benefit equally: “Install CLI on Linux” and “Install CLI on macOS” stay cleanly differentiated because specific technical terms are preserved.
+      </p>
+      <ExampleTable
+        caption="Sample e-commerce catalog rows demonstrating column preservation"
+        headers={["Product SKU", "Product Name", "Generated Slug"]}
+        rows={[
+          ["SKU-1001", "Samsung Galaxy S26", "samsung-galaxy-s26"],
+          ["SKU-1002", "Samsung Galaxy S26", "samsung-galaxy-s26-2"],
+          ["SKU-1003", "Sony WH-1000XM5 (Black)", "sony-wh-1000xm5-black"],
+        ]}
+      />
+    </section>
+    <section>
+      <h2>Guides and technical documentation</h2>
+      <ul class="guide-cards">
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/bulk-url-slug-generation">
+            <span class="guide-card-title">Bulk URL slug generation guide <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">Detailed guide on handling spreadsheets, CSV delimiters, memory limits, and exports.</span>
+          </a>
+        </li>
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/unicode-and-international-urls">
+            <span class="guide-card-title">International characters &amp; UTF-8 <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">How multilingual catalogues handle diacritics, accents, and non-Latin character sets.</span>
+          </a>
+        </li>
+        <li class="guide-card-item">
+          <a class="guide-card" href="/guides/how-to-create-url-slugs">
+            <span class="guide-card-title">How to create a URL slug <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">Best practices for case sensitivity, hyphens, stop words, and URL structure.</span>
+          </a>
+        </li>
+      </ul>
+      <p>
+        For single-title transformations, switch to the <a href="/">Single Slug Generator</a>. Learn more on our <a href="/about">About page</a> and review data handling on our <a href="/privacy">Privacy Policy</a>.
+      </p>
+    </section>
+  </div>
+  <JsonLd data={schema} />
+</BaseLayout>

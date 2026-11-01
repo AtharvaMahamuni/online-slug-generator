@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolBulk from "../../components/ToolBulk.astro";
+import { canonical } from "../../lib/site";
+
+const title = "Générateur de Slugs en Masse — Traitement de Listes";
+const description =
+  "Créez des slugs d'URL en masse depuis des listes ou fichiers CSV. Détection automatique des doublons avec traitement sécurisé dans votre navigateur.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: canonical("/fr") },
+    { "@type": "ListItem", position: 2, name: "En masse", item: canonical("/fr/bulk-slug-generator") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/fr/bulk-slug-generator" kind="tool" locale="fr">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Générer des slugs pour une liste de titres</h1>
+    <div class="intro-row">
+      <p class="definition">Un titre par ligne ou importez un fichier CSV ou TXT. Le fichier reste sur cet appareil.</p>
+      <a class="button-secondary mode-jump" href="/fr" data-tip="Créer un slug pour un seul titre">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="2" width="10" height="12" rx="1.5"></rect>
+          <line x1="6" y1="6" x2="10" y2="6"></line>
+          <line x1="6" y1="9" x2="10" y2="9"></line>
+        </svg>
+        <span>Un titre</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolBulk locale="fr" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Collez une liste de titres d'articles ou importez un catalogue de produits en CSV. Les doublons éventuels reçoivent automatiquement un suffixe numéroté (par exemple <code>nom-produit-2</code>) tout en préservant l'intégralité des autres colonnes de votre fichier.
+      </p>
+    </header>
+
+    <h2>Conservation des colonnes du tableau</h2>
+    <p>
+      Le moteur conserve toutes vos colonnes existantes en mémoire et ajoute une nouvelle colonne dédiée au slug. Vous pouvez exporter le résultat final au format CSV ou texte brut.
+    </p>
+    <p>
+      Pour un titre unique, utilisez notre <a href="/fr">générateur de slug simple</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolBulk from "../../components/ToolBulk.astro";
+import { canonical } from "../../lib/site";
+
+const title = "Gerador de Slugs em Massa — Processar Listas";
+const description =
+  "Gere slugs de URL em massa a partir de listas ou planilhas CSV locais. Inclui mapeamento de colunas e identificação de duplicados no navegador.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Início", item: canonical("/pt") },
+    { "@type": "ListItem", position: 2, name: "Em massa", item: canonical("/pt/bulk-slug-generator") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/pt/bulk-slug-generator" kind="tool" locale="pt">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Gerar slugs para uma lista de títulos</h1>
+    <div class="intro-row">
+      <p class="definition">Um título por linha ou selecione um arquivo CSV ou TXT. O arquivo permanece neste dispositivo.</p>
+      <a class="button-secondary mode-jump" href="/pt" data-tip="Criar slug para um único título">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="2" width="10" height="12" rx="1.5"></rect>
+          <line x1="6" y1="6" x2="10" y2="6"></line>
+          <line x1="6" y1="9" x2="10" y2="9"></line>
+        </svg>
+        <span>Um título</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolBulk locale="pt" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Cole uma lista de títulos ou carregue um arquivo CSV de catálogo. Em caso de repetições, o sistema adiciona automaticamente números sequenciais (como <code>produto-exemplo-2</code>), preservando todas as colunas existentes na planilha.
+      </p>
+    </header>
+
+    <h2>Preservação de colunas da planilha</h2>
+    <p>
+      O leitor mantém todos os dados originais e anexa uma coluna com o slug gerado. Você pode exportar o arquivo pronto em formato CSV ou como lista TXT.
+    </p>
+    <p>
+      Para títulos individuais, utilize a <a href="/pt">ferramenta individual de slugs</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

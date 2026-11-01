@@ -1,0 +1,11 @@
+# Online Slug Generator
+
+> Free browser-only URL slug tool. Google has said llms.txt does not help or hurt Google Search.
+
+- [llms.txt](https://onlinesluggenerator.com/llms.txt): Pages and facts.
+- [llms-full.txt](https://onlinesluggenerator.com/llms-full.txt): The same pages, with a short summary of each.
+- [ai.txt](https://onlinesluggenerator.com/ai.txt): Crawler policy. robots.txt is authoritative.
+- [identity.json](https://onlinesluggenerator.com/identity.json): Organization and Person. No street address.
+- [brand.txt](https://onlinesluggenerator.com/brand.txt): Name and author accounts.
+
+Author: Atharva (https://x.com/athmatwt)

@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Byline from "../components/Byline.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { AUTHOR, canonical, REPO } from "../lib/site";
+
+const title = "About Online Slug Generator — Architecture & Principles";
+const description =
+  "Online Slug Generator is a free static tool. Slugs are computed in your browser. There is no account and no analytics script.";
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: canonical("/") },
+    { "@type": "ListItem", position: 2, name: "About", item: canonical("/about") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/about" kind="document">
+  <article class="prose" data-countable>
+    <p class="crumbs"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>About</span></p>
+    <h1>About this tool</h1>
+    <Byline />
+    <p>
+      Online Slug Generator is a free static website that turns a title, or a list of titles, into a URL slug. A slug is the readable end of a URL, such as <code>how-to-prune-roses</code>. The work happens in your browser. There is no account, no saved history on a server, and no application that receives the text.
+    </p>
+    <p>
+      The site is one pipeline with two screens. The <a href="/">single screen</a> is for the title in front of you. The <a href="/bulk-slug-generator">bulk screen</a> is for a pasted list or a TXT or CSV file. Both call the same cleaning steps, in an order that is not rearrangeable. Presets only set the basic controls. They do not claim an SEO benefit, and the interface does not show a score, a grade, or a keyword density.
+    </p>
+    <h2>What this site refuses to do</h2>
+    <p>
+      It does not upload titles or files. It does not sell placements, run ads, or ask you to create a login in order to copy a slug. It does not offer a separate URL for “blog slugs” or “product slugs.” Those jobs are the same tool. A retail example lives on the bulk page because a catalogue is a file, not because a shop needs a different algorithm. The default already keeps model numbers, which is the retail requirement.
+    </p>
+    <p>
+      It does not ship a custom character map, a custom stop-word list, JSON export, or an Excel reader. Those are later ideas, and only if someone actually needs them. It does not pretend that a short slug, a missing stop word, or a piece of schema markup will move a page up a search result. Google’s own public comments, cited in the <a href="/guides/hyphens-vs-underscores-in-urls">hyphen guide</a>, treat keywords in the URL as a small factor. The useful property of a slug is that a person can read it and a content system can store it.
+    </p>
+    <h2>Who operates it</h2>
+    <p>
+      There is no company biography on this page because inventing a team, an office, or years of experience would be false. The site name is the publisher name until a legal entity exists. Atharva writes the guides and maintains the tool. The public profile is <a href={AUTHOR.x}>Atharva ({AUTHOR.xHandle})</a>. That is one person, not a support desk. The source is the <a href={REPO}>GitHub repository</a>. Issues on that repository are the contact path. <a href="/privacy">Privacy</a> lists the storage keys and what the host can still log. <a href="/contact">Contact</a> repeats the issues link and asks you not to paste a private catalogue into a public ticket.
+    </p>
+    <p>
+      The visual design follows a warm cream canvas, ink text, and a single orange action, which is Copy. The type on the page is Inter. The slug field uses JetBrains Mono. Both families are open-source and are served from this site, not from a font host. Light, dark, and system themes are available from the header. The choice is stored locally.
+    </p>
+    <h2>What you can read next</h2>
+    <p>
+      Five guides cover the definition, the practical steps, hyphens and underscores, non-English characters, and bulk files. They are HTML. They do not depend on the tool script. If a guide and the tool disagree, the tool’s tested pipeline is the behavior, and the guide should be corrected. Search volumes are not printed here because they have not been measured for this domain. After launch, the honest measurement is Search Console and Bing Webmaster Tools, not a tracker embedded in the page.
+    </p>
+    <p>
+      The domain written into the canonical links is onlinesluggenerator.com. Whether that name resolves to this site is a DNS fact the repository cannot prove by itself. Until it does, treat the canonical as the intended address, not as evidence that the host is already live.
+    </p>
+  </article>
+  <JsonLd data={schema} />
+</BaseLayout>

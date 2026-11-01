@@ -1,0 +1,108 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+
+const title = "Hyphens vs Underscores in URLs: Search Engine Guidelines";
+const description =
+  "Google has said hyphens separate words more clearly than underscores. Here is what that does and does not mean for an existing site.";
+---
+
+<GuideLayout
+  title={title}
+  description={description}
+  path="/guides/hyphens-vs-underscores-in-urls"
+  h1="Hyphens and underscores in URLs"
+>
+  <p>
+    Use a hyphen to separate words in a new URL slug. An underscore also separates characters, and a person can still read it, but a hyphen shows the word break more clearly. If a site already has public URLs that use underscores, leave those URLs alone.
+  </p>
+  <p>
+    The example is the same title twice. “How to Prune Roses in June” is <code>how-to-prune-roses-in-june</code> with a hyphen and <code>how_to_prune_roses_in_june</code> with an underscore. Both keep every word. Both are lower case. The difference is the mark between words, and that mark should match the rest of the site you are publishing to.
+  </p>
+  <p>
+    The exception is migration. Replacing underscores with hyphens on pages that are already indexed, linked, or printed creates a second set of addresses. Do that only with a redirect for every old path, a pass over internal links, and a sitemap that lists the new URLs. A separator toggle is not that project.
+  </p>
+  <p>
+    In the April 2024 Google SEO office hours, Gary Illyes answered a question about underscores and hyphens. The transcript, last updated 18 April 2024, quotes him this way: “keywords in URLs have barely any contribution to the rankings of your pages in Google's search results, but yeah, it does matter what you use as separators, and hyphens are better in some sense because it's clearer that they're separating words.” The page is <a href="https://developers.google.com/search/help/office-hours/2024/april">April 2024 Google SEO office hours</a>. He pointed readers at Google’s URL documentation rather than at a ranking lever. The ecommerce guide, updated 10 December 2025, uses hyphens in its recommended path, <code>/product/black-t-shirt-with-a-white-collar</code>. That guide is <a href="https://developers.google.com/search/docs/specialty/ecommerce/designing-a-url-structure-for-ecommerce-sites">Designing a URL structure for ecommerce websites</a>.
+  </p>
+
+  <h2>What did Google actually say?</h2>
+  <p>
+    Two claims are in that answer, and they should not be collapsed into one slogan. The first is that keywords inside a URL barely contribute to rankings. A page does not rise because its slug contains a phrase someone typed. The second is that the separator still matters for clarity. A hyphen is easier to see as a word boundary than an underscore. Clarity is for people reading the address, and for systems that split a path into words. It is not a score.
+  </p>
+  <p>
+    Illyes did not say to rewrite an existing site. He did not give a character budget. He did not say that an underscore is invisible to search. He said hyphens are clearer separators, and he said the keyword effect is small. Treat both halves as the current public comment. The transcript is the source. Paraphrases that keep only “hyphens rank better” are not the source.
+  </p>
+  <p>
+    The ecommerce guide is about crawl and index problems on shops: duplicate URLs, parameters, variants, and paths that contain no words. “Add descriptive words in URL paths” sits in that chapter. The words may help Google understand the page. Understanding is not the same sentence as “this hyphen will outrank that underscore.” A bare id such as <code>/product/3243</code> is the example they mark as not recommended. A hyphenated description is the example they mark as recommended. An underscored description is simply not the example they chose.
+  </p>
+
+  <h2>Why do older posts still circulate?</h2>
+  <p>
+    A German-language Search Central post from 2011 is still cited as the reason to prefer hyphens. That post is old. It is history, not the policy to follow in 2026, and this page does not treat it as a current source. Videos and blog posts from the Matt Cutts era also preferred hyphens over underscores. Those are history too. They explain why so many style guides repeat the rule. They are not a reason to change a public URL that already works.
+  </p>
+  <p>
+    If you need a current citation, use the April 2024 office hours and the ecommerce URL guide linked above. Both are primary pages on Google’s own documentation domain. Both are dated. Neither one instructs a site owner to migrate separators.
+  </p>
+
+  <h2>What does an underscore break?</h2>
+  <p>
+    An underscore is a word character in many programming and search tokenizers, and a hyphen is not. That is the technical version of “clearer.” A human can still read <code>black_t_shirt</code>. A simple splitter that breaks on punctuation may see one token, <code>black_t_shirt</code>, and three tokens, <code>black</code>, <code>t</code>, and <code>shirt</code>, for the hyphenated form. Illyes described the practical result: it is clearer that hyphens are separating words. He did not publish the tokenizer. Do not invent a ranking delta from the tokenizer story.
+  </p>
+  <p>
+    Underscores also disappear in some underlined links. A link style that underlines the whole address can make <code>how_to_prune</code> look like <code>how to prune</code> or like a solid bar. Hyphens usually survive that style. This is a readability problem in email and in chat, which is a fine reason to prefer hyphens on a new site. It is still not a reason to throw away an address that is already in the wild.
+  </p>
+  <p>
+    Spaces are worse than either mark. A space becomes <code>%20</code> as soon as the URL is strict. Percent-encoding is correct and ugly. Neither hyphens nor underscores need that encoding. Plus signs are a third habit, carried over from query strings, and they are a bad word separator in a path because they are easy to confuse with a real plus in a product name.
+  </p>
+
+  <h2>When is an underscore the right choice?</h2>
+  <p>
+    Use an underscore when the site you are adding a page to already uses underscores, and the new page should look like its neighbors. A documentation set that lives at <code>/docs/getting_started</code> should not gain one hyphenated orphan because a generator’s default was a hyphen. The reader’s cue is consistency. The tool’s separator control switches the whole slug. It does not mix marks inside one slug.
+  </p>
+  <p>
+    Use an underscore when a downstream system rejects hyphens. Some identifiers in code, some older export formats, and some file-naming rules allow <code>[A-Za-z0-9_]</code> and nothing else. A slug that must also be a filename on that system can follow the stricter rule. Write that constraint down next to the content model so the next editor does not “fix” the marks.
+  </p>
+  <p>
+    Use a hyphen everywhere else you control and have not published yet. That includes a new blog, a new documentation set, and a new catalogue. The default on this tool is the hyphen. You have to press the underscore control to leave it.
+  </p>
+
+  <h2>Should you replace underscores on a live site?</h2>
+  <p>
+    No, not as a cosmetic project. Here is the work hiding inside a separator change, for a site that already has public pages.
+  </p>
+  <ol>
+    <li>List every URL that would change. A sample of ten posts is not the list.</li>
+    <li>Decide the new path for each one, and check that the new path is free.</li>
+    <li>Add a permanent redirect from each old path to each new path. A redirect in a spreadsheet does nothing until the server or the CDN applies it.</li>
+    <li>Update internal links, canonicals, and the sitemap so they point at the new paths. A redirect plus an internal link to the old path wastes the crawl and confuses the canonical.</li>
+    <li>Leave the redirects in place. External sites will not edit their archives because you asked.</li>
+  </ol>
+  <p>
+    If you cannot do those steps, keep the underscore. The ranking effect Illyes described is small. The damage from a broken URL is not small. People hit a 404, forms lose their return path, and any measurement you do later is split across two addresses.
+  </p>
+  <p>
+    A mixed site is also a choice, and usually a bad one. Old posts on underscores and new posts on hyphens are readable one by one and incoherent as a directory. Prefer one mark per section. A new section can start a new convention if its folder is new and its links do not pretend the old posts moved.
+  </p>
+
+  <h2>How do other characters get confused with separators?</h2>
+  <p>
+    A slash ends a path segment. It is not a hyphen. Pasting “roses / june” into a slug field should not produce a folder. This tool turns the slash into the same separator as the space, so the result is one segment, <code>roses-june</code>, not two. If you needed a folder, type the folder in the URL prefix, not in the title.
+  </p>
+  <p>
+    An ampersand is not a separator until the ampersand option is off. With the default on, “AT&amp;T fiber plans” becomes <code>at-and-t-fiber-plans</code>. With the option off, the ampersand is punctuation and the slug is <code>at-t</code> plus the rest, <code>at-t-fiber-plans</code>. Neither of those is an underscore decision. Turn the ampersand option off only when “and” would be wrong.
+  </p>
+  <p>
+    A hyphen that is already inside a token stays a break. “state-of-the-art” is already hyphenated in the title, and the slug keeps those breaks as separators. You do not get a special “this hyphen was meaningful” pass. If a product code uses an internal hyphen that must survive as one token, edit the slug after it is generated and do not let a later title change overwrite that edit. The single tool keeps an edited slug until you press “Update slug from title.”
+  </p>
+
+  <h2>What should a style guide say?</h2>
+  <p>
+    A useful style guide is short. New URLs use lower case and hyphens. Words stay, including stop words, unless a real length limit forces a cut. Numbers stay. Public URLs do not change for taste. Underscores are allowed only in the section that already uses them. The tool’s Readable URL preset matches the first three sentences. The Short permalink preset does not match them, because it removes stop words and caps the length. Use it when you mean that, and read the warning.
+  </p>
+  <p>
+    Do not add a rule that says “hyphens improve rankings.” That sentence is stronger than the office-hours answer, and it pushes people into needless migrations. The accurate rule is the one Illyes gave: the keyword contribution is small, and hyphens are the clearer separator.
+  </p>
+  <p>
+    Characters outside Latin are a separate decision from the separator. A hyphen between Cyrillic words is still a hyphen. Folding those words into Latin letters is not required by the separator rule. The <a href="/guides/unicode-and-international-urls">Unicode guide</a> covers what this tool folds and what it keeps. The <a href="/">slug tool</a> applies whichever separator is selected, to one title at a time.
+  </p>
+</GuideLayout>

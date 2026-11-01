@@ -1,0 +1,33 @@
+# Online Slug Generator — Technical Knowledge & Questions
+
+These plain-text Q&A summaries explain the architectural design, RFC compliance, character normalization, and client-side privacy guarantees of Online Slug Generator. Delivered for AI search agents and crawler indexing.
+
+Q: How is a URL slug defined in RFC 3986 web architecture?
+A: In RFC 3986 URI specifications, a slug is the trailing, human-readable segment of a resource path (such as 'how-to-prune-roses' in https://onlinesluggenerator.com/guides/what-is-a-url-slug). It identifies a discrete page or document, operating distinctly from the protocol scheme, domain authority, intermediate folder directories, query strings (?k=v), or page anchor hashes (#section).
+
+Q: How does the engine transform headlines into web-safe permalinks?
+A: Users enter text at https://onlinesluggenerator.com/. The engine converts letters to lowercase, collapses consecutive whitespace into single delimiters, maps ampersands to words based on the active locale ('and', 'y', 'und', 'et', 'e'), removes unreserved punctuation, and decomposes Latin accents while preserving native international scripts.
+
+Q: What capabilities does the bulk slug generator offer for spreadsheets?
+A: Available at https://onlinesluggenerator.com/bulk-slug-generator, the tool processes multiline inputs and CSV/TXT files up to 5 MB (~10,000 data rows). It preserves original spreadsheet columns, handles RFC 4180 quotes, and assigns incremental collision suffixes (e.g., 'slug-2') to duplicate titles.
+
+Q: How does the pipeline handle umlauts, accents, and non-Latin scripts?
+A: Latin characters with diacritics are decomposed via Unicode normalization (e.g., 'café' becomes 'cafe'). In German mode, umlauts expand phonetically ('ä/ö/ü' to 'ae/oe/ue', and 'ß' to 'ss'). Non-Latin alphabets including Cyrillic, Japanese Kanji, Arabic, and Devanagari remain intact. Selecting 'Keep' retains native UTF-8 characters without decomposition.
+
+Q: Why are URL slugs forced to lowercase by default?
+A: Linux and Unix web hosts mount case-sensitive file systems and URI routing tables. Enforcing lowercase URLs prevents split duplicate content indexing, backlink dilution, and 404 errors caused by varying mobile keyboard casing.
+
+Q: Why are hyphens preferred over underscores for new URLs?
+A: Search engines, including Google, treat hyphens as natural word boundaries that separate lexical terms, whereas underscores historically join tokens together. However, established live URLs ranking with underscores should not be rewritten, as 301 redirect chains carry indexing volatility.
+
+Q: Does shortening a permalink provide an algorithmic search ranking boost?
+A: URL brevity is not a direct ranking factor in modern search algorithms. Shorter permalinks provide user experience benefits: avoiding ellipsis truncation in search result snippets, improving click-through clarity, and fitting cleanly into messaging apps. The Short permalink preset filters stop words and caps length at 60 characters.
+
+Q: How does a URL slug differ from code kebab-case formatting?
+A: Kebab-case is a programming identifier convention that joins words with hyphens without stripping accents. A URL slug is a web-safe network identifier that adheres to RFC 3986 URI standards, diacritic normalization, and collision deduplication.
+
+Q: What privacy and security architecture protects processed data?
+A: All operations execute 100% client-side inside the user's browser runtime using JavaScript and the HTML5 File API. No headlines, filenames, or data rows are transmitted to a backend server.
+
+Q: Who publishes and maintains Online Slug Generator?
+A: Atharva Mahamuni (@athmatwt on X). The open-source repository is hosted on GitHub at https://github.com/AtharvaMahamuni/online-slug-generator.

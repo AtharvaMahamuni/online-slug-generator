@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Byline from "../components/Byline.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { AUTHOR, canonical, ISSUES, REPO } from "../lib/site";
+
+const title = "Contact · Online Slug Generator";
+const description =
+  "Reach the maintainer of Online Slug Generator through GitHub issues. This page does not accept uploaded titles or files.";
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: canonical("/") },
+    { "@type": "ListItem", position: 2, name: "Contact", item: canonical("/contact") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/contact" kind="document">
+  <article class="prose" data-countable>
+    <p class="crumbs"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>Contact</span></p>
+    <h1>Contact</h1>
+    <Byline />
+    <p>
+      Atharva maintains Online Slug Generator. The public profile is <a href={AUTHOR.x}>Atharva ({AUTHOR.xHandle})</a>. Messages about the tool go through <a href={ISSUES}>GitHub issues</a> on the <a href={REPO}>public repository</a>. There is no email address published here, because inventing one would send your message nowhere. There is no form on this page. A form would need a server, and this site does not have one.
+    </p>
+    <p>
+      Issues are public. Do not include a private catalogue, customer names, unreleased titles, or the contents of a CSV. Describe the behavior you saw. A short example you are willing to show the world is enough. The <a href="/">tool</a> never needs you to send the title in order to make the slug.
+    </p>
+    <p>
+      For what the site stores and what it refuses to collect, read <a href="/privacy">Privacy</a>. For what the project will not build, read <a href="/about">About</a>.
+    </p>
+  </article>
+  <JsonLd data={schema} />
+</BaseLayout>

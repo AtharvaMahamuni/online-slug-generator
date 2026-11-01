@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" role="img" aria-label="Online Slug Generator Logo">
+  <defs>
+    <linearGradient id="osg-brand-lg" x1="8" y1="8" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff5e13"/>
+      <stop offset="100%" stop-color="#d04200"/>
+    </linearGradient>
+    <filter id="osg-shadow" x="0" y="4" width="128" height="128" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#d04200" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Background Badge -->
+  <g filter="url(#osg-shadow)">
+    <rect width="128" height="128" rx="32" fill="url(#osg-brand-lg)"/>
+    <rect x="1" y="1" width="126" height="126" rx="31" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+  </g>
+  <!-- Left Slug Token -->
+  <rect x="20" y="44" width="36" height="40" rx="10" stroke="#ffffff" stroke-width="7" fill="none"/>
+  <circle cx="38" cy="64" r="3.5" fill="#ffffff"/>
+  <!-- Right Slug Token -->
+  <rect x="72" y="44" width="36" height="40" rx="10" stroke="#ffffff" stroke-width="7" fill="none"/>
+  <circle cx="90" cy="64" r="3.5" fill="#ffffff"/>
+  <!-- Connecting Hyphen -->
+  <line x1="48" y1="64" x2="80" y2="64" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+</svg>

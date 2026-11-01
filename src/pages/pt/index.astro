@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolSingle from "../../components/ToolSingle.astro";
+import { canonical, PERSON_ID, SITE_NAME } from "../../lib/site";
+
+const title = "Gerador de Slugs Online — Criar Slug de URL";
+const description =
+  "Gerador gratuito de slugs de URL no navegador. Converta títulos em links limpos e legíveis instantaneamente sem rastreadores e sem envio para servidores.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: canonical("/pt"),
+      inLanguage: "pt",
+    },
+    {
+      "@type": "WebApplication",
+      name: SITE_NAME,
+      url: canonical("/pt"),
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Requer JavaScript para a ferramenta interativa.",
+      description,
+      inLanguage: "pt",
+      author: { "@id": PERSON_ID },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
+    },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/pt" kind="tool" locale="pt">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Converta texto em um slug de URL limpo</h1>
+    <div class="intro-row">
+      <p class="definition">Um slug é o final legível de um endereço web, como <code>como-podar-rosas</code>.</p>
+      <a class="button-secondary mode-jump" id="open-bulk" href="/pt/bulk-slug-generator" data-tip="Abrir ferramenta em lote. O texto do título é mantido neste navegador.">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="2" y1="4" x2="14" y2="4"></line>
+          <line x1="2" y1="8" x2="14" y2="8"></line>
+          <line x1="2" y1="12" x2="14" y2="12"></line>
+        </svg>
+        <span>Em massa</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolSingle locale="pt" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Um slug de URL é o trecho final de uma página web que resume seu conteúdo de maneira compreensível para usuários e mecanismos de busca (por exemplo <code>/artigo/como-podar-rosas</code>).
+      </p>
+    </header>
+
+    <h2>Tratamento de acentos e caracteres em português</h2>
+    <p>
+      Caracteres especiais como <code>ã, õ, ç, é, ê, á</code> são convertidos para suas formas básicas em ASCII (<code>a, o, c, e</code>). O caractere <code>&amp;</code> é substituído automaticamente por <code>e</code>.
+    </p>
+
+    <h2>Processamento seguro e privado no navegador</h2>
+    <p>
+      Todas as manipulações de texto são executadas no seu próprio dispositivo. Seus títulos e dados nunca são enviados a servidores externos.
+    </p>
+    <p>
+      Para converter listas completas ou planilhas, acesse nosso <a href="/pt/bulk-slug-generator">gerador de slugs em massa</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

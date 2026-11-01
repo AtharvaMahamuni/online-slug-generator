@@ -1,0 +1,59 @@
+# robots-ai.txt for Online Slug Generator
+# Supplementary copy of the AI crawler groups in /robots.txt.
+# robots.txt is authoritative. This file adds no extra Allow or Disallow.
+# Content-Signal is an experimental comment, not a Google ranking switch.
+
+User-agent: Googlebot
+Allow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Bingbot
+Allow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: OAI-SearchBot
+Allow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Claude-SearchBot
+Allow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: PerplexityBot
+Allow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Applebot
+Allow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: GPTBot
+Disallow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: ClaudeBot
+Disallow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Google-Extended
+Disallow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Applebot-Extended
+Disallow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: CCBot
+Disallow: /
+# Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+Sitemap: https://onlinesluggenerator.com/sitemap.xml
+
+Discovery: https://onlinesluggenerator.com/llms.txt
+Discovery: https://onlinesluggenerator.com/llms.html
+Discovery: https://onlinesluggenerator.com/llms-full.txt
+Discovery: https://onlinesluggenerator.com/ai.txt
+Discovery: https://onlinesluggenerator.com/ai.json
+Discovery: https://onlinesluggenerator.com/identity.json
+Discovery: https://onlinesluggenerator.com/brand.txt
+Discovery: https://onlinesluggenerator.com/faq-ai.txt

@@ -1,0 +1,51 @@
+---
+import SettingsControls from "./SettingsControls.astro";
+import type { SupportedLocale } from "../lib/slug";
+import { DEFAULT_LOCALE } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  locale?: SupportedLocale;
+}
+
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section id="tool" class="panel" data-tool="single" data-locale={locale} aria-label={t("tool.slugLabel")} tabindex="-1">
+  <div class="fields">
+    <div class="field">
+      <div class="field-head">
+        <label for="title">{t("tool.titleLabel")}</label>
+        <span id="title-count" class="count">0 characters</span>
+        <button type="button" class="button-secondary" id="clear" data-tip="Erase the title and the slug">{t("tool.clear")}</button>
+      </div>
+      <textarea id="title" placeholder={t("tool.titlePlaceholder")} autocomplete="off" spellcheck="true"></textarea>
+      <p id="bulk-nudge" class="bulk-nudge" hidden>
+        <span>Several titles work better as a list.</span>
+        <a id="bulk-nudge-open" href={locale === "en" ? "/bulk-slug-generator" : `/${locale}/bulk-slug-generator`} data-tip="Move these lines into the bulk tool">Open in bulk</a>
+      </p>
+    </div>
+    <div class="field">
+      <div class="field-head">
+        <label for="slug">{t("tool.slugLabel")}</label>
+        <span id="slug-count" class="count">0 characters</span>
+        <button type="button" class="button-secondary" id="update-slug" hidden data-tip="Replace your edit with a slug made from the title">Update slug from title</button>
+        <button type="button" class="button-primary" id="copy" data-tip="Copy this slug">{t("tool.copy")}</button>
+      </div>
+      <textarea id="slug" class="slug-field" placeholder="Your slug will show here" autocomplete="off" spellcheck="false" aria-describedby="slug-count change-note"></textarea>
+      <div id="url-preview" class="url-preview" hidden>
+        <span class="field-label">URL preview</span>
+        <p id="url-preview-text"></p>
+      </div>
+      <p id="change-note" class="change-note" hidden></p>
+    </div>
+  </div>
+  <SettingsControls locale={locale} />
+  <p id="live" class="sr-only" role="status" aria-live="polite"></p>
+  <p id="assertive" class="sr-only" role="alert"></p>
+  <noscript><p>Requires JavaScript for the tool. The explanation below this workspace is still readable.</p></noscript>
+</section>
+<script>
+  import "../scripts/tool.ts";
+</script>

@@ -1,0 +1,207 @@
+---
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { canonical, identityGraph } from "../lib/site";
+import type { SupportedLocale } from "../lib/slug";
+import { DEFAULT_LOCALE, LOCALES } from "../i18n/ui";
+import { getLocalizedPath, hasMultilingualAlternates } from "../i18n/utils";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  kind: "tool" | "document";
+  locale?: SupportedLocale;
+}
+
+const { title, description, path, kind, locale = DEFAULT_LOCALE } = Astro.props;
+const url = canonical(path);
+const skipHref = kind === "tool" ? "#tool" : "#content";
+const skipLabel = kind === "tool" ? "Skip to the tool" : "Skip to content";
+---
+
+<!doctype html>
+<html lang={locale} dir={LOCALES[locale]?.dir ?? "ltr"}>
+  <head>
+    <meta charset="utf-8" />
+    <script is:inline>
+      (function () {
+        try {
+          var choice = localStorage.getItem("osg.theme");
+          if (choice !== "light" && choice !== "dark" && choice !== "system") choice = "system";
+          var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = choice === "system" ? (dark ? "dark" : "light") : choice;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.setAttribute("data-theme-choice", choice);
+          root.style.backgroundColor = theme === "dark" ? "#1c1b17" : "#f7f7f4";
+          root.style.color = theme === "dark" ? "#f4f2ea" : "#26251e";
+        } catch (error) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none';"
+    />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f4" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1c1b17" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    {
+      path !== "/404" && hasMultilingualAlternates(path) && (
+        <>
+          {(Object.keys(LOCALES) as SupportedLocale[]).map((loc) => (
+            <link rel="alternate" hreflang={loc} href={canonical(getLocalizedPath(path, loc))} />
+          ))}
+          <link rel="alternate" hreflang="x-default" href={canonical(getLocalizedPath(path, "en"))} />
+        </>
+      )
+    }
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Summary for language models" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={new URL("/og-image.png", url).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Online Slug Generator - Free, in-browser URL slug generator" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL("/og-image.png", url).href} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href={skipHref}>{skipLabel}</a>
+    {
+      kind === "tool" ? (
+        <div class="utility-screen">
+          <Header path={path} locale={locale} />
+          <main class="utility" id="content">
+            <slot name="tool" />
+          </main>
+        </div>
+      ) : (
+        <Header path={path} locale={locale} />
+      )
+    }
+    {
+      kind === "tool" ? (
+        <section class="knowledge" aria-label="Explanation">
+          <slot />
+        </section>
+      ) : (
+        <main id="content">
+          <slot />
+        </main>
+      )
+    }
+    <Footer locale={locale} />
+    <JsonLd data={identityGraph()} />
+    <script is:inline>
+      (function () {
+        var button = document.getElementById("theme-toggle");
+        if (!button) return;
+        var media = window.matchMedia("(prefers-color-scheme: dark)");
+        function paint(choice) {
+          var theme = choice === "system" ? (media.matches ? "dark" : "light") : choice;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.setAttribute("data-theme-choice", choice);
+          root.style.backgroundColor = theme === "dark" ? "#1c1b17" : "#f7f7f4";
+          root.style.color = theme === "dark" ? "#f4f2ea" : "#26251e";
+          button.setAttribute("aria-label", "Theme: " + choice);
+        }
+        paint(document.documentElement.getAttribute("data-theme-choice") || "system");
+        button.addEventListener("click", function () {
+          var order = ["system", "light", "dark"];
+          var current = document.documentElement.getAttribute("data-theme-choice") || "system";
+          var index = order.indexOf(current);
+          var next = order[(index + 1) % order.length];
+          try {
+            localStorage.setItem("osg.theme", next);
+          } catch (error) {}
+          paint(next);
+        });
+        media.addEventListener("change", function () {
+          if ((document.documentElement.getAttribute("data-theme-choice") || "system") === "system") paint("system");
+        });
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        var tip = document.createElement("p");
+        tip.id = "tip";
+        tip.setAttribute("role", "tooltip");
+        tip.hidden = true;
+        document.body.appendChild(tip);
+        var timer = 0;
+        var current = null;
+        function hide() {
+          window.clearTimeout(timer);
+          if (current) current.removeAttribute("aria-describedby");
+          current = null;
+          tip.hidden = true;
+          tip.textContent = "";
+        }
+        function show(el) {
+          var text = el.getAttribute("data-tip");
+          if (!text) return;
+          if (current && current !== el) current.removeAttribute("aria-describedby");
+          current = el;
+          el.setAttribute("aria-describedby", "tip");
+          if (tip.parentNode !== document.body) document.body.appendChild(tip);
+          tip.textContent = text;
+          tip.hidden = false;
+          var rect = el.getBoundingClientRect();
+          var width = tip.offsetWidth;
+          var height = tip.offsetHeight;
+          var left = rect.left;
+          var top = rect.top - height - 6;
+          if (left + width > window.innerWidth - 8) left = Math.max(8, window.innerWidth - width - 8);
+          if (left < 8) left = 8;
+          if (top < 8) top = Math.min(rect.bottom + 6, window.innerHeight - height - 8);
+          tip.style.left = left + "px";
+          tip.style.top = top + "px";
+        }
+        document.addEventListener("pointerover", function (event) {
+          var el = event.target.closest ? event.target.closest("[data-tip]") : null;
+          if (!el) return;
+          window.clearTimeout(timer);
+          timer = window.setTimeout(function () {
+            show(el);
+          }, 280);
+        });
+        document.addEventListener("pointerout", function (event) {
+          var el = event.target.closest ? event.target.closest("[data-tip]") : null;
+          if (!el || el !== current) return;
+          var next = event.relatedTarget;
+          if (next && el.contains(next)) return;
+          hide();
+        });
+        document.addEventListener("focusin", function (event) {
+          var el = event.target.closest ? event.target.closest("[data-tip]") : null;
+          if (!el) return;
+          window.clearTimeout(timer);
+          show(el);
+        });
+        document.addEventListener("focusout", hide);
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") hide();
+        });
+        window.addEventListener("scroll", hide, true);
+      })();
+    </script>
+  </body>
+</html>

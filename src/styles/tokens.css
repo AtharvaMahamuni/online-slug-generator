@@ -1,0 +1,45 @@
+:root {
+  color-scheme: light;
+  --canvas: #f7f7f4;
+  --canvas-soft: #fafaf7;
+  --surface-card: #ffffff;
+  --surface-strong: #e6e5e0;
+  --ink: #26251e;
+  --body: #5a5852;
+  /* #807d72 is 3.84:1 on canvas. Informational text uses this darker warm gray, 4.96:1. */
+  --muted: #6e6b62;
+  --hairline: #e6e5e0;
+  --hairline-soft: #efeee8;
+  --hairline-strong: #cfcdc4;
+  --primary: #f54e00;
+  --primary-active: #d04200;
+  /* #1c1b17 on #f54e00 is 4.90:1 (satisfies WCAG AA 4.5:1) */
+  --on-primary: #1c1b17;
+  --semantic-error: #cf2d56;
+  --semantic-success: #f54e00;
+  --font-sans: "Inter", "Inter Fallback", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Mono Fallback", ui-monospace, "Courier New", monospace;
+  --radius-control: 8px;
+  --radius-panel: 12px;
+  --header-height: 48px;
+  --focus: 2px solid var(--primary);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #1c1b17;
+  --canvas-soft: #24231e;
+  --surface-card: #2a2924;
+  --surface-strong: #3a3832;
+  --ink: #f4f2ea;
+  --body: #c8c4b8;
+  --muted: #9c978c;
+  --hairline: #3f3d36;
+  --hairline-soft: #3a3832;
+  --hairline-strong: #5c594f;
+  --primary: #ff6a22;
+  --primary-active: #ff8544;
+  --on-primary: #1c1b17;
+  --semantic-error: #ff6b8a;
+  --semantic-success: #ff6a22;
+}

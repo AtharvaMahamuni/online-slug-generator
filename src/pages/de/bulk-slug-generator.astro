@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Byline from "../../components/Byline.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import ToolBulk from "../../components/ToolBulk.astro";
+import { canonical } from "../../lib/site";
+
+const title = "Massen-Slug-Generator — URL-Slugs aus Listen erstellen";
+const description =
+  "Generieren Sie URL-Slugs aus Listen oder CSV-Dateien im Browser. Mit Spaltenauswahl und Duplikaterkennung ohne Uploads auf externe Server.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Startseite", item: canonical("/de") },
+    { "@type": "ListItem", position: 2, name: "Masse", item: canonical("/de/bulk-slug-generator") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/de/bulk-slug-generator" kind="tool" locale="de">
+  <div slot="tool" class="utility-fill">
+    <h1 class="tool-title">Slugs für eine Liste generieren</h1>
+    <div class="intro-row">
+      <p class="definition">Ein Titel pro Zeile oder eine CSV- bzw. TXT-Datei. Die Datei bleibt auf diesem Gerät.</p>
+      <a class="button-secondary mode-jump" href="/de" data-tip="Slug für einen einzelnen Titel erstellen">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="2" width="10" height="12" rx="1.5"></rect>
+          <line x1="6" y1="6" x2="10" y2="6"></line>
+          <line x1="6" y1="9" x2="10" y2="9"></line>
+        </svg>
+        <span>Ein Titel</span>
+        <span class="mode-jump-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <ToolBulk locale="de" />
+  </div>
+
+  <article class="prose" data-countable>
+    <header class="doc-head">
+      <Byline />
+      <p>
+        Fügen Sie Produkt- oder Beitragslisten ein oder öffnen Sie eine CSV-Datei. Duplikate erhalten automatisch fortlaufende Zähler (z. B. <code>artikel-name-2</code>). Alle ursprünglichen Tabellenspalten bleiben beim Export erhalten.
+      </p>
+    </header>
+
+    <h2>Spaltenerhalt und Duplikatautomatik</h2>
+    <p>
+      Der Generator liest CSV-Dateien vollständig im Arbeitsspeicher Ihres Endgeräts ein. Sie wählen die gewünschte Titelspalte aus und laden die Tabelle mit einer zusätzlichen Slug-Spalte herunter.
+    </p>
+    <p>
+      Für einzelne Überschriften wechseln Sie zum <a href="/de">Einzel-Slug-Tool</a>.
+    </p>
+  </article>
+
+  <JsonLd data={schema} />
+</BaseLayout>

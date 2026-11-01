@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Byline from "../components/Byline.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { canonical, ISSUES } from "../lib/site";
+
+const title = "Privacy Policy · Online Slug Generator";
+const description =
+  "Text, files, and slugs are not uploaded by this site. What the host and your browser still do is spelled out here, without a tracker.";
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: canonical("/") },
+    { "@type": "ListItem", position: 2, name: "Privacy", item: canonical("/privacy") },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} path="/privacy" kind="document">
+  <article class="prose" data-countable>
+    <p class="crumbs"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>Privacy</span></p>
+    <h1>Privacy</h1>
+    <Byline />
+    <p>
+      Text you type, slugs the page produces, and files you open are processed in your browser. This site does not upload them to an application server. There is no form that accepts a title, and the contact link does not attach a file. This page does not call the tool secure. A browser on a shared computer is not a private room, and a browser extension can read the page you are looking at.
+    </p>
+    <h2>What the page stores</h2>
+    <p>
+      Two <code>localStorage</code> keys are functional, not tracking. <code>osg.theme</code> remembers system, light, or dark. <code>osg.settings</code> remembers the separator, letter policy, stop words, numbers, ampersand rule, maximum length, preset, and URL prefix. If the stored version is not the version this site understands, the values are ignored and the defaults return. <code>sessionStorage</code> key <code>osg.handoff</code> holds the text from the single page while you move to the bulk page, and that key is removed when the bulk page reads it. None of these keys are sent by this site’s scripts.
+    </p>
+    <p>
+      The clipboard is the browser’s clipboard. Copy asks the browser to write the slug. If that fails, the field is selected so you can copy it with the browser’s own command. The site does not receive a copy of that text.
+    </p>
+    <h2>What this site does not run</h2>
+    <p>
+      Version 1 has no analytics product. There is no Google Analytics, no Plausible, no advertising script, and no event beacon. A consent banner is not shown, because there is no non-essential tracker to accept. Search measurement, if the operator adds it later, belongs in Search Console and Bing Webmaster Tools on the domain. Those products are not scripts in this page.
+    </p>
+    <p>
+      If a cookieless counter is ever added, the only honest design is an event name from a fixed list, never the title, the slug, the file name, the column header, or a settings value that could encode a catalogue. That decision is not part of this version. The page you are reading matches the requests the current build makes: HTML, CSS, fonts, and the tool script, all from this host.
+    </p>
+    <h2>What the host can still see</h2>
+    <p>
+      The planned host is GitHub Pages. Pages can log the ordinary fields of an HTTP request, such as IP address, user agent, and the URL of the document. That log is the host’s, not a product analytics pipeline built into this repository. GitHub Pages does not offer a web application firewall for this project to configure, and this site does not claim it can authenticate bots. <code>robots.txt</code> asks known training crawlers to stay out and allows search crawlers. A user-triggered fetcher may ignore <code>robots.txt</code>. The file does not pretend otherwise.
+    </p>
+    <h2>Contact and files</h2>
+    <p>
+      The only intentional way off the site is a link to <a href={ISSUES}>GitHub issues</a> or to the repository itself. An issue is public. Do not paste a private catalogue, a customer list, or an unreleased headline into it. There is no upload field that could smuggle file contents into that message, because there is no message form on this site.
+    </p>
+    <p>
+      Questions about the tool itself belong on <a href="/contact">Contact</a>. The <a href="/">slug tool</a> and the <a href="/bulk-slug-generator">bulk tool</a> are the places where text is handled, and both stay in the tab.
+    </p>
+  </article>
+  <JsonLd data={schema} />
+</BaseLayout>

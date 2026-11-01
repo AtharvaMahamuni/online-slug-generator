@@ -1,0 +1,31 @@
+{
+  "name": "Online Slug Generator",
+  "url": "https://onlinesluggenerator.com/",
+  "description": "Free static URL slug tool. Slugs are computed in the browser.",
+  "author": {
+    "name": "Atharva",
+    "url": "https://x.com/athmatwt"
+  },
+  "policy": {
+    "searchCrawling": "allowed",
+    "training": "disallowed",
+    "citation": "allowed",
+    "attribution": "Name Online Slug Generator and link the page you used.",
+    "note": "robots.txt is authoritative. This file does not allow a crawler that robots.txt disallows. llms.txt does not help or hurt Google Search. User-triggered fetchers may ignore robots.txt."
+  },
+  "crawlers": {
+    "allow": ["Googlebot", "Bingbot", "OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "Applebot"],
+    "disallow": ["GPTBot", "ClaudeBot", "Google-Extended", "Applebot-Extended", "CCBot"]
+  },
+  "files": [
+    "https://onlinesluggenerator.com/llms.txt",
+    "https://onlinesluggenerator.com/llms-full.txt",
+    "https://onlinesluggenerator.com/ai.txt",
+    "https://onlinesluggenerator.com/robots.txt",
+    "https://onlinesluggenerator.com/identity.json",
+    "https://onlinesluggenerator.com/brand.txt",
+    "https://onlinesluggenerator.com/faq-ai.txt"
+  ],
+  "privacy": "https://onlinesluggenerator.com/privacy",
+  "contact": "https://onlinesluggenerator.com/contact"
+}

@@ -1,0 +1,104 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+
+const title = "Bulk URL Slug Generation: CSV & List Best Practices";
+const description =
+  "Use a list or a spreadsheet when you have more than a handful of titles, and decide what to do when two slugs match exactly.";
+---
+
+<GuideLayout
+  title={title}
+  description={description}
+  path="/guides/bulk-url-slug-generation"
+  h1="How to generate slugs in bulk"
+>
+  <p>
+    Generate slugs in bulk when you have more than one title. Paste one title per line, or open a TXT or CSV file on your device. Each row uses the same cleaning steps as a single title. When two rows would share a slug, the later row gets a numeric suffix, so a second Samsung Galaxy S26 becomes <code>samsung-galaxy-s26-2</code>. The state cell says Duplicate.
+  </p>
+  <p>
+    A shop file is the example. Three columns, Product ID, Name, and Category, and two phones with the same name. You choose Name as the title column. The export still has Product ID and Category. A new column, <code>slug</code>, holds <code>samsung-galaxy-s26</code> on the first row and <code>samsung-galaxy-s26-2</code> on the second. The ids are how you tell the products apart after the names collide. Deleting the id column before you import would throw away the only stable key.
+  </p>
+  <p>
+    The exception is a collision that the suffix must not paper over. Two different products that genuinely need two different words should be renamed in the source, not published as <code>-2</code>. The suffix is there so a batch does not contain two identical path segments. It does not look at your live site, and it does not know that <code>samsung-galaxy-s26</code> was published last season. A row you edit by hand keeps your text. If that text still matches another row, the state stays Duplicate and the tool does not rewrite what you typed.
+  </p>
+  <p>
+    The screen for this job is <a href="/bulk-slug-generator">Generate slugs for a list</a>. Files are read in the browser. The drop zone says so, and the privacy page explains what the host can still see, which is the request for the site itself. Google’s ecommerce URL guide, updated 10 December 2025, is the reference for descriptive words in a path: <a href="https://developers.google.com/search/docs/specialty/ecommerce/designing-a-url-structure-for-ecommerce-sites">Designing a URL structure for ecommerce websites</a>. Its example, <code>/product/black-t-shirt-with-a-white-collar</code>, is one product. A catalogue is that decision repeated without dropping the other columns. Nothing in that guide asks you to upload the catalogue to a slug website.
+  </p>
+
+  <h2>When is one row enough?</h2>
+  <p>
+    One title belongs on the <a href="/">single tool</a>. You can see the slug as you type, edit it, and copy it. The single screen can hand the current title to the bulk screen if you follow the bulk link, so you do not retype it, but that is a convenience for a second title, not a file workflow.
+  </p>
+  <p>
+    Move to bulk when you have a list you would otherwise paste into a spreadsheet and repair by hand. Docs, menu items, support articles, and product names are the usual lists. The pipeline does not change. Separator, case, letter policy, stop words, numbers, and length are the same controls as the single screen. A preset you set on one screen is stored in this browser under <code>osg.settings</code> and shows up on the other. That storage is the settings, not the titles.
+  </p>
+
+  <h2>Should you paste or import?</h2>
+  <p>
+    Paste when the source is a column you have already copied. One title per line. A trailing newline does not create an extra row. Empty lines are counted and skipped, and the page says how many. The line is the whole source. There is no column to pick, because a paste has one column.
+  </p>
+  <p>
+    Import when you need the other columns back. TXT is still one title per line, with the same empty-line behavior. CSV is a table. Quoted commas stay inside the cell. A header row is detected when the first row looks like names, and you can override that with “This file has headers.” The title column defaults to the first header that matches name, title, or handle. If none matches, the first column is selected and you can change it. The column control appears only after a CSV is loaded. A TXT file does not show it, because there is nothing to map.
+  </p>
+  <p>
+    The file has to be 5 MB or smaller. A larger file is rejected before it is read, so a huge export does not get parsed halfway. After a successful read, only the first 10,000 data rows are kept. If the file has more, the page tells you how many were dropped. Split the export and run it in parts if you hit that line. Ten thousand inputs are not mounted in the page. The table shows 100 rows at a time, and the export uses the full list in memory.
+  </p>
+  <p>
+    Broken quotes are reported. When a quoted cell breaks in a way that the next line is its own valid row, that broken line is an error and the parser continues. Other rows are kept. Read the error list before you trust the count. A silent skip would be worse than a visible one.
+  </p>
+
+  <h2>Why keep the source columns?</h2>
+  <p>
+    The slug is a new fact about a row you already had. Product ID, SKU, locale, price, and category are the facts you will need when you import the result into a shop or a CMS. A tool that returns only the slug forces you to glue columns back together by position. Position breaks as soon as a row is filtered or a blank line is dropped.
+  </p>
+  <p>
+    The CSV export is UTF-8 with a byte-order mark, so a spreadsheet opens the accents correctly. Rows use CRLF. Cells that contain a comma, a quote, or a line break are quoted, and quotes inside a cell are doubled. The new header is <code>slug</code>. If the file already has a column named slug, the new header is <code>slug_2</code>, then <code>slug_3</code>, and so on. The old slug column is not overwritten. TXT export is only the slugs, one per line, in a file named <code>slugs.txt</code>. Use TXT when the destination is a box that wants a list and nothing else. Use CSV when you still need Product ID.
+  </p>
+  <p>
+    Paste exports have a single source column, because that is all the paste contained. The header in that case is a generated column name plus <code>slug</code>. If you needed real headers, go back to the CSV.
+  </p>
+
+  <h2>What does Duplicate mean?</h2>
+  <p>
+    Duplicate means two finished slugs in this batch were the same before suffixes, or an edited cell still matches another row. The comparison is case-sensitive on the finished string. The first row keeps the plain slug. Later rows take the separator and a number, starting at 2. If <code>name-2</code> is already the first occurrence of some other row, the next free integer is used. Empty slugs are not given a suffix. There is nothing to disambiguate.
+  </p>
+  <p>
+    The word Duplicate is printed in the state column. Color is not the signal. You can sort or scan without guessing what a tint means.
+  </p>
+  <p>
+    A maximum length does not win against that suffix. If the suffixed slug is longer than the cap, the suffix stays and the row warns that it was not cut back. Cutting it back could make it match another row again. Uniqueness inside the file is the point of the pass. If the cap matters more than the suffix, rename the source so the base slug is shorter, then run the file again.
+  </p>
+  <p>
+    Edited cells opt out of the automatic suffix. The tool assumes you typed that string because you meant it. If it collides, you see Duplicate and the text stays. Change it to something unique and the state can leave Duplicate. Change the source line for that row and the edit is discarded, because the edit belonged to the old source. That rule avoids a careful correction sticking to the wrong product after you replace the file.
+  </p>
+
+  <h2>How should a catalogue use the settings?</h2>
+  <p>
+    Leave stop words off and leave number removal off. Product names are full of words that look disposable and are not. “The” in a brand, “of” in a collection, and “17” in a model are distinctive. The Short permalink preset turns stop words on and caps the length at 60. It is the wrong default for a catalogue. Readable URL keeps the words and the numbers. The warning on the short preset exists because the loss is silent if you only glance at the first row.
+  </p>
+  <p>
+    Latin accents fold to ASCII under Readable URL. A drinks list with Café will export <code>cafe</code>. If the shop’s public URLs already use <code>café</code>, switch to Keep original script before you import, not after you have edited fifty rows. The <a href="/guides/unicode-and-international-urls">Unicode guide</a> shows what the fold does to Straße, Привет, and 東京. Non-Latin letters are kept either way. Confirm that the CMS will accept them before you export ten thousand.
+  </p>
+  <p>
+    Hyphens are the default separator. A catalogue that already lives on underscores should switch the separator first, then import. Doing it later means a second export and a second chance to mismatch the live site. The <a href="/guides/hyphens-vs-underscores-in-urls">hyphen guide</a> explains why a new site should prefer hyphens, and why a live underscore site should not be converted for taste.
+  </p>
+
+  <h2>What does the tool refuse to do with a file?</h2>
+  <p>
+    It does not upload the file. It does not send rows to an API to detect duplicates against the public web. It does not open Excel workbooks or JSON. It does not remember the catalogue after you close the tab, except for the settings and the theme, which are not the file. It does not invent a Product ID if the column was blank. A missing cell becomes an empty source and, if there is nothing else in the title, an empty slug.
+  </p>
+  <p>
+    It also does not hide a destructive setting inside the export. If you enabled number removal, the slugs will lack numbers and the state of the batch is the evidence. Clear the file from the page when you are done on a shared computer. Clearing asks you to confirm when there is a file loaded or when there are more than 20 rows, so a mis-click does not wipe a long list. Replacing a file asks as well.
+  </p>
+  <p>
+    Do not paste a private catalogue into a GitHub issue, an email, or a chat in order to ask why a row looks odd. Paste the pattern, with the names removed. The contact page says the same thing. A bug in the suffix rule can be shown with “Alpha” and “Alpha.” A customer file cannot.
+  </p>
+
+  <h2>How do you check a sample before the full export?</h2>
+  <p>
+    Run the real file, then read the first page of results and the duplicate states, not a hand-built sample of five easy titles. Check one accented name, one name with an ampersand, one name that is only a model number, and one pair you know are identical. Open the CSV in a spreadsheet and confirm that Product ID survived and that the slug column is new. Then import one row into the CMS and load the public URL.
+  </p>
+  <p>
+    If that row is right, export the rest. If it is wrong, change the setting and run again from the file so edited experiments do not linger on the wrong rows. The definition of a slug, if you need to explain the column to someone else, is on <a href="/guides/what-is-a-url-slug">What a URL slug is</a>.
+  </p>
+</GuideLayout>

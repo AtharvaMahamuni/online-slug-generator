@@ -1,0 +1,24 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://onlinesluggenerator.com/#org",
+      "name": "Online Slug Generator",
+      "url": "https://onlinesluggenerator.com/",
+      "logo": "https://onlinesluggenerator.com/favicon.svg",
+      "founder": { "@id": "https://onlinesluggenerator.com/#atharva" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://onlinesluggenerator.com/#atharva",
+      "name": "Atharva",
+      "url": "https://onlinesluggenerator.com/about",
+      "sameAs": [
+        "https://x.com/athmatwt",
+        "https://www.linkedin.com/in/atharvamahamuni",
+        "https://github.com/AtharvaMahamuni"
+      ]
+    }
+  ]
+}
