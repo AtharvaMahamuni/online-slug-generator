@@ -7,9 +7,9 @@ import QuickAnswers from "../components/QuickAnswers.astro";
 import ToolBulk from "../components/ToolBulk.astro";
 import { canonical } from "../lib/site";
 
-const title = "Bulk URL Slug Generator — Convert Lists to URL Slugs";
+const title = "Bulk Slug Generator — Convert Lists & CSV Files to Slugs";
 const description =
-  "Turn a pasted list or a CSV into slugs without dropping the other columns. Duplicates are marked. Files stay on your device.";
+  "Convert hundreds of titles or entire CSV files into URL slugs in bulk. Preserves existing columns and flags duplicates automatically with client-side privacy.";
 const schema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -102,19 +102,26 @@ const schema = {
       </p>
     </section>
     <section>
-      <h2>Catalog and documentation examples</h2>
+      <h2>E-Commerce handles &amp; CMS permalinks (Shopify, WooCommerce, Webflow)</h2>
+      <p>
+        When preparing spreadsheets for store imports or bulk migrations, e-commerce platforms like Shopify, WooCommerce, and Webflow require clean, URL-safe "handles" or "slugs" for every product. For example, a title like <em>Men's Trail Running Shoes (Navy / Size 10)</em> becomes <code>mens-trail-running-shoes-navy-size-10</code> while keeping the underlying SKU (<code>SHOE-992-NVY</code>) and inventory price intact.
+      </p>
       <p>
         Retail inventories typically require model and version numbers to survive. By default, digits are preserved so “Samsung Galaxy S26 Ultra” produces <code>samsung-galaxy-s26-ultra</code>. Documentation hierarchies benefit equally: “Install CLI on Linux” and “Install CLI on macOS” stay cleanly differentiated because specific technical terms are preserved.
       </p>
       <ExampleTable
         caption="Sample e-commerce catalog rows demonstrating column preservation"
-        headers={["Product SKU", "Product Name", "Generated Slug"]}
+        headers={["Product SKU", "Product Name", "Category", "Generated Slug"]}
         rows={[
-          ["SKU-1001", "Samsung Galaxy S26", "samsung-galaxy-s26"],
-          ["SKU-1002", "Samsung Galaxy S26", "samsung-galaxy-s26-2"],
-          ["SKU-1003", "Sony WH-1000XM5 (Black)", "sony-wh-1000xm5-black"],
+          ["SKU-1001", "Samsung Galaxy S26", "Smartphones", "samsung-galaxy-s26"],
+          ["SKU-1002", "Samsung Galaxy S26 (Refurbished)", "Smartphones", "samsung-galaxy-s26-refurbished"],
+          ["SKU-1003", "Men's Trail Running Shoes (Navy / 10)", "Footwear", "mens-trail-running-shoes-navy-10"],
+          ["SKU-1004", "Sony WH-1000XM5 (Black)", "Audio", "sony-wh-1000xm5-black"],
         ]}
       />
+      <p>
+        Because all processing occurs in-browser, unpublished product catalogs, unreleased line items, and proprietary SKU mappings remain 100% confidential without third-party cloud uploads.
+      </p>
     </section>
     <section>
       <h2>Guides and technical documentation</h2>
