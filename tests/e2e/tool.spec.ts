@@ -62,12 +62,12 @@ test("quick answers are in the HTML and stay in the DOM", async ({ page }) => {
   expect(html).toContain("What is a URL slug?");
   expect(html).toContain("Does this upload what I paste?");
   expect(html).toContain("Should I use a hyphen or an underscore?");
-  await expect(page.locator(".qa details")).toHaveCount(6);
+  await expect(page.locator(".qa details")).toHaveCount(8);
   const first = page.locator(".qa details").first();
   await first.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(first).toHaveJSProperty("open", true);
-  await expect(page.locator(".qa details")).toHaveCount(6);
+  await expect(page.locator(".qa details")).toHaveCount(8);
   await page.keyboard.press("Enter");
   await expect(first).toHaveJSProperty("open", false);
 });

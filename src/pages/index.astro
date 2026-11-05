@@ -91,6 +91,16 @@ const schema = {
           answer:
             "A concise URL slug is not a direct algorithmic ranking boost in Google Search. Search engines evaluate topical relevance, helpfulness, and search intent over slug length. However, shorter slugs provide meaningful indirect benefits: they avoid ellipsis cutoff in search result display snippets, fit cleanly within shared social cards or printed collateral, and make technical documentation easier to reference. The 'Short permalink' configuration selectively filters high-frequency stop words and applies a 60-character ceiling to support these publishing needs.",
         },
+        {
+          question: "How does a URL slug differ from kebab-case in programming?",
+          answer:
+            "While both conventions format text into lowercase words separated by hyphens, a URL slug is specifically engineered for RFC 3986 URI safety and web routing. Programming kebab-case (e.g. for CSS class names or JSON keys) often leaves accents or raw symbols unchanged. In contrast, a web slug generator explicitly strips URL-unsafe punctuation (quotes, question marks, brackets), decomposes diacritics into ASCII, converts ampersands to readable words ('and'), and handles duplicate collision increments.",
+        },
+        {
+          question: "Can I use this for WordPress permalinks and Shopify handles?",
+          answer:
+            "Yes. Both WordPress (under the /%postname%/ structure) and Shopify product catalogs (/products/{handle}) require clean lowercase, hyphen-separated identifiers without spaces, commas, or percent-encoded entities. Slugs generated here can be copied directly into your CMS editor or generated in bulk for Shopify CSV imports, where existing columns like SKU, inventory, and category remain perfectly intact.",
+        },
       ]}
     />
     <section>
