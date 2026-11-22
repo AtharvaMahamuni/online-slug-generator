@@ -48,4 +48,25 @@ describe("discovery files", () => {
     expect(llms.toLowerCase()).toContain("does not help or hurt google search");
     expect(read("faq-ai.txt")).not.toContain("FAQPage");
   });
+
+  it("keeps locale URLs out of the sitemap and does not emit hreflang there", () => {
+    const sitemap = read("sitemap.xml");
+    const locs = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
+    expect(locs).toHaveLength(11);
+    for (const loc of locs) {
+      expect(loc).not.toMatch(/https:\/\/onlinesluggenerator\.com\/(es|de|fr|pt)(?:\/|$)/);
+    }
+    expect(sitemap).not.toMatch(/hreflang/);
+    expect(sitemap).not.toContain("xmlns:xhtml");
+  });
+
+  it("does not list locale tool URLs in llms files and states they are not indexed yet", () => {
+    const fact =
+      "Spanish, German, French and Portuguese tool screens exist for visitors. They are not indexed yet.";
+    for (const name of ["llms.txt", "llms-full.txt", "llms.html"]) {
+      const body = read(name);
+      expect(body).toContain(fact);
+      expect(body).not.toMatch(/https:\/\/onlinesluggenerator\.com\/(es|de|fr|pt)(?:\/|"|\s|$)/);
+    }
+  });
 });

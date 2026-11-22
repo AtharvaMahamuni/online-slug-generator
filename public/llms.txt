@@ -20,17 +20,6 @@ Contact: https://onlinesluggenerator.com/contact
 - [Privacy](https://onlinesluggenerator.com/privacy): Titles and files are not uploaded. The host can still see ordinary requests.
 - [Contact](https://onlinesluggenerator.com/contact): GitHub issues only. No email form.
 
-### Multilingual versions
-
-- [Español — Generador de Slugs](https://onlinesluggenerator.com/es): Versión en español con soporte para palabras vacías en español y mapeo de ampersand a 'y'.
-- [Español — Slugs en Lote](https://onlinesluggenerator.com/es/bulk-slug-generator): Procesamiento en lote para listas y archivos en español.
-- [Deutsch — URL-Slug-Generator](https://onlinesluggenerator.com/de): Deutsche Version mit Umlautersetzung (ä/ö/ü zu ae/oe/ue, ß zu ss) und deutschen Stoppwörtern.
-- [Deutsch — Massen-Generator](https://onlinesluggenerator.com/de/bulk-slug-generator): Massenverarbeitung für deutsche Listen und CSV-Dateien.
-- [Français — Générateur de Slug](https://onlinesluggenerator.com/fr): Version française avec mots vides français et perluète convertie en 'et'.
-- [Français — Slugs en Masse](https://onlinesluggenerator.com/fr/bulk-slug-generator): Traitement par lots de titres et fichiers en français.
-- [Português — Gerador de Slugs](https://onlinesluggenerator.com/pt): Versão em português com remoção de stopwords em português e ampersand como 'e'.
-- [Português — Slugs em Massa](https://onlinesluggenerator.com/pt/bulk-slug-generator): Processamento em lote de listas e arquivos em português.
-
 ## Identity files
 
 These describe the site. They are not extra articles, and they are not in the sitemap.
@@ -47,6 +36,7 @@ These describe the site. They are not extra articles, and they are not in the si
 
 ## Facts a summary can quote
 
+- Spanish, German, French and Portuguese tool screens exist for visitors. They are not indexed yet.
 - A slug is the readable end of a URL, such as how-to-prune-roses.
 - Processing stays in the browser, including CSV files. They are not uploaded.
 - The default separator is a hyphen. Lower case is on. Latin accents fold. Stop-word removal is off until someone turns it on.

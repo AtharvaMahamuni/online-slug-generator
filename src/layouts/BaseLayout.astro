@@ -6,7 +6,7 @@ import JsonLd from "../components/JsonLd.astro";
 import { canonical, identityGraph } from "../lib/site";
 import type { SupportedLocale } from "../lib/slug";
 import { DEFAULT_LOCALE, LOCALES } from "../i18n/ui";
-import { getLocalizedPath, hasMultilingualAlternates } from "../i18n/utils";
+import { getLocalizedPath, hasMultilingualAlternates, INDEXED_LOCALES } from "../i18n/utils";
 
 interface Props {
   title: string;
@@ -55,6 +55,9 @@ const skipLabel = kind === "tool" ? "Skip to the tool" : "Skip to content";
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={url} />
+    {!INDEXED_LOCALES.includes(locale) && (
+      <meta name="robots" content="noindex, follow" />
+    )}
     {
       path !== "/404" && hasMultilingualAlternates(path) && (
         <>

@@ -313,8 +313,10 @@ for (const { fullPath, relPath } of htmlFiles) {
   auditReport.pages.push(pageAudit);
 }
 
-// Check Reciprocal Hreflang (Return tags)
+// Reciprocal hreflang is required only when a page emits alternates.
+// With a single indexed locale, pages have no hreflang tags and this loop is a no-op.
 for (const [route, hreflangs] of Object.entries(auditReport.hreflangMatrix)) {
+  if (!hreflangs || hreflangs.length === 0) continue;
   for (const hl of hreflangs) {
     if (hl.lang === "x-default") continue;
     const targetRoute = resolveUrlToRoute(hl.href);
