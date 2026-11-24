@@ -78,6 +78,9 @@ describe("parity presets", () => {
       "Prāṇāyāma",
       "Ḥadīth",
       "₦ naira",
+      "2020&#8211;2024 Report",
+      "Title&#8212;Subtitle",
+      "Q&amp;A&#8212;Live",
     ]));
     expect(titles.some((title) => title.includes("\ufeff"))).toBe(true);
     expect(titles.some((title) => title.includes("\u00ad"))).toBe(true);
@@ -192,6 +195,34 @@ describe("parity presets", () => {
     expect(slugify("Ɓ Ɗ Ƒ", python).flags.unmatched).toBe(true);
     expect(slugify("right\u200fto\u200eleft", python).slug).toBe("righttoleft");
     expect(slugify("right\u200fto\u200eleft", python).flags.unmatched).toBe(false);
+  });
+
+
+  it("turns WordPress dash and nbsp entities into hyphens before remaining entities are stripped", () => {
+    const wordpress = PRESETS.wordpress;
+    expect(slugify("2020&#8211;2024 Report", wordpress).slug).toBe("2020-2024-report");
+    expect(slugify("Title&#8212;Subtitle", wordpress).slug).toBe("title-subtitle");
+    expect(slugify("Q&amp;A&#8212;Live", wordpress).slug).toBe("qa-live");
+    expect(slugify("2020&ndash;2024 Report", wordpress).slug).toBe("2020-2024-report");
+    expect(slugify("Title&mdash;Subtitle", wordpress).slug).toBe("title-subtitle");
+    expect(slugify("keep&#160;together", wordpress).slug).toBe("keep-together");
+
+    const source = readFileSync(path.join(import.meta.dirname, "../../src/lib/slug/parity.ts"), "utf8");
+    const start = source.indexOf("const WP_ENTITY_TO_HYPHEN");
+    const end = source.indexOf("function djangoSlug");
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    const fn = source.slice(start, end);
+    const stripAt = fn.search(/replace\(\/&\.\+\?;\/g/);
+    const useAt = fn.indexOf("for (const token of WP_ENTITY_TO_HYPHEN)");
+    expect(stripAt, "entity strip in wordpressSlug").toBeGreaterThan(-1);
+    expect(useAt, "WP_ENTITY_TO_HYPHEN must be applied in wordpressSlug").toBeGreaterThan(-1);
+    expect(useAt, "entities must be converted to hyphens before remaining entities are stripped").toBeLessThan(stripAt);
+    for (const entity of ["&nbsp;", "&#160;", "&ndash;", "&#8211;", "&mdash;", "&#8212;"]) {
+      const at = fn.indexOf(entity);
+      expect(at, `${entity} must be in WP_ENTITY_TO_HYPHEN`).toBeGreaterThan(-1);
+      expect(at, `${entity} must be listed before entities are stripped`).toBeLessThan(stripAt);
+    }
   });
 
 describe("home parity table", () => {

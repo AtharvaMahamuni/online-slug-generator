@@ -842,6 +842,27 @@
       "unsupported": [
         "python-slugify"
       ]
+    },
+    {
+      "title": "2020&#8211;2024 Report",
+      "wordpress": "2020-2024-report",
+      "django": "202082112024-report",
+      "python-slugify": "2020-2024-report",
+      "npm-slugify": "2020and82112024-report"
+    },
+    {
+      "title": "Title&#8212;Subtitle",
+      "wordpress": "title-subtitle",
+      "django": "title8212subtitle",
+      "python-slugify": "title-subtitle",
+      "npm-slugify": "titleand8212subtitle"
+    },
+    {
+      "title": "Q&amp;A&#8212;Live",
+      "wordpress": "qa-live",
+      "django": "qampa8212live",
+      "python-slugify": "q-a-live",
+      "npm-slugify": "qandampaand8212live"
     }
   ]
 }

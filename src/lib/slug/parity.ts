@@ -310,6 +310,10 @@ function utf8UriEncode(input: string, maxLength: number): string {
   return out;
 }
 
+// HTML entities sanitize_title_with_dashes converts to a hyphen, in this
+// order, before it removes remaining entities. Verified against WP 7.1.5.
+const WP_ENTITY_TO_HYPHEN = ["&nbsp;", "&#160;", "&ndash;", "&#8211;", "&mdash;", "&#8212;"];
+
 function applyEncodedReplacements(slug: string): string {
   for (const token of WP_ENCODED_TO_HYPHEN) slug = slug.replaceAll(token, "-");
   for (const token of WP_ENCODED_TO_X) slug = slug.replaceAll(token, "x");
@@ -325,7 +329,10 @@ function wordpressSlug(title: string): string {
   slug = wordpressLower(slug);
   slug = utf8UriEncode(slug, 200);
   slug = applyEncodedReplacements(slug);
-  slug = slug.replaceAll("&nbsp;", "-");
+  // sanitize_title_with_dashes (save) converts these to '-' before it
+  // strips remaining entities. Hex forms (&#x2013; / &#x2014; / &#xa0;)
+  // are left for the strip, which matches real WordPress 7.1.5.
+  for (const token of WP_ENTITY_TO_HYPHEN) slug = slug.replaceAll(token, "-");
   slug = slug.replace(/&.+?;/g, "");
   slug = slug.replaceAll(".", "-");
   slug = slug.replaceAll("/", "-");

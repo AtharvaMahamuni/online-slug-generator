@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { gunzipSync } from "node:zlib";
@@ -9,6 +10,7 @@ type SweepPreset = {
   v: string[];
   w: 1 | 2;
   i: string;
+  hash?: number;
 };
 
 type SweepPlane = {
@@ -29,6 +31,11 @@ type SweepFile = {
 const TOKEN_PERCENT = "\u0001";
 const TOKEN_PERCENT_LOWER = "\u0002";
 const PRESET_IDS: ParityId[] = ["wordpress", "django", "python-slugify", "npm-slugify"];
+const PYTHON_HASH_LEN = 12;
+
+function slugHash(slug: string, length = PYTHON_HASH_LEN): string {
+  return createHash("sha256").update(slug, "utf8").digest("hex").slice(0, length);
+}
 
 function percentEncode(text: string): string {
   return [...new TextEncoder().encode(text)]
@@ -89,11 +96,15 @@ function silentMismatches(
     for (let i = 0; i < chars.length; i += 1) {
       const char = chars[i]!;
       const title = `${prefix}${char}${suffix}`;
-      const expected = expectedSlug(prefix, suffix, char, block.v[ids[i]!]!);
+      const token = block.v[ids[i]!]!;
       const result = paritySlug(title, preset);
-      if (result.slug !== expected && !result.unsupported) {
+      const ok = block.hash
+        ? slugHash(result.slug, block.hash) === token
+        : result.slug === expectedSlug(prefix, suffix, char, token);
+      if (!ok && !result.unsupported) {
+        const seen = block.hash ? `real#=${token} preset#=${slugHash(result.slug, block.hash)}` : `real=${expectedSlug(prefix, suffix, char, token)}`;
         silent.push(
-          `${preset} U+${char.codePointAt(0)!.toString(16).padStart(4, "0")} real=${expected} preset=${result.slug}`,
+          `${preset} U+${char.codePointAt(0)!.toString(16).padStart(4, "0")} ${seen} preset=${result.slug}`,
         );
         if (silent.length >= 20) return silent;
       }
@@ -117,6 +128,17 @@ describe("single-character sweep against committed real-library outputs", () => 
     const src = readFileSync(path.join(import.meta.dirname, "../../src/lib/slug/parity.ts"), "utf8");
     expect(src).not.toContain("sweep-expected");
     expect(src).not.toContain("tests/slug/fixtures/sweep");
+    expect(sweep.presets["python-slugify"].hash).toBe(PYTHON_HASH_LEN);
+    expect(sweep.smp.presets["python-slugify"].hash).toBe(PYTHON_HASH_LEN);
+    for (const token of sweep.presets["python-slugify"].v) {
+      expect(token).toMatch(/^[0-9a-f]{12}$/);
+    }
+    for (const token of sweep.smp.presets["python-slugify"].v) {
+      expect(token).toMatch(/^[0-9a-f]{12}$/);
+    }
+    expect(sweep.presets.wordpress.hash).toBeUndefined();
+    expect(sweep.presets.django.hash).toBeUndefined();
+    expect(sweep.presets["npm-slugify"].hash).toBeUndefined();
   });
 
   it("has no silent mismatch for WordPress, Django, python-slugify or npm slugify on the BMP", () => {

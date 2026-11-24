@@ -10,6 +10,7 @@
  *
  * The written file is test-only. Do not import it from src/.
  */
+import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -42,6 +43,10 @@ const PREFIX = "xx";
 const SUFFIX = "yy";
 const TOKEN_PERCENT = "\u0001";
 const TOKEN_PERCENT_LOWER = "\u0002";
+// python-slugify expected slugs are stored only as truncated sha256
+// prefixes so the committed fixture does not hold plaintext output
+// that comes from text-unidecode.
+const PYTHON_HASH_LEN = 12;
 
 function percentEncode(text) {
   return [...new TextEncoder().encode(text)]
@@ -84,6 +89,40 @@ function compact(chars, slugs) {
     for (let i = 0; i < ids.length; i += 1) bytes.writeUInt16LE(ids[i], i * 2);
   }
   return { v: vocab, w: width, i: bytes.toString("base64") };
+}
+
+function slugHash(slug) {
+  return createHash("sha256").update(slug, "utf8").digest("hex").slice(0, PYTHON_HASH_LEN);
+}
+
+function compactHashed(slugs) {
+  const vocab = [];
+  const index = new Map();
+  const ids = [];
+  const hashToSlug = new Map();
+  for (const slug of slugs) {
+    const token = slugHash(slug);
+    const previous = hashToSlug.get(token);
+    if (previous !== undefined && previous !== slug) {
+      throw new Error(`sha256/${PYTHON_HASH_LEN} collision: ${JSON.stringify(previous)} vs ${JSON.stringify(slug)}`);
+    }
+    hashToSlug.set(token, slug);
+    let id = index.get(token);
+    if (id === undefined) {
+      id = vocab.length;
+      index.set(token, id);
+      vocab.push(token);
+    }
+    ids.push(id);
+  }
+  const width = Math.max(0, ...ids) < 256 ? 1 : 2;
+  const bytes = Buffer.alloc(ids.length * width);
+  if (width === 1) {
+    for (let i = 0; i < ids.length; i += 1) bytes[i] = ids[i];
+  } else {
+    for (let i = 0; i < ids.length; i += 1) bytes.writeUInt16LE(ids[i], i * 2);
+  }
+  return { v: vocab, w: width, i: bytes.toString("base64"), hash: PYTHON_HASH_LEN };
 }
 
 mkdirSync(cache, { recursive: true });
@@ -147,7 +186,7 @@ function slicePresets(offset, sliceChars) {
   return {
     wordpress: compact(sliceChars, wordpress.slice(offset, end)),
     django: compact(sliceChars, pythonOut.django.slice(offset, end)),
-    "python-slugify": compact(sliceChars, pythonOut.python_slugify.slice(offset, end)),
+    "python-slugify": compactHashed(pythonOut.python_slugify.slice(offset, end)),
     "npm-slugify": compact(sliceChars, npmSlugs.slice(offset, end)),
   };
 }

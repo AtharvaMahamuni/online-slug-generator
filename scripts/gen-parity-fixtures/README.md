@@ -76,10 +76,13 @@ preset. For non-Latin scripts, use python-slugify directly.
 `sweep-chars.mjs` runs the real pinned libraries on every character from
 U+00A0 to U+FFFF and on the emoji and supplementary ranges the harness
 covers (as `xx{ch}yy`) and writes compact expected slugs to
-`tests/slug/fixtures/sweep-expected.json.gz`. That file is test-only; do
-not import it from `src/`. Do not hand-write the expected slugs.
-The sweep test checks all four presets, including python-slugify, for
-silent mismatches.
+`tests/slug/fixtures/sweep-expected.json.gz`. WordPress, Django and npm
+slugify values are stored as plaintext. python-slugify expected slugs
+are stored only as the first 12 hex characters of a SHA-256 of the
+slug, not as plaintext. That file is test-only; do not import it from
+`src/`. Do not hand-write the expected slugs. The sweep test hashes the
+in-app python-slugify output and compares the prefix, and it checks all
+four presets for silent mismatches.
 
 ```
 node scripts/gen-parity-fixtures/sweep-chars.mjs

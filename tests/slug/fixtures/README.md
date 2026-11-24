@@ -13,10 +13,15 @@ Compact expected slugs for every character from U+00A0 to U+FFFF, plus
 the emoji and supplementary ranges the harness covers (Linear B,
 mathematical alphanumeric symbols, emoji, a CJK Ext B sample, and
 tags), generated from the real libraries and wrapped as `xx{ch}yy`.
-This file is test-only. Do not import it from `src/`. Do not hand-write
-the expected slugs. `tests/slug/sweep.test.ts` fails on a silent
-mismatch for all four presets, including python-slugify. False flags
-are allowed.
+WordPress, Django and npm slugify values are stored as plaintext.
+python-slugify expected slugs are stored only as the first 12 hex
+characters of the SHA-256 of the expected slug, not as plaintext, so
+this file does not commit text-unidecode-derived output. This file is
+test-only. Do not import it from `src/`. Do not hand-write the expected
+slugs. `tests/slug/sweep.test.ts` hashes the in-app python-slugify
+preset output and compares that prefix; it fails on a silent mismatch
+for all four presets. False flags are allowed. An empty slug hashes
+like any other slug; a flagged mismatch is not silent.
 
 ### How to regenerate
 
