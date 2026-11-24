@@ -43,7 +43,6 @@ describe("parity presets", () => {
         const displayed = slugify(row.title, PRESETS[preset]).slug;
         if (row.unsupported?.includes(preset)) {
           const result = slugify(row.title, PRESETS[preset]);
-          expect(raw, `${preset} unsupported for ${row.title}`).not.toBe(row[preset]);
           expect(displayed, `${preset} display for ${row.title}`).toBe("");
           expect(result.flags.unmatched, `${preset} unmatched for ${row.title}`).toBe(true);
           expect(changeNote(result)).toBe("Not matched");
@@ -138,23 +137,24 @@ describe("parity presets", () => {
     expect(slugify("&ndash;", python).slug).toBe("");
     expect(slugify("&hellip;more", python).slug).toBe("more");
     expect(slugify("&eacute;cole", python).slug).toBe("e-cole");
-    expect(slugify("§ 12", python).slug).toBe("ss-12");
-    expect(slugify("¶ para", python).slug).toBe("p-para");
-    expect(slugify("¢ ¥ ₹ ₽ ₿", python).slug).toBe("c-y");
-    expect(slugify("‰ permille", python).slug).toBe("0-permille");
+    expect(slugify("§ 12", python).flags.unmatched).toBe(true);
+    expect(slugify("¶ para", python).flags.unmatched).toBe(true);
+    expect(slugify("¢ ¥ ₹ ₽ ₿", python).flags.unmatched).toBe(true);
+    expect(slugify("‰ permille", python).flags.unmatched).toBe(true);
     expect(slugify("soft\u00adhyphen", python).slug).toBe("softhyphen");
+    expect(slugify("soft\u00adhyphen", python).flags.unmatched).toBe(false);
     expect(slugify("a\u200cb", python).slug).toBe("ab");
     expect(slugify("\ufeffabc", python).slug).toBe("abc");
-    expect(slugify("ŉ test", python).slug).toBe("n-test");
-    expect(slugify("ŉ test", python).flags.unmatched).toBe(false);
-    expect(slugify("ɐ ə ɛ", python).flags.unmatched).toBe(false);
-    expect(slugify("ɐ ə ɛ", python).slug).toBe("a-e");
-    expect(slugify("₦ naira", python).slug).toBe("n-naira");
-    expect(slugify("ƛ ƞ ƥ ƭ ƴ ƶ", python).slug).toBe("l-n-p-t-y-z");
-    expect(slugify("ʹ ʺ ˆ ˇ ˈ", python).slug).toBe("v");
+    expect(slugify("ŉ test", python).flags.unmatched).toBe(true);
+    expect(slugify("ɐ ə ɛ", python).flags.unmatched).toBe(true);
+    expect(slugify("₦ naira", python).flags.unmatched).toBe(true);
+    expect(slugify("ƛ ƞ ƥ ƭ ƴ ƶ", python).flags.unmatched).toBe(true);
     expect(slugify("a\u2066b\u2069c", python).slug).toBe("a-b-c");
     expect(slugify("x\u180ey", python).slug).toBe("xy");
     expect(slugify("a\u2066b\u2069c", python).flags.unmatched).toBe(false);
+    expect(slugify("John’s guide", python).slug).toBe("johns-guide");
+    expect(slugify("John’s guide", python).flags.unmatched).toBe(false);
+    expect(slugify("Launch🚀Day Recap", python).flags.unmatched).toBe(true);
 
     const wordpress = PRESETS.wordpress;
     expect(slugify("Fußball ẞig", wordpress).slug).toBe("fusball-%c3%9fig");
@@ -173,15 +173,25 @@ describe("parity presets", () => {
     // not a raw U+FEFF character, so the pre-strip of ﻿ does not apply.
     expect(slugify("foo%ef%bb%bfbar", wordpress).slug).toBe("foobar");
     expect(slugify("a%ef%bf%bcb", wordpress).slug).toBe("ab");
+    expect(slugify("ΟΔΥΣΣΕΥΣ", wordpress).slug).toBe("οδυσσευς".split("").map((ch) => {
+      const bytes = new TextEncoder().encode(ch);
+      return [...bytes].map((b) => `%${b.toString(16).padStart(2, "0")}`).join("");
+    }).join(""));
+    // Final sigma: the last Σ becomes ς (U+03C2), not σ (U+03C3).
+    expect(slugify("ΟΔΥΣΣΕΥΣ", wordpress).slug.endsWith("%cf%82")).toBe(true);
+    expect(slugify("ΟΔΥΣΣΕΥΣ", wordpress).slug.endsWith("%cf%83")).toBe(false);
+    expect(slugify("ΣΟΦΟΣ", wordpress).slug.endsWith("%cf%82")).toBe(true);
+    expect(slugify("ΟΔΟΣ.", wordpress).slug.endsWith("%cf%82")).toBe(true);
 
     expect(slugify("&apos;tis", python).slug).toBe("apos-tis");
     expect(slugify("&AMP;", python).slug).toBe("amp");
     expect(slugify("&#X41;BC", python).slug).toBe("x41-bc");
     expect(slugify("&#x41;BC", python).slug).toBe("abc");
-    expect(slugify("₤ ₩ ₪ ₫ word", python).slug).toBe("l-w-ns-d-word");
-    expect(slugify("ƀ ƈ ƌ ƒ ǥ", python).slug).toBe("b-c-d-f-g");
-    expect(slugify("Ɓ Ɗ Ƒ", python).slug).toBe("b-d-f");
+    expect(slugify("₤ ₩ ₪ ₫ word", python).flags.unmatched).toBe(true);
+    expect(slugify("ƀ ƈ ƌ ƒ ǥ", python).flags.unmatched).toBe(true);
+    expect(slugify("Ɓ Ɗ Ƒ", python).flags.unmatched).toBe(true);
     expect(slugify("right\u200fto\u200eleft", python).slug).toBe("righttoleft");
+    expect(slugify("right\u200fto\u200eleft", python).flags.unmatched).toBe(false);
   });
 
 describe("home parity table", () => {

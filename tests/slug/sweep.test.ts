@@ -11,6 +11,11 @@ type SweepPreset = {
   i: string;
 };
 
+type SweepPlane = {
+  count: number;
+  presets: Record<ParityId, SweepPreset>;
+};
+
 type SweepFile = {
   versions: Record<ParityId, string>;
   wrap: [string, string];
@@ -18,10 +23,12 @@ type SweepFile = {
   end: number;
   count: number;
   presets: Record<ParityId, SweepPreset>;
+  smp: SweepPlane & { ranges: [number, number][] };
 };
 
 const TOKEN_PERCENT = "\u0001";
 const TOKEN_PERCENT_LOWER = "\u0002";
+const PRESET_IDS: ParityId[] = ["wordpress", "django", "python-slugify", "npm-slugify"];
 
 function percentEncode(text: string): string {
   return [...new TextEncoder().encode(text)]
@@ -54,24 +61,53 @@ function idsOf(block: SweepPreset, count: number): number[] {
   return ids;
 }
 
-function codepoints(start: number, end: number): string[] {
+function codepoints(ranges: [number, number][]): string[] {
   const chars: string[] = [];
-  for (let cp = start; cp <= end; cp += 1) {
-    if (cp >= 0xd800 && cp <= 0xdfff) continue;
-    chars.push(String.fromCodePoint(cp));
+  for (const [start, end] of ranges) {
+    for (let cp = start; cp <= end; cp += 1) {
+      if (cp >= 0xd800 && cp <= 0xdfff) continue;
+      chars.push(String.fromCodePoint(cp));
+    }
   }
   return chars;
 }
 
 const fixturePath = path.join(import.meta.dirname, "fixtures/sweep-expected.json.gz");
 const sweep = JSON.parse(gunzipSync(readFileSync(fixturePath)).toString("utf8")) as SweepFile;
-const chars = codepoints(sweep.start, sweep.end);
+const bmpChars = codepoints([[sweep.start, sweep.end]]);
+const smpChars = codepoints(sweep.smp.ranges);
 const [prefix, suffix] = sweep.wrap;
 
+function silentMismatches(
+  chars: string[],
+  presets: Record<ParityId, SweepPreset>,
+): string[] {
+  const silent: string[] = [];
+  for (const preset of PRESET_IDS) {
+    const block = presets[preset];
+    const ids = idsOf(block, chars.length);
+    for (let i = 0; i < chars.length; i += 1) {
+      const char = chars[i]!;
+      const title = `${prefix}${char}${suffix}`;
+      const expected = expectedSlug(prefix, suffix, char, block.v[ids[i]!]!);
+      const result = paritySlug(title, preset);
+      if (result.slug !== expected && !result.unsupported) {
+        silent.push(
+          `${preset} U+${char.codePointAt(0)!.toString(16).padStart(4, "0")} real=${expected} preset=${result.slug}`,
+        );
+        if (silent.length >= 20) return silent;
+      }
+    }
+  }
+  return silent;
+}
+
 describe("single-character sweep against committed real-library outputs", () => {
-  it("covers U+00A0 to U+FFFF and is not imported by the app bundle", () => {
-    expect(chars.length).toBe(sweep.count);
+  it("covers U+00A0 to U+FFFF and the harness supplementary ranges, and is not imported by the app bundle", () => {
+    expect(bmpChars.length).toBe(sweep.count);
     expect(sweep.count).toBe(63328);
+    expect(smpChars.length).toBe(sweep.smp.count);
+    expect(sweep.smp.count).toBe(4636);
     expect(sweep.versions).toEqual({
       wordpress: "7.1.5",
       django: "6.1.3",
@@ -83,23 +119,13 @@ describe("single-character sweep against committed real-library outputs", () => 
     expect(src).not.toContain("tests/slug/fixtures/sweep");
   });
 
-  it("has no silent mismatch for WordPress, Django or npm slugify", () => {
-    const checked: ParityId[] = ["wordpress", "django", "npm-slugify"];
-    const silent: string[] = [];
-    for (const preset of checked) {
-      const block = sweep.presets[preset];
-      const ids = idsOf(block, chars.length);
-      for (let i = 0; i < chars.length; i += 1) {
-        const char = chars[i]!;
-        const title = `${prefix}${char}${suffix}`;
-        const expected = expectedSlug(prefix, suffix, char, block.v[ids[i]!]!);
-        const result = paritySlug(title, preset);
-        if (result.slug !== expected && !result.unsupported) {
-          silent.push(`${preset} U+${char.codePointAt(0)!.toString(16).padStart(4, "0")} real=${expected} preset=${result.slug}`);
-          if (silent.length >= 20) break;
-        }
-      }
-    }
+  it("has no silent mismatch for WordPress, Django, python-slugify or npm slugify on the BMP", () => {
+    const silent = silentMismatches(bmpChars, sweep.presets);
+    expect(silent, silent.join("\n")).toEqual([]);
+  });
+
+  it("has no silent mismatch for WordPress, Django, python-slugify or npm slugify on the supplementary ranges", () => {
+    const silent = silentMismatches(smpChars, sweep.smp.presets);
     expect(silent, silent.join("\n")).toEqual([]);
   });
 });

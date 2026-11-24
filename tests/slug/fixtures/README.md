@@ -9,10 +9,14 @@ Do not hand-write expected slugs. See
 
 ## `sweep-expected.json.gz`
 
-Compact expected slugs for every character from U+00A0 to U+FFFF
-(wrapped as `xx{ch}yy`), generated from the real libraries. This file
-is test-only. Do not import it from `src/`. Do not hand-write the
-expected slugs.
+Compact expected slugs for every character from U+00A0 to U+FFFF, plus
+the emoji and supplementary ranges the harness covers (Linear B,
+mathematical alphanumeric symbols, emoji, a CJK Ext B sample, and
+tags), generated from the real libraries and wrapped as `xx{ch}yy`.
+This file is test-only. Do not import it from `src/`. Do not hand-write
+the expected slugs. `tests/slug/sweep.test.ts` fails on a silent
+mismatch for all four presets, including python-slugify. False flags
+are allowed.
 
 ### How to regenerate
 
@@ -22,7 +26,8 @@ From the repository root, after the fixture caches exist:
 node scripts/gen-parity-fixtures/sweep-chars.mjs
 ```
 
-That command writes this `sweep-expected.json.gz` file.
+That command writes this `sweep-expected.json.gz` file (BMP and
+supplementary planes together).
 
 Pinned library versions (the same pins as `parity.json`):
 

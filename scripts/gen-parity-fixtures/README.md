@@ -61,27 +61,25 @@ WORDPRESS_ROOT=scripts/gen-parity-fixtures/.cache/wordpress \
   python3 scripts/gen-parity-fixtures/probe-wp-lists.py --write --count-fixture
 ```
 
-## python-slugify observed maps
+## python-slugify policy
 
-`probe-pyslugify-chars.py` calls python-slugify 9.2.0 on individual
-characters (as `xx{ch}yy`) and records the observed mid-slug. Values
-are observed from python-slugify 9.2.0 output per character; no table
-is copied from text-unidecode or Unidecode. Keys are stored as one
-string so the built bundle does not emit bare Unicode identifiers.
-Characters the probe cannot derive cleanly, and scripts outside the
-probed ranges, are flagged as not matched.
-
-```
-scripts/gen-parity-fixtures/.cache/venv/bin/python \
-  scripts/gen-parity-fixtures/probe-pyslugify-chars.py --write
-```
+The in-app python-slugify preset does not ship a transliteration table.
+It may produce output only for characters whose real python-slugify
+9.2.0 result comes from an NFKD fold, an ASCII letter or digit, or
+punctuation and separator behaviour verified against that library
+(strip or dash). Everything else is flagged as not matched and is
+never guessed. There is no Unidecode or text-unidecode data in the
+preset. For non-Latin scripts, use python-slugify directly.
 
 ## Single-character sweep
 
 `sweep-chars.mjs` runs the real pinned libraries on every character from
-U+00A0 to U+FFFF (as `xx{ch}yy`) and writes compact expected slugs to
+U+00A0 to U+FFFF and on the emoji and supplementary ranges the harness
+covers (as `xx{ch}yy`) and writes compact expected slugs to
 `tests/slug/fixtures/sweep-expected.json.gz`. That file is test-only; do
 not import it from `src/`. Do not hand-write the expected slugs.
+The sweep test checks all four presets, including python-slugify, for
+silent mismatches.
 
 ```
 node scripts/gen-parity-fixtures/sweep-chars.mjs

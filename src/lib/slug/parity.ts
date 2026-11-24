@@ -29,20 +29,21 @@
 import npmCharmap from "./parity-npm-charmap.json";
 import html4Entities from "./parity-html4-entities.json";
 import wpUnfolded from "./parity-wp-unfolded.json";
-import pythonObserved from "./parity-python-observed.json";
 import type { ParityId } from "./types";
 
 const NPM_CHARMAP = npmCharmap as Record<string, string>;
 const HTML4_ENTITIES = html4Entities as Record<string, string>;
 const WP_LATIN_UNFOLDED = new Set(wpUnfolded.unfolded);
 const WP_KEEP_CASE = new Set(wpUnfolded.keepCase);
-// Values observed from python-slugify 9.2.0 output per character; no table
-// copied from text-unidecode or Unidecode. Written by
-// scripts/gen-parity-fixtures/probe-pyslugify-chars.py.
-const PYTHON_OBSERVED: Record<string, string> = {};
-[...pythonObserved.keys].forEach((ch, index) => {
-  PYTHON_OBSERVED[ch] = pythonObserved.values[index]!;
-});
+
+// Punctuation and separators whose python-slugify 9.2.0 wrap mid is empty
+// (they are dropped, with no dash). Not a transliteration table.
+const PYTHON_PUNCT_STRIP = new Set(
+  "\u00AD\u055A\u05BE\u05F3\u070F\u0F04\u0F05\u0F06\u0F07\u0F0A\u0F85\u1806\u180A\u180E\u200C\u200D\u200E\u200F\u2018\u2019\u201B\u202A\u202B\u202C\u202D\u202E\u2032\u2033\u2034\u2057\u206A\u206B\u206C\u206D\u206E\u206F\u2768\u2769\u276A\u276B\u276C\u276D\u276E\u276F\u2770\u2771\u2772\u2773\u2774\u2775\u301E\u30FB\uFD3E\uFD3F\uFEFF\uFF07\uFF65",
+);
+// Punctuation whose real mid is letters or digits, not a dash or a strip.
+// Flag these; do not guess the mapping.
+const PYTHON_PUNCT_UNSAFE = new Set("\u00A7\u00B6\u0F11\u0F12\u104C\u104D\u104E\u104F\u2030\u2031\u204A\u204B");
 
 // JS NFKD maps U+A7F1 to "S"; Python 3 / Django 6.1.3 leave it, so slugify
 // then drops it as non-ASCII. Recorded against Django 6.1.3 on U+00A0..U+FFFF.
@@ -60,7 +61,7 @@ export const PARITY_NOTES: Record<ParityId, string> = {
     "matches WordPress 7.1.5 sanitize_title with an English (US) site language, on our test set",
   django: "matches Django 6.1.3 django.utils.text.slugify (allow_unicode=False) on our test set",
   "python-slugify":
-    "matches python-slugify 9.2.0 on our test set, except Han and other non-Latin scripts",
+    "matches python-slugify 9.2.0 on ASCII, Latin accents that fold, and punctuation from our test set. For non-Latin scripts, use python-slugify directly",
   "npm-slugify": "matches npm slugify 1.6.9 with lower, strict on our test set",
 };
 
@@ -262,11 +263,18 @@ function foldWordpressLetters(input: string): string {
 }
 
 function wordpressLower(input: string): string {
-  let out = "";
-  for (const ch of input) {
-    out += WP_KEEP_CASE.has(ch) ? ch : ch.toLocaleLowerCase("en");
+  // Lowercase the whole string so Greek final sigma follows word context,
+  // like PHP mb_strtolower. Then put back the 3 letters WordPress 7.1.5
+  // does not lowercase (U+A7CE, U+A7D2, U+A7D4).
+  const lowered = input.toLocaleLowerCase("en");
+  const source = [...input];
+  if (!source.some((ch) => WP_KEEP_CASE.has(ch))) return lowered;
+  const dest = [...lowered];
+  if (source.length !== dest.length) {
+    // The keep-case set lowercases 1:1; a length change is unexpected.
+    return source.map((ch) => (WP_KEEP_CASE.has(ch) ? ch : ch.toLocaleLowerCase("en"))).join("");
   }
-  return out;
+  return source.map((ch, i) => (WP_KEEP_CASE.has(ch) ? ch : dest[i]!)).join("");
 }
 
 function utf8UriEncode(input: string, maxLength: number): string {
@@ -358,57 +366,60 @@ function decodeEntities(text: string): string {
   return text;
 }
 
-function pythonMapped(ch: string): string | undefined {
-  if (Object.hasOwn(PYTHON_OBSERVED, ch)) return PYTHON_OBSERVED[ch];
-  return undefined;
+function pythonPunctStrip(ch: string): boolean {
+  if (PYTHON_PUNCT_STRIP.has(ch)) return true;
+  const code = ch.codePointAt(0) ?? 0;
+  return code === 0xe0001 || (code >= 0x10100 && code <= 0x10102) || (code >= 0xe0020 && code <= 0xe007e);
 }
 
 function pythonTransliterate(text: string): string {
   let out = "";
   for (const ch of text) {
-    const direct = pythonMapped(ch);
-    if (direct !== undefined) {
-      out += direct;
-      continue;
-    }
+    if (pythonPunctStrip(ch)) continue;
     const source = JS_NFKD_SKIP.has(ch) ? ch : ch.normalize("NFKD");
     for (const piece of source) {
       if (/\p{M}/u.test(piece)) continue;
-      out += pythonMapped(piece) ?? piece;
+      if (pythonPunctStrip(piece)) continue;
+      out += piece;
     }
   }
   return out;
 }
 
-// Common combining diacritics that python-slugify 9.2.0 strips from
-// xx{ch}yy (U+0300..U+034E and U+0360..U+0362). Other marks are not
-// guessed: they are in the observed table, or flagged as not matched.
-function pythonMarkKnown(ch: string): boolean {
-  const code = ch.codePointAt(0) ?? 0;
-  return (code >= 0x0300 && code <= 0x034e) || (code >= 0x0360 && code <= 0x0362);
-}
-
+// The preset only claims output from an NFKD fold to known pieces, ASCII
+// letters and digits, or punctuation and separators verified against
+// python-slugify 9.2.0 (strip or dash). Everything else is flagged.
 function pythonCharKnown(ch: string): boolean {
-  if ((ch.codePointAt(0) ?? 0) < 128) return true;
-  if (pythonMapped(ch) !== undefined) return true;
+  const code = ch.codePointAt(0) ?? 0;
+  if (code < 128) return true;
   if (JS_NFKD_SKIP.has(ch)) return false;
-  if (/\p{M}/u.test(ch)) return pythonMarkKnown(ch);
-  const decomposed = ch.normalize("NFKD");
-  if (decomposed !== ch && [...decomposed].every((piece) => pythonCharKnown(piece))) return true;
-  // Known filter: punctuation, math and other symbols, and separators
-  // become a dash. Currency and modifier symbols can transliterate to
-  // letters, so they are known only through the tables above.
-  if (/\p{P}|\p{Sm}|\p{So}|\p{Z}/u.test(ch)) return true;
+  if (/\p{M}/u.test(ch)) return false;
+  if (pythonPunctStrip(ch)) return true;
+  if (PYTHON_PUNCT_UNSAFE.has(ch)) return false;
+  const decomposed = JS_NFKD_SKIP.has(ch) ? ch : ch.normalize("NFKD");
+  if (decomposed !== ch) {
+    const pieces = [...decomposed].filter((piece) => !/\p{M}/u.test(piece) && !pythonPunctStrip(piece));
+    // A fold counts only when it yields an ASCII letter or digit. Space or
+    // punctuation plus leftover marks is not an NFKD letter fold.
+    if (
+      pieces.some((piece) => /[A-Za-z0-9]/.test(piece)) &&
+      pieces.every((piece) => pythonCharKnown(piece))
+    ) {
+      return true;
+    }
+  }
+  // Other BMP punctuation, separators and format controls become a dash.
+  // Supplementary-plane punctuation is flagged unless it is in the strip set.
+  if (code <= 0xffff && /\p{P}|\p{Z}|\p{Cf}/u.test(ch)) return true;
   return false;
 }
 
 function pythonHasUnmappedLetters(title: string): boolean {
-  // Inspect the original title. python-slugify transliterates before it
-  // decodes entities, so letters that only appear after entity decoding
-  // are stripped the same way in the real library and in this preset.
-  // If the preset does not know a character's real output, flag it and
-  // never guess a mapping.
-  for (const ch of title) {
+  // Check the title and the string after HTML4 entity decoding. If the
+  // preset does not know a character's real output, flag it and never
+  // guess a mapping.
+  const decoded = decodeEntities(title);
+  for (const ch of title + decoded) {
     if (!pythonCharKnown(ch)) return true;
   }
   return false;

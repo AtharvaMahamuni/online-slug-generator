@@ -72,7 +72,7 @@ GitHub issues on https://github.com/AtharvaMahamuni/online-slug-generator/issues
 
 Spanish, German, French and Portuguese tool screens exist for visitors. They are not indexed yet.
 
-Presets reproduce WordPress, Django, python-slugify and npm slugify output on a published test set: https://github.com/AtharvaMahamuni/online-slug-generator/blob/main/tests/slug/fixtures/parity.json.
+Presets reproduce WordPress, Django, python-slugify and npm slugify output on a published test set: https://github.com/AtharvaMahamuni/online-slug-generator/blob/main/tests/slug/fixtures/parity.json. The python-slugify preset matches python-slugify 9.2.0 on ASCII, Latin accents that fold, and punctuation from that test set; it shows “not matched” when it cannot. For non-Latin scripts, use python-slugify directly.
 
 ## Policy
 

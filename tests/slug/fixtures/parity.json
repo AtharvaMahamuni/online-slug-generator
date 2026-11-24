@@ -53,21 +53,30 @@
       "wordpress": "strase",
       "django": "strae",
       "python-slugify": "strasse",
-      "npm-slugify": "strasse"
+      "npm-slugify": "strasse",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "Łódź",
       "wordpress": "lodz",
       "django": "odz",
       "python-slugify": "lodz",
-      "npm-slugify": "lodz"
+      "npm-slugify": "lodz",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "Привет",
       "wordpress": "%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82",
       "django": "",
       "python-slugify": "privet",
-      "npm-slugify": "privet"
+      "npm-slugify": "privet",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "東京",
@@ -175,7 +184,10 @@
       "wordpress": "aeble",
       "django": "ble",
       "python-slugify": "aeble",
-      "npm-slugify": "aeble"
+      "npm-slugify": "aeble",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "¿Qué es esto?",
@@ -196,7 +208,10 @@
       "wordpress": "s",
       "django": "",
       "python-slugify": "ss",
-      "npm-slugify": "ss"
+      "npm-slugify": "ss",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "Café in 東京, 12",
@@ -269,7 +284,10 @@
       "wordpress": "5-x-3-15",
       "django": "5-3-15",
       "python-slugify": "5-x-3-15",
-      "npm-slugify": "5-3-15"
+      "npm-slugify": "5-3-15",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "<b>Bold</b> title",
@@ -283,14 +301,20 @@
       "wordpress": "%f0%9f%98%80-party-time-%f0%9f%8e%89",
       "django": "party-time",
       "python-slugify": "party-time",
-      "npm-slugify": "party-time"
+      "npm-slugify": "party-time",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "I ♥ NY",
       "wordpress": "i-%e2%99%a5-ny",
       "django": "i-ny",
       "python-slugify": "i-ny",
-      "npm-slugify": "i-love-ny"
+      "npm-slugify": "i-love-ny",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "path/to/file",
@@ -346,21 +370,30 @@
       "wordpress": "price-e100-50-20",
       "django": "price-100-50-20",
       "python-slugify": "price-eur100-ps50-20",
-      "npm-slugify": "price-euro100-pound50-dollar20"
+      "npm-slugify": "price-euro100-pound50-dollar20",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "© 2026 Acme™ ®",
       "wordpress": "2026-acme",
       "django": "2026-acmetm",
       "python-slugify": "c-2026-acmetm-r",
-      "npm-slugify": "c-2026-acmetm-r"
+      "npm-slugify": "c-2026-acmetm-r",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "Temp 20°C",
       "wordpress": "temp-20c",
       "django": "temp-20c",
       "python-slugify": "temp-20degc",
-      "npm-slugify": "temp-20c"
+      "npm-slugify": "temp-20c",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "1,000 rows",
@@ -408,7 +441,10 @@
       "wordpress": "fusball-%c3%9fig",
       "django": "fuball-ig",
       "python-slugify": "fussball-ssig",
-      "npm-slugify": "fussball-ssig"
+      "npm-slugify": "fussball-ssig",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "bom﻿here",
@@ -422,7 +458,10 @@
       "wordpress": "objhere",
       "django": "objhere",
       "python-slugify": "objhere",
-      "npm-slugify": "objhere"
+      "npm-slugify": "objhere",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "5 < 6 > 4",
@@ -471,28 +510,40 @@
       "wordpress": "%c2%a7-12",
       "django": "12",
       "python-slugify": "ss-12",
-      "npm-slugify": "12"
+      "npm-slugify": "12",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "¶ para",
       "wordpress": "%c2%b6-para",
       "django": "para",
       "python-slugify": "p-para",
-      "npm-slugify": "para"
+      "npm-slugify": "para",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "¢ ¥ ₹ ₽ ₿",
       "wordpress": "%c2%a2-%c2%a5-%e2%82%b9-%e2%82%bd-%e2%82%bf",
       "django": "",
       "python-slugify": "c-y",
-      "npm-slugify": "cent-yen-indian-rupee-russian-ruble-bitcoin"
+      "npm-slugify": "cent-yen-indian-rupee-russian-ruble-bitcoin",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "‰ permille",
       "wordpress": "%e2%80%b0-permille",
       "django": "permille",
       "python-slugify": "0-permille",
-      "npm-slugify": "permille"
+      "npm-slugify": "permille",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "soft­hyphen",
@@ -520,14 +571,20 @@
       "wordpress": "%c9%90-%c9%99-%c9%9b",
       "django": "",
       "python-slugify": "a-e",
-      "npm-slugify": "e"
+      "npm-slugify": "e",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "ŉ test",
       "wordpress": "n-test",
       "django": "n-test",
       "python-slugify": "n-test",
-      "npm-slugify": "test"
+      "npm-slugify": "test",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "ﬁ ﬂ ﬃ",
@@ -555,7 +612,10 @@
       "wordpress": "%c9%90-turned",
       "django": "turned",
       "python-slugify": "turned",
-      "npm-slugify": "turned"
+      "npm-slugify": "turned",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "&apos;tis",
@@ -590,21 +650,30 @@
       "wordpress": "%e2%82%a4-%e2%82%a9-%e2%82%aa-%e2%82%ab-word",
       "django": "word",
       "python-slugify": "l-w-ns-d-word",
-      "npm-slugify": "lira-won-new-shequel-dong-word"
+      "npm-slugify": "lira-won-new-shequel-dong-word",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "ƀ ƈ ƌ ƒ ǥ",
       "wordpress": "%c6%80-%c6%88-%c6%8c-%c6%92-%c7%a5",
       "django": "",
       "python-slugify": "b-c-d-f-g",
-      "npm-slugify": "f"
+      "npm-slugify": "f",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "Ɓ Ɗ Ƒ",
       "wordpress": "%c9%93-%c9%97-%c6%92",
       "django": "",
       "python-slugify": "b-d-f",
-      "npm-slugify": ""
+      "npm-slugify": "",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "right‏to‎left",
@@ -681,7 +750,10 @@
       "wordpress": "hawai%ca%bbi",
       "django": "hawaii",
       "python-slugify": "hawai-i",
-      "npm-slugify": "hawaii"
+      "npm-slugify": "hawaii",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "Ḱ Ḿ Ṕ",
@@ -695,21 +767,30 @@
       "wordpress": "%e2%82%a6-naira",
       "django": "naira",
       "python-slugify": "n-naira",
-      "npm-slugify": "naira-naira"
+      "npm-slugify": "naira-naira",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "ƛ ƞ ƥ ƭ ƴ ƶ",
       "wordpress": "%c6%9b-%c6%9e-%c6%a5-%c6%ad-%c6%b4-%c6%b6",
       "django": "",
       "python-slugify": "l-n-p-t-y-z",
-      "npm-slugify": ""
+      "npm-slugify": "",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "ʹ ʺ ˆ ˇ ˈ",
       "wordpress": "%ca%b9-%ca%ba-%cb%86-%cb%87-%cb%88",
       "django": "",
       "python-slugify": "v",
-      "npm-slugify": ""
+      "npm-slugify": "",
+      "unsupported": [
+        "python-slugify"
+      ]
     },
     {
       "title": "a⁦b⁩c",
@@ -731,6 +812,36 @@
       "django": "a",
       "python-slugify": "a",
       "npm-slugify": ""
+    },
+    {
+      "title": "ΟΔΥΣΣΕΥΣ",
+      "wordpress": "%ce%bf%ce%b4%cf%85%cf%83%cf%83%ce%b5%cf%85%cf%82",
+      "django": "",
+      "python-slugify": "odusseus",
+      "npm-slugify": "odysseys",
+      "unsupported": [
+        "python-slugify"
+      ]
+    },
+    {
+      "title": "ΣΟΦΟΣ",
+      "wordpress": "%cf%83%ce%bf%cf%86%ce%bf%cf%82",
+      "django": "",
+      "python-slugify": "sophos",
+      "npm-slugify": "sofos",
+      "unsupported": [
+        "python-slugify"
+      ]
+    },
+    {
+      "title": "ΟΔΟΣ.",
+      "wordpress": "%ce%bf%ce%b4%ce%bf%cf%82",
+      "django": "",
+      "python-slugify": "odos",
+      "npm-slugify": "odos",
+      "unsupported": [
+        "python-slugify"
+      ]
     }
   ]
 }

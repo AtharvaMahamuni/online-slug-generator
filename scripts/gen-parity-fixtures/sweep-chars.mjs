@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Sweep U+00A0..U+FFFF against the real pinned libraries and write compact
+ * Sweep U+00A0..U+FFFF plus the emoji and supplementary ranges the
+ * harness covers, against the real pinned libraries, and write compact
  * expected slugs for tests/slug/sweep.test.ts. Never hand-write outputs.
  *
  * Usage (from the repository root, after the fixture caches exist):
@@ -28,6 +29,15 @@ const versions = {
 
 const START = 0x00a0;
 const END = 0xffff;
+// Same supplementary ranges as /workspace/slug-pr7-harness/sweepsmp.json
+// (Linear B, math alnum, emoji, CJK Ext B sample, tags).
+const SMP_RANGES = [
+  [0x10000, 0x1019e],
+  [0x1d400, 0x1d7fe],
+  [0x1f000, 0x1fafe],
+  [0x20000, 0x200ff],
+  [0xe0000, 0xe007e],
+];
 const PREFIX = "xx";
 const SUFFIX = "yy";
 const TOKEN_PERCENT = "\u0001";
@@ -78,12 +88,21 @@ function compact(chars, slugs) {
 
 mkdirSync(cache, { recursive: true });
 
-const chars = [];
-for (let cp = START; cp <= END; cp += 1) {
-  if (cp >= 0xd800 && cp <= 0xdfff) continue;
-  chars.push(String.fromCodePoint(cp));
+function codepoints(ranges) {
+  const chars = [];
+  for (const [start, end] of ranges) {
+    for (let cp = start; cp <= end; cp += 1) {
+      if (cp >= 0xd800 && cp <= 0xdfff) continue;
+      chars.push(String.fromCodePoint(cp));
+    }
+  }
+  return chars;
 }
-const titles = chars.map((char) => `${PREFIX}${char}${SUFFIX}`);
+
+const chars = codepoints([[START, END]]);
+const smpChars = codepoints(SMP_RANGES);
+const allChars = chars.concat(smpChars);
+const titles = allChars.map((char) => `${PREFIX}${char}${SUFFIX}`);
 const titleJson = JSON.stringify(titles);
 
 const wpRoot = path.join(cache, "wordpress");
@@ -123,6 +142,16 @@ if (pythonOut.python_slugify_version !== versions["python-slugify"]) {
   throw new Error(`python-slugify version ${pythonOut.python_slugify_version} does not match pin`);
 }
 
+function slicePresets(offset, sliceChars) {
+  const end = offset + sliceChars.length;
+  return {
+    wordpress: compact(sliceChars, wordpress.slice(offset, end)),
+    django: compact(sliceChars, pythonOut.django.slice(offset, end)),
+    "python-slugify": compact(sliceChars, pythonOut.python_slugify.slice(offset, end)),
+    "npm-slugify": compact(sliceChars, npmSlugs.slice(offset, end)),
+  };
+}
+
 const payload = {
   generated: "2026-11-24",
   versions,
@@ -130,15 +159,15 @@ const payload = {
   start: START,
   end: END,
   count: chars.length,
-  presets: {
-    wordpress: compact(chars, wordpress),
-    django: compact(chars, pythonOut.django),
-    "python-slugify": compact(chars, pythonOut.python_slugify),
-    "npm-slugify": compact(chars, npmSlugs),
+  presets: slicePresets(0, chars),
+  smp: {
+    ranges: SMP_RANGES,
+    count: smpChars.length,
+    presets: slicePresets(chars.length, smpChars),
   },
 };
 
 const outPath = path.join(root, "tests/slug/fixtures/sweep-expected.json.gz");
 const zipped = gzipSync(Buffer.from(`${JSON.stringify(payload)}\n`), { level: 9 });
 writeFileSync(outPath, zipped);
-console.log(`Wrote ${chars.length} characters to ${path.relative(root, outPath)} (${zipped.length} bytes gzipped)`);
+console.log(`Wrote ${chars.length} BMP + ${smpChars.length} SMP characters to ${path.relative(root, outPath)} (${zipped.length} bytes gzipped)`);
