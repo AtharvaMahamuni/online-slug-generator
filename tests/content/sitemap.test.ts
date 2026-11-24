@@ -36,9 +36,17 @@ function isIndexableRoute(route: string): boolean {
   return INDEXED_LOCALES.includes(getLocaleFromUrl(route));
 }
 
+function sourceDeclaresNoindex(source: string): boolean {
+  return (
+    /name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(source) ||
+    /content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["']/i.test(source)
+  );
+}
+
 function indexableFromSource(): string[] {
   return walk(pagesDir)
     .filter((file) => file.endsWith(".astro"))
+    .filter((file) => !sourceDeclaresNoindex(readFileSync(file, "utf8")))
     .map((file) => astroToPath(path.relative(pagesDir, file)))
     .filter(isIndexableRoute)
     .map((route) => (route === "/" ? `${SITE}/` : `${SITE}${route}`))
@@ -50,6 +58,38 @@ function robotsContent(html: string): string {
     html.match(/<meta\b[^>]*\bname="robots"[^>]*\bcontent="([^"]+)"/i) ??
     html.match(/<meta\b[^>]*\bcontent="([^"]+)"[^>]*\bname="robots"/i);
   return match?.[1] ?? "";
+}
+
+function refreshTarget(html: string): string | null {
+  const match =
+    html.match(/<meta\b[^>]*\bhttp-equiv="refresh"[^>]*\bcontent="([^"]+)"/i) ??
+    html.match(/<meta\b[^>]*\bcontent="([^"]+)"[^>]*\bhttp-equiv="refresh"/i);
+  if (!match?.[1]) return null;
+  const urlMatch = match[1].match(/url\s*=\s*([^;\s]+)/i);
+  return urlMatch?.[1]?.trim() ?? null;
+}
+
+function resolveSiteUrl(target: string | null): string | null {
+  if (!target) return null;
+  try {
+    const url = new URL(target, `${SITE}/`);
+    if (url.origin !== SITE) return null;
+    const suffix = `${url.pathname}${url.search}${url.hash}`;
+    return suffix === "/" ? `${SITE}/` : `${SITE}${suffix}`;
+  } catch {
+    return null;
+  }
+}
+
+function movedDestination(html: string): string | null {
+  if (!robotsContent(html).includes("noindex")) return null;
+  const dest = resolveSiteUrl(refreshTarget(html));
+  const canon =
+    html.match(/<link\b[^>]*\brel="canonical"[^>]*\bhref="([^"]+)"/i)?.[1] ??
+    html.match(/<link\b[^>]*\bhref="([^"]+)"[^>]*\brel="canonical"/i)?.[1] ??
+    null;
+  if (!dest || !canon || dest !== canon) return null;
+  return dest;
 }
 
 function indexableFromDist(): string[] {
@@ -115,6 +155,11 @@ describe("sitemap", () => {
           null;
         if (rel === "llms.html") {
           expect(canonical, rel).toBeNull();
+          continue;
+        }
+        const movedTo = movedDestination(html);
+        if (movedTo) {
+          expect(canonical, rel).toBe(movedTo);
           continue;
         }
         const expectedCanonical =

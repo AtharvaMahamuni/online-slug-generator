@@ -3,7 +3,7 @@ import GuideLayout from "../../layouts/GuideLayout.astro";
 
 const title = "Unicode URL Slugs: Accents, Umlauts and Non-Latin Text";
 const description =
-  "How to slug accented, German and non-Latin titles: ASCII folding, keeping Cyrillic or Han letters, percent-encoding and what a CMS does with each choice.";
+  "How to slug accented, German and non-Latin titles: ASCII folding, keeping Cyrillic or Han letters, percent-encoding, and what a CMS does with each.";
 ---
 
 <GuideLayout
@@ -116,7 +116,7 @@ const description =
     A CSV is bytes before it is rows. Save it as UTF-8. The parser accepts a leading byte-order mark and does not treat that mark as a character in the first header. If you save a spreadsheet as “CSV (Macintosh)” or as a national code page, accented letters can arrive as the wrong characters, and the fold will faithfully fold the wrong thing. Open the file in a plain editor and look at one Café row before you convert ten thousand of them.
   </p>
   <p>
-    The bulk tool reads the file on your device. It does not upload the catalogue, and it does not send titles to a translation API. There is no network step hiding inside the letter policy. That also means there is no server dictionary you can opt into. The <a href="/guides/bulk-url-slug-generation">bulk guide</a> covers columns, duplicate suffixes, and the export that keeps Product ID next to the slug. The <a href="/">single tool</a> is enough when you are deciding, on one title, whether Café should stay accented.
+    The bulk tool reads the file on your device. It does not upload the catalogue, and it does not send titles to a translation API. There is no network step hiding inside the letter policy. That also means there is no server dictionary you can opt into. The <a href="/">URL slug generator</a> is enough when you are deciding, on one title, whether to keep or fold accents. The rest of the rule list is in <a href="/guides/how-to-create-url-slugs">URL slug best practices</a>.
   </p>
   <p>
     After you choose a policy, leave it for the batch. Mixing Keep and Latin inside one catalogue produces two conventions and a set of duplicates that differ only by an accent. The duplicate suffix compares the finished slug, so <code>cafe</code> and <code>café</code> are not duplicates. They are two addresses. That is sometimes what you want for two languages. It is rarely what you want for one language typed two ways.

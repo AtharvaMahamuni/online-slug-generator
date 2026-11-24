@@ -9,7 +9,7 @@ import { canonical } from "../lib/site";
 
 const title = "Bulk Slug Generator: Turn a List or CSV Into URL Slugs";
 const description =
-  "Convert a list or a CSV of titles into URL slugs. Keeps your other columns, adds -2 to duplicates and exports CSV. Runs in your browser, nothing uploaded.";
+  "Convert a list or a CSV of titles into URL slugs. Keeps your other columns, adds -2 to duplicates and exports CSV. Runs in your browser.";
 const schema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -124,24 +124,39 @@ const schema = {
       </p>
     </section>
     <section>
+      <h2>What does the tool refuse to do with a file?</h2>
+      <p>
+        The file has to be 5 MB or smaller. A larger file is rejected before it is read, so a huge export does not get parsed halfway. After a successful read, only the first 10,000 data rows are kept. If the file has more, the page tells you how many were dropped. Split the export and run it in parts if you hit that line. JSON and Excel workbooks (XLSX) are not accepted. The accepted inputs are a pasted list, a TXT file, or a CSV file.
+      </p>
+      <p>
+        It does not upload the file. It does not send rows to an API to detect duplicates against the public web. It does not invent a Product ID if the column was blank. A missing cell becomes an empty source and, if there is nothing else in the title, an empty slug.
+      </p>
+    </section>
+    <section>
+      <h2>How do you check a sample before the full export?</h2>
+      <p>
+        Run the real file, then read the first page of results and the duplicate states, not a hand-built sample of easy titles. Check one accented name, one name with an ampersand, one name that is only a model number, and one pair you know are identical. Open the CSV in a spreadsheet and confirm that Product ID survived and that the slug column is new. Then import one row into the CMS and load the public URL.
+      </p>
+      <p>
+        If that row is right, export the rest. If it is wrong, change the setting and run again from the file so edited experiments do not linger on the wrong rows. Letter and script choices are covered in <a href="/guides/unicode-and-international-urls">Unicode URL slugs</a>.
+      </p>
+    </section>
+    <section>
       <h2>Guides and technical documentation</h2>
+      <p>
+        For the full rule list, see <a href="/guides/how-to-create-url-slugs">URL slug best practices</a>. Letter and script choices are in the <a href="/guides/unicode-and-international-urls">Unicode URL slugs</a> guide.
+      </p>
       <ul class="guide-cards">
         <li class="guide-card-item">
-          <a class="guide-card" href="/guides/bulk-url-slug-generation">
-            <span class="guide-card-title">Bulk URL slug generation guide <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
-            <span class="guide-card-desc">Detailed guide on handling spreadsheets, CSV delimiters, memory limits, and exports.</span>
+          <a class="guide-card" href="/guides/how-to-create-url-slugs">
+            <span class="guide-card-title">URL slug best practices <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-desc">Best practices for case sensitivity, hyphens, stop words, and URL structure.</span>
           </a>
         </li>
         <li class="guide-card-item">
           <a class="guide-card" href="/guides/unicode-and-international-urls">
-            <span class="guide-card-title">International characters &amp; UTF-8 <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+            <span class="guide-card-title">Unicode URL slugs <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
             <span class="guide-card-desc">How multilingual catalogues handle diacritics, accents, and non-Latin character sets.</span>
-          </a>
-        </li>
-        <li class="guide-card-item">
-          <a class="guide-card" href="/guides/how-to-create-url-slugs">
-            <span class="guide-card-title">How to create a URL slug <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
-            <span class="guide-card-desc">Best practices for case sensitivity, hyphens, stop words, and URL structure.</span>
           </a>
         </li>
       </ul>

@@ -3,12 +3,12 @@ import GuideLayout from "../../layouts/GuideLayout.astro";
 
 const title = "What Is a URL Slug? Meaning, Examples and Rules";
 const description =
-  "A URL slug is the readable last part of a web address, like how-to-prune-roses. See its meaning, real examples, allowed characters and slug vs permalink.";
+  "A URL slug is the readable last part of a web address, like how-to-prune-roses. See its meaning, examples, allowed characters and slug vs permalink.";
 ---
 
 <GuideLayout title={title} description={description} path="/guides/what-is-a-url-slug" h1="What is a URL slug?">
   <p>
-    A URL slug is the readable last part of a web address that names one page, such as <code>how-to-prune-roses</code> in <code>https://example.com/guides/how-to-prune-roses</code>. A slug is not the domain, the protocol, or a query string. The steps that turn a title into that slug are in the <a href="/guides/how-to-create-url-slugs">URL slug best practices</a> guide.
+    A URL slug is the readable last part of a web address that names one page, such as <code>how-to-prune-roses</code> in <code>https://example.com/guides/how-to-prune-roses</code>. A slug is not the domain, the protocol, or a query string. To try it on a title, use the <a href="/">URL slug generator</a>. The steps that turn a title into that slug are in the <a href="/guides/how-to-create-url-slugs">URL slug best practices</a> guide.
   </p>
 
   <h2>What does slug mean in a URL?</h2>
@@ -18,7 +18,7 @@ const description =
 
   <h2>URL slug examples</h2>
   <p>
-    These are ordinary pages and the slug each title produces under the default Readable URL preset.
+    These are ordinary pages and the slug each title produces under the default Readable URL preset. Use the <a href="/bulk-slug-generator">bulk slug generator</a> for a whole list.
   </p>
   <div class="table-wrap">
     <table>
@@ -132,7 +132,7 @@ const description =
     Spaces never belong in the finished slug. A space in a path has to be encoded as <code>%20</code> or as a plus in some query strings, and both are harder to read and easier to get wrong when a link is copied into a message. The tool turns a run of spaces into one separator.
   </p>
   <p>
-    Some letters need a decision rather than a deletion. <code>é</code> can stay, or it can fold to <code>e</code>. <code>ß</code> does not become a plain <code>s</code> by stripping a mark; the Latin-to-ASCII step maps it to <code>ss</code>, so Straße becomes <code>strasse</code>. Characters from other scripts are kept. Привет stays Cyrillic. 東京 stays Japanese. The <a href="/guides/unicode-and-international-urls">Unicode guide</a> is the page for that choice. This page only needs the rule that “non-Latin” is not the same thing as “invalid.”
+    Some letters need a decision rather than a deletion. <code>é</code> can stay, or it can fold to <code>e</code>. <code>ß</code> does not become a plain <code>s</code> by stripping a mark; the Latin-to-ASCII step maps it to <code>ss</code>, so Straße becomes <code>strasse</code>. Characters from other scripts are kept. Привет stays Cyrillic. 東京 stays Japanese. This page only needs the rule that “non-Latin” is not the same thing as “invalid.”
   </p>
 
   <h2>What does a slug not do?</h2>

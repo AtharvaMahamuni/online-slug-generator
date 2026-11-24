@@ -1,8 +1,10 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 const pages = path.resolve("src/pages");
+const publicDir = path.resolve("public");
+const srcDir = path.resolve("src");
 
 function read(relative: string): string {
   return readFileSync(path.join(pages, relative), "utf8");
@@ -37,6 +39,7 @@ function title(source: string): string {
 const retitled = [
   "index.astro",
   "bulk-slug-generator.astro",
+  "about.astro",
   "guides/index.astro",
   "guides/what-is-a-url-slug.astro",
   "guides/how-to-create-url-slugs.astro",
@@ -44,13 +47,33 @@ const retitled = [
   "guides/unicode-and-international-urls.astro",
 ];
 
-const guides = [
-  "guides/what-is-a-url-slug.astro",
-  "guides/how-to-create-url-slugs.astro",
-  "guides/hyphens-vs-underscores-in-urls.astro",
-  "guides/unicode-and-international-urls.astro",
-  "guides/bulk-url-slug-generation.astro",
-];
+function sourceDeclaresNoindex(source: string): boolean {
+  return (
+    /name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(source) ||
+    /content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["']/i.test(source)
+  );
+}
+
+function liveGuides(): string[] {
+  return readdirSync(path.join(pages, "guides"))
+    .filter((file) => file.endsWith(".astro") && file !== "index.astro")
+    .filter((file) => !sourceDeclaresNoindex(read(`guides/${file}`)))
+    .map((file) => `guides/${file}`)
+    .sort();
+}
+
+const guides = liveGuides();
+
+function walk(dir: string, found: string[] = []): string[] {
+  for (const entry of readdirSync(dir)) {
+    const full = path.join(dir, entry);
+    if (statSync(full).isDirectory()) walk(full, found);
+    else found.push(full);
+  }
+  return found;
+}
+
+const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 
 describe("content floors", () => {
   it("keeps the home knowledge layer at 500 words or more", () => {
@@ -101,5 +124,73 @@ describe("metadata", () => {
     expect(source.toLocaleLowerCase("en")).not.toContain("completely secure");
     expect(source).not.toContain("googletagmanager");
     expect(source).not.toContain("google-analytics");
+  });
+
+  it("keeps every page title free of em and en dashes", () => {
+    for (const file of files) {
+      const value = title(read(file));
+      expect(value, file).not.toMatch(/\u2013|\u2014/);
+    }
+  });
+});
+
+describe("guide inventory", () => {
+  const countWord = NUMBER_WORDS[guides.length];
+  const wrongCount = new RegExp(
+    `\\b(?:${NUMBER_WORDS.filter((word) => word !== countWord).join("|")})\\s+(?:core\\s+)?(?:HTML\\s+)?(?:references?|guides?)\\b`,
+    "i",
+  );
+  const copyFiles = [
+    path.join(publicDir, "llms.txt"),
+    path.join(publicDir, "llms-full.txt"),
+    path.join(publicDir, "llms.html"),
+    path.join(pages, "about.astro"),
+    path.join(pages, "404.astro"),
+    path.join(pages, "guides/index.astro"),
+  ];
+
+  it("keeps published copy in sync with the live guide list", () => {
+    expect(guides.length).toBeGreaterThan(0);
+    expect(countWord, "missing number word for guide count").toBeTruthy();
+    for (const file of copyFiles) {
+      const body = readFileSync(file, "utf8");
+      expect(body, path.relative(".", file)).not.toMatch(wrongCount);
+    }
+  });
+
+  it("links each live guide to the homepage and to exactly one sibling guide", () => {
+    for (const guide of guides) {
+      const body = template(read(guide));
+      expect(body, guide).toMatch(/href="\/"/);
+      const hrefs = [...body.matchAll(/href="(\/guides\/[^"]+)"/g)].map((match) => match[1]);
+      const siblings = [...new Set(hrefs)].filter((href) => href !== "/guides");
+      expect(siblings, guide).toHaveLength(1);
+    }
+  });
+
+  it("does not point internal links at a moved noindex guide URL", () => {
+    const moved = walk(path.join(pages, "guides"))
+      .filter((file) => file.endsWith(".astro"))
+      .filter((file) => sourceDeclaresNoindex(readFileSync(file, "utf8")))
+      .map((file) => {
+        const route = "/" + path.relative(pages, file).replace(/\.astro$/, "").split(path.sep).join("/");
+        return route.endsWith("/index") ? route.slice(0, -"/index".length) : route;
+      });
+    const skip = new Set(
+      walk(path.join(pages, "guides"))
+        .filter((file) => file.endsWith(".astro") && sourceDeclaresNoindex(readFileSync(file, "utf8"))),
+    );
+    const filesToScan = [
+      ...walk(srcDir).filter((file) => file.endsWith(".astro") || file.endsWith(".ts") || file.endsWith(".js")),
+      ...walk(publicDir).filter((file) => /\.(txt|html|xml|json)$/.test(file)),
+    ].filter((file) => !skip.has(file));
+    for (const file of filesToScan) {
+      const body = readFileSync(file, "utf8");
+      for (const route of moved) {
+        expect(body, path.relative(".", file)).not.toMatch(
+          new RegExp(`(?:href=["']|https://onlinesluggenerator\\.com)${route.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:["'\s]|$)`),
+        );
+      }
+    }
   });
 });
