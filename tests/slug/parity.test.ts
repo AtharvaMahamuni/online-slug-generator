@@ -42,9 +42,11 @@ describe("parity presets", () => {
         const raw = slugifyParity(row.title, preset);
         const displayed = slugify(row.title, PRESETS[preset]).slug;
         if (row.unsupported?.includes(preset)) {
+          const result = slugify(row.title, PRESETS[preset]);
           expect(raw, `${preset} unsupported for ${row.title}`).not.toBe(row[preset]);
-          expect(displayed, `${preset} display for ${row.title}`).toBe("not matched");
-          expect(displayed).not.toBe("");
+          expect(displayed, `${preset} display for ${row.title}`).toBe("");
+          expect(result.flags.unmatched, `${preset} unmatched for ${row.title}`).toBe(true);
+          expect(changeNote(result)).toBe("Not matched");
           continue;
         }
         expect(raw, `${preset}: ${row.title}`).toBe(row[preset]);
@@ -63,7 +65,16 @@ describe("parity presets", () => {
       "Ben &amp; Jerry",
       "1,000 rows",
       "Ελληνικά νέα",
+      "Fußball ẞig",
+      "5 < 6 > 4",
+      "&eacute;cole",
+      "§ 12",
+      "‰ permille",
+      "ŉ test",
+      "ɐ ə ɛ",
     ]));
+    expect(titles.some((title) => title.includes("\ufeff"))).toBe(true);
+    expect(titles.some((title) => title.includes("\u00ad"))).toBe(true);
     expect(titles.some((title) => title.includes("\u2011"))).toBe(true);
     expect(titles.some((title) => title.includes("<b>"))).toBe(true);
     const comma = fixture.rows.find((row) => row.title === "1,000 rows");
@@ -90,7 +101,9 @@ describe("parity presets", () => {
       for (const preset of PRESET_IDS) {
         if (row.unsupported?.includes(preset)) {
           expect(row[preset]).not.toBe("not matched");
-          expect(slugify(title, PRESETS[preset]).slug).toBe("not matched");
+          const result = slugify(title, PRESETS[preset]);
+          expect(result.slug).toBe("");
+          expect(result.flags.unmatched).toBe(true);
           continue;
         }
         expect(slugify(title, PRESETS[preset]).slug).toBe(row[preset]);
@@ -109,6 +122,34 @@ describe("parity presets", () => {
     expect(changeNote(cafe)).toBe("Latin accents were folded to ASCII.");
   });
 });
+
+
+  it("matches the widened WordPress and python-slugify cases", () => {
+    const python = PRESETS["python-slugify"];
+    expect(slugify("&rsquo;s", python).slug).toBe("s");
+    expect(slugify("&mdash;dash", python).slug).toBe("dash");
+    expect(slugify("&ndash;", python).slug).toBe("");
+    expect(slugify("&hellip;more", python).slug).toBe("more");
+    expect(slugify("&eacute;cole", python).slug).toBe("e-cole");
+    expect(slugify("§ 12", python).slug).toBe("ss-12");
+    expect(slugify("¶ para", python).slug).toBe("p-para");
+    expect(slugify("¢ ¥ ₹ ₽ ₿", python).slug).toBe("c-y");
+    expect(slugify("‰ permille", python).slug).toBe("0-permille");
+    expect(slugify("soft\u00adhyphen", python).slug).toBe("softhyphen");
+    expect(slugify("a\u200cb", python).slug).toBe("ab");
+    expect(slugify("\ufeffabc", python).slug).toBe("abc");
+    expect(slugify("ŉ test", python).slug).toBe("n-test");
+    expect(slugify("ŉ test", python).flags.unmatched).toBe(false);
+    expect(slugify("ɐ ə ɛ", python).flags.unmatched).toBe(true);
+    expect(slugify("ɐ ə ɛ", python).slug).toBe("");
+
+    const wordpress = PRESETS.wordpress;
+    expect(slugify("Fußball ẞig", wordpress).slug).toBe("fusball-%c3%9fig");
+    expect(slugify("bom\ufeffhere", wordpress).slug).toBe("bomhere");
+    expect(slugify("obj\ufffchere", wordpress).slug).toBe("objhere");
+    expect(slugify("5 < 6 > 4", wordpress).slug).toBe("5-6-4");
+    expect(slugify("ﬁ ﬂ ﬃ", wordpress).slug).toBe("%ef%ac%81-%ef%ac%82-%ef%ac%83");
+  });
 
 describe("home parity table", () => {
   it("prints fixture values, Readable URL defaults, not matched, and (empty)", () => {

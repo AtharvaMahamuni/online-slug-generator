@@ -37,6 +37,7 @@ type BulkRow = {
   transliterated: boolean;
   stopWordsRemoved: boolean;
   numbersRemoved: boolean;
+  unmatched: boolean;
   cleaned: string;
 };
 
@@ -99,14 +100,16 @@ function previewText(slug: string): string {
   return prefix ? `${prefix}/${slug}` : slug;
 }
 
+let previewBlocked = false;
+
 function updatePreview(): void {
   const box = document.getElementById("url-preview");
   const text = document.getElementById("url-preview-text");
   const slug = document.getElementById("slug");
   if (!box || !text) return;
-  box.hidden = !settings.urlPreview;
+  box.hidden = !settings.urlPreview || previewBlocked;
   const value = slug instanceof HTMLTextAreaElement ? slug.value : "";
-  text.textContent = previewText(value);
+  text.textContent = previewBlocked ? "" : previewText(value);
 }
 
 function syncControls(): void {
@@ -366,6 +369,9 @@ function initSingle(): void {
       dirty = false;
       update.hidden = true;
     }
+    previewBlocked = result.flags.unmatched && !dirty;
+    const copyButton = must<HTMLButtonElement>("copy");
+    copyButton.disabled = previewBlocked;
     titleCount.textContent = countLabel(title.value);
     slugCount.textContent = countLabel(slug.value);
     const preserved = /[^\u0000-\u007f]/.test(writeField ? result.slug : slug.value);
@@ -390,7 +396,7 @@ function initSingle(): void {
       if ((live.dataset.ticket ?? "") !== ticket) return;
       if (slug.value === lastAnnounced) return;
       lastAnnounced = slug.value;
-      live.textContent = slug.value ? "Slug updated" : "";
+      live.textContent = previewBlocked ? "Not matched" : slug.value ? "Slug updated" : "";
     }, 600);
   };
 
@@ -418,6 +424,10 @@ function initSingle(): void {
   slug.addEventListener("input", () => {
     dirty = slug.value !== lastAuto;
     update.hidden = !dirty;
+    if (dirty) {
+      previewBlocked = false;
+      must<HTMLButtonElement>("copy").disabled = false;
+    }
     slugCount.textContent = countLabel(slug.value);
     updatePreview();
   });
@@ -449,6 +459,7 @@ function initSingle(): void {
 }
 
 function stateWord(row: BulkRow): string {
+  if (row.unmatched) return "Not matched";
   if (row.duplicate) return "Duplicate";
   if (row.edited) return "Edited";
   if (row.truncated || row.lengthWarning) return "Truncated";
@@ -496,6 +507,7 @@ function renderRow(row: BulkRow, index: number): HTMLTableRowElement {
   button.dataset.idleLabel = "Copy";
   button.setAttribute("aria-label", `Copy row ${number}`);
   button.dataset.tip = "Copy this row's slug";
+  button.disabled = row.unmatched;
   button.addEventListener("click", () => {
     void copyText(row.slug, input, button);
   });
@@ -536,8 +548,11 @@ function syncVisibleRows(): void {
       const row = rows[start + offset];
       if (!row) return;
       if (document.activeElement !== input && input.value !== row.slug) input.value = row.slug;
-      const state = input.closest("tr")?.querySelector(".state");
+      const rowEl = input.closest("tr");
+      const state = rowEl?.querySelector(".state");
       if (state) state.textContent = stateWord(row);
+      const copyButton = rowEl?.querySelector("button");
+      if (copyButton instanceof HTMLButtonElement) copyButton.disabled = row.unmatched;
     });
 }
 
@@ -552,9 +567,10 @@ function recheckDuplicates(): void {
     const next = assigned[index];
     if (!next) return;
     row.slug = next.slug;
+    if (row.edited) row.unmatched = false;
     row.duplicate = next.duplicate;
     row.lengthWarning = next.lengthWarning;
-    row.empty = next.slug.length === 0;
+    row.empty = next.slug.length === 0 && !row.unmatched;
   });
   syncVisibleRows();
 }
@@ -590,11 +606,12 @@ async function recomputeBulk(): Promise<void> {
       row.transliterated = base.result.flags.transliterated;
       row.stopWordsRemoved = base.result.flags.stopWordsRemoved;
       row.numbersRemoved = base.result.flags.numbersRemoved;
+      row.unmatched = base.result.flags.unmatched;
     }
     row.slug = next.slug;
     row.duplicate = next.duplicate;
     row.lengthWarning = next.lengthWarning;
-    row.empty = next.slug.length === 0;
+    row.empty = next.slug.length === 0 && !row.unmatched;
   });
   renderBulk();
 }
@@ -705,6 +722,7 @@ function applyLoadedFile(reportErrors = false): void {
       transliterated: false,
       stopWordsRemoved: false,
       numbersRemoved: false,
+      unmatched: false,
       cleaned: "",
     } satisfies BulkRow;
   });
@@ -880,6 +898,7 @@ function initBulk(): void {
         transliterated: false,
         stopWordsRemoved: false,
         numbersRemoved: false,
+        unmatched: false,
         cleaned: "",
       } satisfies BulkRow;
     });

@@ -8,6 +8,11 @@ export default defineConfig({
     format: "file",
     inlineStylesheets: "never",
   },
+  vite: {
+    esbuild: {
+      legalComments: "inline",
+    },
+  },
   i18n: {
     defaultLocale: "en",
     locales: ["en", "es", "de", "fr", "pt"],

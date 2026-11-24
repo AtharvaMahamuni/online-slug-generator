@@ -120,4 +120,19 @@ describe("csv and export", () => {
     expect(kept).toEqual(["Roses", "Prunes"]);
     expect(skipped).toBeGreaterThan(0);
   });
+
+  it("exports empty slugs for unmatched rows without writing not matched", () => {
+    const exported = buildExport({
+      sourceHeaders: ["title"],
+      sourceRows: [["東京"], ["東京"], ["Café"], ["Ελληνικά"]],
+      slugs: ["", "", "cafe", ""],
+    });
+    expect(exported.rows.map((row) => row[1])).toEqual(["", "", "cafe", ""]);
+    expect(toTxt(exported.rows.map((row) => row[1] ?? ""))).toBe("\n\ncafe\n\n");
+    expect(exported.csv).toContain("東京,");
+    expect(exported.csv).toContain(",cafe");
+    expect(exported.csv).not.toContain("not matched");
+    expect(exported.txt).not.toContain("not matched");
+    expect(exported.txt).not.toContain("-2");
+  });
 });

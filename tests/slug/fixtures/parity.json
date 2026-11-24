@@ -402,6 +402,163 @@
       "unsupported": [
         "python-slugify"
       ]
+    },
+    {
+      "title": "Fußball ẞig",
+      "wordpress": "fusball-%c3%9fig",
+      "django": "fuball-ig",
+      "python-slugify": "fussball-ssig",
+      "npm-slugify": "fussball-ssig"
+    },
+    {
+      "title": "bom﻿here",
+      "wordpress": "bomhere",
+      "django": "bomhere",
+      "python-slugify": "bomhere",
+      "npm-slugify": "bom-here"
+    },
+    {
+      "title": "obj￼here",
+      "wordpress": "objhere",
+      "django": "objhere",
+      "python-slugify": "objhere",
+      "npm-slugify": "objhere"
+    },
+    {
+      "title": "5 < 6 > 4",
+      "wordpress": "5-6-4",
+      "django": "5-6-4",
+      "python-slugify": "5-6-4",
+      "npm-slugify": "5-less-6-greater-4"
+    },
+    {
+      "title": "&rsquo;s",
+      "wordpress": "s",
+      "django": "rsquos",
+      "python-slugify": "s",
+      "npm-slugify": "andrsquos"
+    },
+    {
+      "title": "&mdash;dash",
+      "wordpress": "dash",
+      "django": "mdashdash",
+      "python-slugify": "dash",
+      "npm-slugify": "andmdashdash"
+    },
+    {
+      "title": "&ndash;",
+      "wordpress": "",
+      "django": "ndash",
+      "python-slugify": "",
+      "npm-slugify": "andndash"
+    },
+    {
+      "title": "&hellip;more",
+      "wordpress": "more",
+      "django": "hellipmore",
+      "python-slugify": "more",
+      "npm-slugify": "andhellipmore"
+    },
+    {
+      "title": "&eacute;cole",
+      "wordpress": "cole",
+      "django": "eacutecole",
+      "python-slugify": "e-cole",
+      "npm-slugify": "andeacutecole"
+    },
+    {
+      "title": "§ 12",
+      "wordpress": "%c2%a7-12",
+      "django": "12",
+      "python-slugify": "ss-12",
+      "npm-slugify": "12"
+    },
+    {
+      "title": "¶ para",
+      "wordpress": "%c2%b6-para",
+      "django": "para",
+      "python-slugify": "p-para",
+      "npm-slugify": "para"
+    },
+    {
+      "title": "¢ ¥ ₹ ₽ ₿",
+      "wordpress": "%c2%a2-%c2%a5-%e2%82%b9-%e2%82%bd-%e2%82%bf",
+      "django": "",
+      "python-slugify": "c-y",
+      "npm-slugify": "cent-yen-indian-rupee-russian-ruble-bitcoin"
+    },
+    {
+      "title": "‰ permille",
+      "wordpress": "%e2%80%b0-permille",
+      "django": "permille",
+      "python-slugify": "0-permille",
+      "npm-slugify": "permille"
+    },
+    {
+      "title": "soft­hyphen",
+      "wordpress": "softhyphen",
+      "django": "softhyphen",
+      "python-slugify": "softhyphen",
+      "npm-slugify": "softhyphen"
+    },
+    {
+      "title": "a‌b",
+      "wordpress": "ab",
+      "django": "ab",
+      "python-slugify": "ab",
+      "npm-slugify": "ab"
+    },
+    {
+      "title": "﻿abc",
+      "wordpress": "abc",
+      "django": "abc",
+      "python-slugify": "abc",
+      "npm-slugify": "abc"
+    },
+    {
+      "title": "ɐ ə ɛ",
+      "wordpress": "%c9%90-%c9%99-%c9%9b",
+      "django": "",
+      "python-slugify": "a-e",
+      "npm-slugify": "e",
+      "unsupported": [
+        "python-slugify"
+      ]
+    },
+    {
+      "title": "ŉ test",
+      "wordpress": "n-test",
+      "django": "n-test",
+      "python-slugify": "n-test",
+      "npm-slugify": "test"
+    },
+    {
+      "title": "ﬁ ﬂ ﬃ",
+      "wordpress": "%ef%ac%81-%ef%ac%82-%ef%ac%83",
+      "django": "fi-fl-ffi",
+      "python-slugify": "fi-fl-ffi",
+      "npm-slugify": ""
+    },
+    {
+      "title": "ĳ Ĳ",
+      "wordpress": "ij-ij",
+      "django": "ij-ij",
+      "python-slugify": "ij-ij",
+      "npm-slugify": ""
+    },
+    {
+      "title": "ſ long s",
+      "wordpress": "s-long-s",
+      "django": "s-long-s",
+      "python-slugify": "s-long-s",
+      "npm-slugify": "long-s"
+    },
+    {
+      "title": "Ɐ turned",
+      "wordpress": "%c9%90-turned",
+      "django": "turned",
+      "python-slugify": "turned",
+      "npm-slugify": "turned"
     }
   ]
 }

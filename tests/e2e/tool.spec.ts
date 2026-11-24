@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import fs from "node:fs";
 import path from "node:path";
 
 test("single mode types a slug and copies it", async ({ page }) => {
@@ -224,6 +225,48 @@ test("switching to the WordPress preset follows sanitize_title on the test title
   await expect(page.locator("#change-note")).toHaveText("Latin accents were folded to ASCII.");
   await page.locator("#preset").selectOption("python-slugify");
   await page.locator("#title").fill("東京");
-  await expect(page.locator("#slug")).toHaveValue("not matched");
-  await expect(page.locator("#change-note")).toHaveText("This title is not matched by the selected preset.");
+  await expect(page.locator("#slug")).toHaveValue("");
+  await expect(page.locator("#change-note")).toHaveText("Not matched");
+  await expect(page.locator("#copy")).toBeDisabled();
+  await page.locator("#advanced-open").click();
+  await page.locator("#url-preview-toggle").check({ force: true });
+  await expect(page.locator("#url-preview")).toBeHidden();
+  await expect(page.locator("#url-preview-text")).toHaveText("");
+  await expect(page.locator(".qa-heading")).toHaveText("URL Slug FAQs & Best Practices");
+});
+
+test("bulk python-slugify leaves unmatched slugs empty and omits them from export numbering", async ({ page }) => {
+  await page.goto("/bulk-slug-generator");
+  await page.locator("#preset").selectOption("python-slugify");
+  await page.locator("#bulk-input").fill("東京\n東京\nCafé\nΕλληνικά");
+  await expect(page.getByLabel("Slug for row 1")).toHaveValue("");
+  await expect(page.getByLabel("Slug for row 2")).toHaveValue("");
+  await expect(page.getByLabel("Slug for row 3")).toHaveValue("cafe");
+  await expect(page.getByLabel("Slug for row 4")).toHaveValue("");
+  await expect(page.locator(".state").nth(0)).toHaveText("Not matched");
+  await expect(page.locator(".state").nth(1)).toHaveText("Not matched");
+  await expect(page.locator(".state").nth(2)).toHaveText("OK");
+  await expect(page.locator(".state").nth(3)).toHaveText("Not matched");
+  await expect(page.getByRole("button", { name: "Copy row 4" })).toBeDisabled();
+  await expect(page.locator(".qa-heading")).toHaveText("Bulk Processing FAQs & Data Workflows");
+
+  const [txtDownload] = await Promise.all([
+    page.waitForEvent("download"),
+    page.locator("#export-txt").click(),
+  ]);
+  const txtPath = await txtDownload.path();
+  if (!txtPath) throw new Error("missing txt download");
+  const txt = fs.readFileSync(txtPath, "utf8");
+  expect(txt).toBe("\n\ncafe\n\n");
+  expect(txt).not.toContain("not matched");
+
+  const [csvDownload] = await Promise.all([
+    page.waitForEvent("download"),
+    page.locator("#export-csv").click(),
+  ]);
+  const csvPath = await csvDownload.path();
+  if (!csvPath) throw new Error("missing csv download");
+  const csv = fs.readFileSync(csvPath, "utf8");
+  expect(csv).not.toContain("not matched");
+  expect(csv).toMatch(/東京,\r?\n東京,\r?\nCafé,cafe\r?\nΕλληνικά,\r?\n/);
 });

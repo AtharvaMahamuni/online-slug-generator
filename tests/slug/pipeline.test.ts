@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { slugify, slugifyBatch } from "../../src/lib/slug/pipeline";
-import { DEFAULT_CONFIG } from "../../src/lib/slug/presets";
+import { changeNote, slugify, slugifyBatch } from "../../src/lib/slug/pipeline";
+import { DEFAULT_CONFIG, PRESETS } from "../../src/lib/slug/presets";
 import type { SlugConfig } from "../../src/lib/slug/types";
 
 function cfg(patch: Partial<SlugConfig> = {}): SlugConfig {
@@ -136,5 +136,20 @@ describe("slug pipeline", () => {
   it("preserves Latin accents when asked", () => {
     expect(slugify("Café", cfg({ letterPolicy: "preserve" })).slug).toBe("café");
     expect(slugify("Café", cfg({ letterPolicy: "preserve" })).flags.transliterated).toBe(false);
+  });
+
+  it("keeps an unmatched parity slug empty and out of duplicate numbering", () => {
+    const tokyo = slugify("東京", PRESETS["python-slugify"]);
+    expect(tokyo.slug).toBe("");
+    expect(tokyo.flags.unmatched).toBe(true);
+    expect(tokyo.flags.empty).toBe(false);
+    expect(changeNote(tokyo)).toBe("Not matched");
+
+    const rows = slugifyBatch(["東京", "東京", "Café", "Ελληνικά"], PRESETS["python-slugify"]);
+    expect(rows.map((row) => row.slug)).toEqual(["", "", "cafe", ""]);
+    expect(rows.map((row) => row.flags.unmatched)).toEqual([true, true, false, true]);
+    expect(rows.map((row) => row.duplicate)).toEqual([false, false, false, false]);
+    expect(rows.map((row) => row.flags.empty)).toEqual([false, false, false, false]);
+    expect(rows[2]?.slug).toBe("cafe");
   });
 });

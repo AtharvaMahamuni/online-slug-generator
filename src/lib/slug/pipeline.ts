@@ -87,7 +87,7 @@ export function slugify(
   const cleaned = cleanText(original);
   if (config.parity) {
     const result = paritySlug(original, config.parity);
-    const slug = result.unsupported ? "not matched" : result.slug;
+    const slug = result.unsupported ? "" : result.slug;
     const flags: SlugFlags = {
       truncated: false,
       transliterated: !result.unsupported && latinAccentsWereFolded(original),
@@ -164,7 +164,7 @@ export function slugifyBatch(
       lengthWarning: next.lengthWarning,
       flags: {
         ...row.flags,
-        empty: next.slug.length === 0,
+        empty: next.slug.length === 0 && !row.flags.unmatched,
       },
     };
   });
@@ -173,7 +173,7 @@ export function slugifyBatch(
 export function changeNote(result: Pick<SlugResult, "slug" | "flags"> & { preservedNonLatin?: boolean }): string {
   const notes: string[] = [];
   if (result.flags.unmatched) {
-    return "This title is not matched by the selected preset.";
+    return "Not matched";
   }
   if (result.flags.htmlStripped) notes.push("HTML tags were removed");
   if (result.flags.transliterated) notes.push("Latin accents were folded to ASCII");
