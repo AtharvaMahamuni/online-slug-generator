@@ -3,7 +3,7 @@ import GuideLayout from "../../layouts/GuideLayout.astro";
 
 const title = "Unicode URL Slugs: Accents, Umlauts and Non-Latin Text";
 const description =
-  "How to slug accented, German and non-Latin titles: ASCII folding, keeping Cyrillic or Han letters, percent-encoding, and what a CMS does with each.";
+  "How to slug accented, German and non-Latin titles: ASCII folding, keeping Cyrillic or Han letters, and what a CMS does with each choice.";
 ---
 
 <GuideLayout
@@ -13,7 +13,7 @@ const description =
   h1="International characters in URL slugs"
 >
   <p>
-    International characters in a slug are valid. This tool folds Latin accents to ASCII by default, so Café becomes <code>cafe</code>, and it keeps scripts that have no Latin equivalent, so 東京 stays 東京. A second setting, Keep, leaves the accents in place as well. Neither setting deletes Cyrillic, Greek, or Han characters.
+    International characters in a slug are valid. This tool can <a href="/">keep or fold accents</a>: it folds Latin accents to ASCII by default, so Café becomes <code>cafe</code>, and it keeps scripts that have no Latin equivalent, so 東京 stays 東京. A second setting, Keep, leaves the accents in place as well. Neither setting deletes Cyrillic, Greek, or Han characters.
   </p>
   <p>
     Café au lait is the Latin example. The readable default produces <code>cafe-au-lait</code> once you ignore the size that a longer title might add. Keep original script produces <code>café-au-lait</code>, still lower case, still hyphenated. Привет becomes <code>привет</code> under both settings, because the letters are not Latin accents. 東京 is unchanged under both, because those characters have no case and no accent to strip.
@@ -116,7 +116,7 @@ const description =
     A CSV is bytes before it is rows. Save it as UTF-8. The parser accepts a leading byte-order mark and does not treat that mark as a character in the first header. If you save a spreadsheet as “CSV (Macintosh)” or as a national code page, accented letters can arrive as the wrong characters, and the fold will faithfully fold the wrong thing. Open the file in a plain editor and look at one Café row before you convert ten thousand of them.
   </p>
   <p>
-    The bulk tool reads the file on your device. It does not upload the catalogue, and it does not send titles to a translation API. There is no network step hiding inside the letter policy. That also means there is no server dictionary you can opt into. The <a href="/">URL slug generator</a> is enough when you are deciding, on one title, whether to keep or fold accents. The rest of the rule list is in <a href="/guides/how-to-create-url-slugs">URL slug best practices</a>.
+    The bulk tool reads the file on your device. It does not upload the catalogue, and it does not send titles to a translation API. There is no network step hiding inside the letter policy. That also means there is no server dictionary you can opt into. The single-title tool is enough when you are deciding a letter policy on one row. The rest of the rule list is in <a href="/guides/how-to-create-url-slugs">URL slug best practices</a>.
   </p>
   <p>
     After you choose a policy, leave it for the batch. Mixing Keep and Latin inside one catalogue produces two conventions and a set of duplicates that differ only by an accent. The duplicate suffix compares the finished slug, so <code>cafe</code> and <code>café</code> are not duplicates. They are two addresses. That is sometimes what you want for two languages. It is rarely what you want for one language typed two ways.

@@ -173,11 +173,11 @@ function resolveSiteUrl(target) {
   }
 }
 
-function movedDestination(html) {
-  if (!robotsContent(html).includes("noindex")) return null;
+function movedDestination(html, selfUrl) {
   const dest = resolveSiteUrl(refreshTarget(html));
   const canon = canonicalHref(html);
   if (!dest || !canon || dest !== canon) return null;
+  if (selfUrl && dest === selfUrl) return null;
   return dest;
 }
 
@@ -194,6 +194,7 @@ function localeUrlPattern(locales) {
 }
 
 const indexableUrls = new Set();
+const movedPages = new Map();
 for (const file of htmlFiles) {
   const rel = path.relative(dist, file).split(path.sep).join("/");
   const html = readFileSync(file, "utf8");
@@ -218,10 +219,13 @@ for (const file of htmlFiles) {
   }
   const expected = expectedCanonical(rel);
   const actual = canonicalHref(html);
-  const movedTo = movedDestination(html);
+  const movedTo = movedDestination(html, expected);
   if (movedTo) {
     if (actual !== movedTo) {
       failures.push(`${rel} moved page canonical is ${actual ?? "(missing)"}, expected ${movedTo}.`);
+    }
+    if (robotsContent(html).includes("noindex")) {
+      failures.push(`${rel} combines noindex with a redirect canonical.`);
     }
   } else if (actual !== expected) {
     failures.push(`${rel} canonical is ${actual ?? "(missing)"}, expected ${expected}.`);
@@ -235,8 +239,34 @@ for (const file of htmlFiles) {
   } else if (pageLocale && INDEXED_LOCALES.includes(pageLocale) && robots.includes("noindex")) {
     failures.push(`${rel} is in INDEXED_LOCALES but has a noindex robots meta tag.`);
   }
-  if (!robots.includes("noindex")) {
+  if (!robots.includes("noindex") && !movedTo) {
     indexableUrls.add(expected);
+  }
+  if (movedTo) movedPages.set(routeFromRel(rel), rel);
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+for (const file of files) {
+  const rel = path.relative(dist, file).split(path.sep).join("/");
+  if (/\.(png|ico|woff2?|ttf|eot|jpg|jpeg|webp|gif|svg)$/i.test(rel)) continue;
+  if ([...movedPages.values()].includes(rel)) continue;
+  let body = "";
+  try {
+    body = readFileSync(file, "utf8");
+  } catch {
+    continue;
+  }
+  for (const [route] of movedPages) {
+    const pathPattern = escapeRegExp(route);
+    const hrefToMoved = new RegExp(
+      `(?:href=["'](?:https://onlinesluggenerator\\.com)?${pathPattern}(?:["'?#]|$)|https://onlinesluggenerator\\.com${pathPattern}(?:["'\\s]|$))`,
+    );
+    if (hrefToMoved.test(body)) {
+      failures.push(`${rel} links to moved URL ${route}.`);
+    }
   }
 }
 

@@ -185,7 +185,17 @@ for (const { fullPath, relPath } of htmlFiles) {
     }
   }
 
-  const isIndexable = !pageAudit.robots?.includes("noindex");
+  const refreshContent = document.querySelector('meta[http-equiv="refresh"]')?.getAttribute("content") || null;
+  const refreshMatch = refreshContent ? refreshContent.match(/url\s*=\s*([^;\s]+)/i) : null;
+  const refreshRoute = refreshMatch ? resolveUrlToRoute(refreshMatch[1].trim()) : null;
+  const canonicalRouteForMove = pageAudit.canonical ? resolveUrlToRoute(pageAudit.canonical) : null;
+  const isMoved = Boolean(
+    refreshRoute &&
+    canonicalRouteForMove &&
+    refreshRoute === canonicalRouteForMove &&
+    refreshRoute !== route,
+  );
+  const isIndexable = !pageAudit.robots?.includes("noindex") && !isMoved;
 
   // Check description
   if (isIndexable) {

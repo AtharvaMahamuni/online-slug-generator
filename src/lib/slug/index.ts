@@ -1,5 +1,5 @@
 export { cleanText } from "./clean";
-export { parseCsv, looksLikeHeader, defaultTitleColumn, assessFileSize, limitDataRows, MAX_FILE_BYTES, MAX_DATA_ROWS } from "./csv";
+export { parseCsv, looksLikeHeader, defaultTitleColumn, assessFileSize, droppedPastLimitMessage, limitDataRows, MAX_FILE_BYTES, MAX_DATA_ROWS } from "./csv";
 export type { CsvError, CsvParseResult } from "./csv";
 export { assignDuplicates } from "./duplicates";
 export { escapeCsvField, slugHeader, toCsv, toTxt, buildExport } from "./export";

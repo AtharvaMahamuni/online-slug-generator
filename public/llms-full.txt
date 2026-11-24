@@ -18,7 +18,7 @@ One title in, one slug out. The work runs in the browser. “How to Prune Roses 
 
 https://onlinesluggenerator.com/bulk-slug-generator
 
-One title per line, or a TXT or CSV file of up to 5 MB and 10,000 data rows. JSON and Excel are not accepted. Other columns stay in memory and come back in the CSV next to a slug column. Two identical results get a numeric suffix: samsung-galaxy-s26 and samsung-galaxy-s26-2. The file is read on the device. It is not uploaded.
+One title per line, or a TXT or CSV file of up to 5 MiB and 10,000 data rows. JSON and Excel are not accepted. Other columns stay in memory and come back in the CSV next to a slug column. Two identical results get a numeric suffix: samsung-galaxy-s26 and samsung-galaxy-s26-2. The file is read on the device. It is not uploaded.
 
 ## Guides
 

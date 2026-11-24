@@ -9,7 +9,7 @@ Contact: https://onlinesluggenerator.com/contact
 ## Pages
 
 - [URL slug generator](https://onlinesluggenerator.com/): Turn one title into a clean URL slug. Example: “How to Prune Roses in June” becomes how-to-prune-roses-in-june.
-- [Bulk URL slug generator](https://onlinesluggenerator.com/bulk-slug-generator): Paste a list or a CSV and keep the other columns. A repeated slug gains a numeric suffix. Limits: 5 MB and 10,000 rows. JSON and Excel are not accepted.
+- [Bulk URL slug generator](https://onlinesluggenerator.com/bulk-slug-generator): Paste a list or a CSV and keep the other columns. A repeated slug gains a numeric suffix. Limits: 5 MiB and 10,000 rows. JSON and Excel are not accepted.
 - [Guides](https://onlinesluggenerator.com/guides): Four references. They are HTML and do not need the tool script.
 - [What is a URL slug? Meaning and examples](https://onlinesluggenerator.com/guides/what-is-a-url-slug): Definition, examples, and what a slug does not do.
 - [URL slug best practices](https://onlinesluggenerator.com/guides/how-to-create-url-slugs): Case, hyphens, stop words, length, and numbers.

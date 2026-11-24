@@ -9,7 +9,7 @@ Q: How does the engine transform headlines into web-safe permalinks?
 A: Users enter text at https://onlinesluggenerator.com/. The engine converts letters to lowercase, collapses consecutive whitespace into single delimiters, maps ampersands to words based on the active locale ('and', 'y', 'und', 'et', 'e'), removes unreserved punctuation, and decomposes Latin accents while preserving native international scripts.
 
 Q: What capabilities does the bulk slug generator offer for spreadsheets?
-A: Available at https://onlinesluggenerator.com/bulk-slug-generator, the tool processes multiline inputs and CSV/TXT files up to 5 MB (~10,000 data rows). It preserves original spreadsheet columns, handles RFC 4180 quotes, and assigns incremental collision suffixes (e.g., 'slug-2') to duplicate titles.
+A: Available at https://onlinesluggenerator.com/bulk-slug-generator, the tool processes multiline inputs and CSV/TXT files up to 5 MiB (~10,000 data rows). It preserves original spreadsheet columns, handles RFC 4180 quotes, and assigns incremental collision suffixes (e.g., 'slug-2') to duplicate titles.
 
 Q: How does the pipeline handle umlauts, accents, and non-Latin scripts?
 A: Latin characters with diacritics are decomposed via Unicode normalization (e.g., 'café' becomes 'cafe'). In German mode, umlauts expand phonetically ('ä/ö/ü' to 'ae/oe/ue', and 'ß' to 'ss'). Non-Latin alphabets including Cyrillic, Japanese Kanji, Arabic, and Devanagari remain intact. Selecting 'Keep' retains native UTF-8 characters without decomposition.
