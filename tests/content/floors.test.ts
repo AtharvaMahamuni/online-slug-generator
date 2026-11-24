@@ -54,10 +54,17 @@ function sourceDeclaresNoindex(source: string): boolean {
   );
 }
 
+function sourceIsMoved(source: string): boolean {
+  return /http-equiv=["']refresh["']/i.test(source);
+}
+
 function liveGuides(): string[] {
   return readdirSync(path.join(pages, "guides"))
     .filter((file) => file.endsWith(".astro") && file !== "index.astro")
-    .filter((file) => !sourceDeclaresNoindex(read(`guides/${file}`)))
+    .filter((file) => {
+      const source = read(`guides/${file}`);
+      return !sourceDeclaresNoindex(source) && !sourceIsMoved(source);
+    })
     .map((file) => `guides/${file}`)
     .sort();
 }
@@ -168,18 +175,23 @@ describe("guide inventory", () => {
     }
   });
 
-  it("does not point internal links at a moved noindex guide URL", () => {
-    const moved = walk(path.join(pages, "guides"))
-      .filter((file) => file.endsWith(".astro"))
-      .filter((file) => sourceDeclaresNoindex(readFileSync(file, "utf8")))
-      .map((file) => {
-        const route = "/" + path.relative(pages, file).replace(/\.astro$/, "").split(path.sep).join("/");
-        return route.endsWith("/index") ? route.slice(0, -"/index".length) : route;
-      });
-    const skip = new Set(
-      walk(path.join(pages, "guides"))
-        .filter((file) => file.endsWith(".astro") && sourceDeclaresNoindex(readFileSync(file, "utf8"))),
+  it("links each live guide to the homepage in the first screen", () => {
+    for (const guide of guides) {
+      const body = template(read(guide));
+      const first = body.slice(0, body.search(/<h2[\s>]/i));
+      expect(first, guide).toMatch(/href="\/"/);
+    }
+  });
+
+  it("does not point internal links at a moved guide URL", () => {
+    const movedFiles = walk(path.join(pages, "guides")).filter(
+      (file) => file.endsWith(".astro") && sourceIsMoved(readFileSync(file, "utf8")),
     );
+    const moved = movedFiles.map((file) => {
+      const route = "/" + path.relative(pages, file).replace(/\.astro$/, "").split(path.sep).join("/");
+      return route.endsWith("/index") ? route.slice(0, -"/index".length) : route;
+    });
+    const skip = new Set(movedFiles);
     const filesToScan = [
       ...walk(srcDir).filter((file) => file.endsWith(".astro") || file.endsWith(".ts") || file.endsWith(".js")),
       ...walk(publicDir).filter((file) => /\.(txt|html|xml|json)$/.test(file)),

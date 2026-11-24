@@ -43,13 +43,23 @@ function sourceDeclaresNoindex(source: string): boolean {
   );
 }
 
+function selfUrlForRoute(route: string): string {
+  return route === "/" ? `${SITE}/` : `${SITE}${route}`;
+}
+
 function indexableFromSource(): string[] {
   return walk(pagesDir)
     .filter((file) => file.endsWith(".astro"))
-    .filter((file) => !sourceDeclaresNoindex(readFileSync(file, "utf8")))
+    .filter((file) => {
+      const source = readFileSync(file, "utf8");
+      const route = astroToPath(path.relative(pagesDir, file));
+      if (sourceDeclaresNoindex(source)) return false;
+      if (movedDestination(source, selfUrlForRoute(route))) return false;
+      return true;
+    })
     .map((file) => astroToPath(path.relative(pagesDir, file)))
     .filter(isIndexableRoute)
-    .map((route) => (route === "/" ? `${SITE}/` : `${SITE}${route}`))
+    .map((route) => selfUrlForRoute(route))
     .sort();
 }
 
@@ -81,14 +91,14 @@ function resolveSiteUrl(target: string | null): string | null {
   }
 }
 
-function movedDestination(html: string): string | null {
-  if (!robotsContent(html).includes("noindex")) return null;
+function movedDestination(html: string, selfUrl?: string): string | null {
   const dest = resolveSiteUrl(refreshTarget(html));
   const canon =
     html.match(/<link\b[^>]*\brel="canonical"[^>]*\bhref="([^"]+)"/i)?.[1] ??
     html.match(/<link\b[^>]*\bhref="([^"]+)"[^>]*\brel="canonical"/i)?.[1] ??
     null;
   if (!dest || !canon || dest !== canon) return null;
+  if (selfUrl && dest === selfUrl) return null;
   return dest;
 }
 
@@ -100,8 +110,9 @@ function indexableFromDist(): string[] {
       const html = readFileSync(file, "utf8");
       if (rel === "llms.html" || rel === "404.html") return null;
       if (robotsContent(html).includes("noindex")) return null;
-      if (rel === "index.html") return `${SITE}/`;
-      return `${SITE}/${rel.replace(/\.html$/, "")}`;
+      const self = rel === "index.html" ? `${SITE}/` : `${SITE}/${rel.replace(/\.html$/, "")}`;
+      if (movedDestination(html, self)) return null;
+      return self;
     })
     .filter((url): url is string => Boolean(url))
     .sort();
@@ -157,7 +168,9 @@ describe("sitemap", () => {
           expect(canonical, rel).toBeNull();
           continue;
         }
-        const movedTo = movedDestination(html);
+        const self =
+          rel === "index.html" ? `${SITE}/` : `${SITE}/${rel.replace(/\.html$/, "")}`;
+        const movedTo = movedDestination(html, self);
         if (movedTo) {
           expect(canonical, rel).toBe(movedTo);
           continue;

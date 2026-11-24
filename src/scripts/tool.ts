@@ -5,6 +5,7 @@ import {
   changeNote,
   defaultSettings,
   defaultTitleColumn,
+  droppedPastLimitMessage,
   limitDataRows,
   looksLikeHeader,
   parseCsv,
@@ -636,7 +637,7 @@ function fileStatus(): void {
     return;
   }
   const parts = [`${loadedFile.name} is loaded on this device.`];
-  if (loadedFile.dropped > 0) parts.push(`${loadedFile.dropped} rows past 10,000 were left out.`);
+  if (loadedFile.dropped > 0) parts.push(droppedPastLimitMessage(loadedFile.dropped, "row"));
   if (loadedFile.errors.length > 0) {
     parts.push(`${loadedFile.errors.length} malformed ${loadedFile.errors.length === 1 ? "row was" : "rows were"} listed and not slugged.`);
   }
@@ -872,7 +873,7 @@ function initBulk(): void {
       } satisfies BulkRow;
     });
     if (limited.dropped > 0) {
-      must<HTMLElement>("file-status").textContent = `${limited.dropped} lines past 10,000 were left out.`;
+      must<HTMLElement>("file-status").textContent = droppedPastLimitMessage(limited.dropped, "line");
     }
     setRows(next, skipped);
   };
