@@ -35,7 +35,7 @@ online-slug-generator/
         how-to-create-url-slugs.astro
         hyphens-vs-underscores-in-urls.astro
         unicode-and-international-urls.astro
-        bulk-url-slug-generation.astro
+        bulk-url-slug-generation.astro  # move stub to /bulk-slug-generator
       404.astro
     layouts/BaseLayout.astro
     components/

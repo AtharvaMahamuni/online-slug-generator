@@ -12,7 +12,7 @@
 | `/guides/how-to-create-url-slugs` | How, including length, stop words, lowercase | Practice | How to create a URL slug | How to Create a URL Slug | index | V1 |
 | `/guides/hyphens-vs-underscores-in-urls` | Compare separators | Separators | Hyphens and underscores in URLs | Hyphens vs Underscores in URLs | index | V1 |
 | `/guides/unicode-and-international-urls` | Non-English text | Unicode | International characters in URL slugs | Unicode and URL Slugs | index | V1 |
-| `/guides/bulk-url-slug-generation` | Many rows, duplicates, files | Bulk practice | How to generate slugs in bulk | Bulk URL Slug Generation | index | V1 |
+| `/guides/bulk-url-slug-generation` | Old bulk-guide links | Moved stub | (none; refresh to the bulk tool) | This Guide Moved to the Bulk Slug Generator | not in sitemap | V1 |
 | `/about` | Who operates this | Trust | About this tool | About Online Slug Generator | index | V1 |
 | `/privacy` | What leaves the browser | Trust | Privacy | Privacy | index | V1 |
 | `/contact` | Reach a human | Trust | Contact | Contact | index | V1 |
@@ -25,7 +25,7 @@ Meta descriptions are written at implementation time to the quality-gate shape: 
 - How to: "Make a slug from a title: lowercase, hyphens, and what to do with accents, numbers, and very long headlines."
 - Hyphens: "Google has said hyphens separate words more clearly than underscores. Here is what that does and does not mean for an existing site."
 - Unicode: "Accented letters can be folded to ASCII. Other scripts can stay as they are. Both are valid choices, for different CMSs."
-- Bulk guide: "Use a list or a spreadsheet when you have more than a handful of titles, and decide what to do when two slugs match."
+- Bulk guide: the guide now lives on `/bulk-slug-generator`. `/guides/bulk-url-slug-generation` is a move stub (meta refresh 0, canonical, and a visible link to the bulk tool). It is not in the sitemap.
 - About: "Online Slug Generator is a free static tool. Slugs are computed in your browser. There is no account."
 - Privacy: "Text, files, and slugs are not uploaded by this site. What the host and your browser still do is spelled out here."
 - Contact: "How to reach the maintainer of Online Slug Generator. This page does not accept uploaded titles."
@@ -203,7 +203,7 @@ All parsing and serialization run in the browser.
 ### Import UX
 
 - Drop zone and a file button. `accept=".txt,.csv,text/plain,text/csv"`.
-- Reject above 5 MB with a specific message. Do not read the file.
+- Reject above 5 MiB with a specific message. Do not read the file.
 - Above 10,000 data rows, process the first 10,000 and say how many were left out.
 - TXT: each line is a source. No column picker.
 - CSV: a real parser, not `split(",")`. Support quoted fields, commas inside quotes, `""` escapes, CRLF, LF, and a leading UTF-8 BOM. Header row if the first row is unique short strings and the user can override "this file has headers."
