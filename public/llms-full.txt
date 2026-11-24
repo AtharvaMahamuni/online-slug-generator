@@ -72,6 +72,8 @@ GitHub issues on https://github.com/AtharvaMahamuni/online-slug-generator/issues
 
 Spanish, German, French and Portuguese tool screens exist for visitors. They are not indexed yet.
 
+Presets reproduce WordPress, Django, python-slugify and npm slugify output on a published test set: https://github.com/AtharvaMahamuni/online-slug-generator/blob/main/tests/slug/fixtures/parity.json.
+
 ## Policy
 
 robots.txt allows Googlebot, Bingbot, OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Applebot. It disallows GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, and CCBot. /ai.txt and /robots-ai.txt repeat that policy and do not replace robots.txt. User-triggered fetchers such as ChatGPT-User, Google-Agent, and Perplexity-User may ignore robots.txt.

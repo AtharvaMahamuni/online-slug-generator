@@ -6,10 +6,38 @@ import JsonLd from "../components/JsonLd.astro";
 import QuickAnswers from "../components/QuickAnswers.astro";
 import ToolSingle from "../components/ToolSingle.astro";
 import { canonical, PERSON_ID, SITE_NAME } from "../lib/site";
+import { PARITY_FIXTURE_URL, PARITY_SAMPLE_TITLES, PRESETS, slugify } from "../lib/slug";
+import fixture from "../../tests/slug/fixtures/parity.json";
 
 const title = "Online Slug Generator: Free URL Slug Maker, No Upload";
 const description =
-  "Free online slug generator. Paste a title and get a clean URL slug with hyphen, stop word and length options. Runs in the browser. Nothing uploaded.";
+  "Free online slug generator with WordPress, Django and python-slugify presets. Paste a title, get a clean URL slug. Runs in your browser, nothing uploaded.";
+
+type ParityRow = {
+  title: string;
+  wordpress: string;
+  django: string;
+  "python-slugify": string;
+  "npm-slugify": string;
+  unsupported?: string[];
+};
+
+function parityCell(row: ParityRow, preset: "wordpress" | "django" | "python-slugify" | "npm-slugify"): string {
+  return row.unsupported?.includes(preset) ? "not matched" : row[preset];
+}
+
+const parityRows = PARITY_SAMPLE_TITLES.map((sampleTitle) => {
+  const row = (fixture.rows as ParityRow[]).find((item) => item.title === sampleTitle);
+  if (!row) throw new Error(`Parity sample missing from fixture: ${sampleTitle}`);
+  return [
+    sampleTitle,
+    slugify(sampleTitle, PRESETS.readable).slug,
+    parityCell(row, "wordpress"),
+    parityCell(row, "django"),
+    parityCell(row, "python-slugify"),
+    parityCell(row, "npm-slugify"),
+  ];
+});
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -123,6 +151,20 @@ const schema = {
       </p>
       <p>
         In programming terminology, this casing convention is known as kebab-case: lowercase words separated by hyphens. In web publishing, URL slugs also incorporate rules for character encoding, duplicate disambiguation, and query parameter handling.
+      </p>
+    </section>
+    <section id="parity-table">
+      <h2>What WordPress, Django and other slugifiers output</h2>
+      <p>
+        The presets below are a set of rules in this page. They are checked against a published test set from WordPress 7.1.5, Django 6.1.3, python-slugify 9.2.0, and npm slugify 1.6.9. Under the WordPress preset, “Men's Trail Running Shoes (Navy / Size 10)” becomes <code>mens-trail-running-shoes-navy-size-10</code>. Rows this tool cannot match, such as python-slugify Han transliteration, are shown as “not matched”.
+      </p>
+      <ExampleTable
+        caption="The same title under the default Readable URL preset and four platform presets"
+        headers={["Title", "Readable URL", "WordPress", "Django", "python-slugify", "npm slugify"]}
+        rows={parityRows}
+      />
+      <p>
+        The full test vectors are in the <a href={PARITY_FIXTURE_URL}>published parity fixture</a>.
       </p>
     </section>
     <section>

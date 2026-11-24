@@ -1,0 +1,233 @@
+{
+  "generated": "2026-11-24",
+  "versions": {
+    "wordpress": "7.1.5",
+    "django": "6.1.3",
+    "python-slugify": "9.2.0",
+    "npm-slugify": "1.6.9"
+  },
+  "libraries": {
+    "wordpress": "WordPress 7.1.5 sanitize_title (save context)",
+    "django": "Django 6.1.3 django.utils.text.slugify",
+    "python-slugify": "python-slugify 9.2.0",
+    "npm-slugify": "npm slugify 1.6.9 with { lower: true, strict: true }"
+  },
+  "rows": [
+    {
+      "title": "How to Prune Roses in June",
+      "wordpress": "how-to-prune-roses-in-june",
+      "django": "how-to-prune-roses-in-june",
+      "python-slugify": "how-to-prune-roses-in-june",
+      "npm-slugify": "how-to-prune-roses-in-june"
+    },
+    {
+      "title": "Café au lait, 12 oz",
+      "wordpress": "cafe-au-lait-12-oz",
+      "django": "cafe-au-lait-12-oz",
+      "python-slugify": "cafe-au-lait-12-oz",
+      "npm-slugify": "cafe-au-lait-12-oz"
+    },
+    {
+      "title": "AT&T fiber plans",
+      "wordpress": "att-fiber-plans",
+      "django": "att-fiber-plans",
+      "python-slugify": "at-t-fiber-plans",
+      "npm-slugify": "atandt-fiber-plans"
+    },
+    {
+      "title": "Men's Trail Running Shoes (Navy / Size 10)",
+      "wordpress": "mens-trail-running-shoes-navy-size-10",
+      "django": "mens-trail-running-shoes-navy-size-10",
+      "python-slugify": "men-s-trail-running-shoes-navy-size-10",
+      "npm-slugify": "mens-trail-running-shoes-navy-size-10"
+    },
+    {
+      "title": "Node.js 20.0",
+      "wordpress": "node-js-20-0",
+      "django": "nodejs-200",
+      "python-slugify": "node-js-20-0",
+      "npm-slugify": "nodejs-200"
+    },
+    {
+      "title": "Straße",
+      "wordpress": "strase",
+      "django": "strae",
+      "python-slugify": "strasse",
+      "npm-slugify": "strasse"
+    },
+    {
+      "title": "Łódź",
+      "wordpress": "lodz",
+      "django": "odz",
+      "python-slugify": "lodz",
+      "npm-slugify": "lodz"
+    },
+    {
+      "title": "Привет",
+      "wordpress": "%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82",
+      "django": "",
+      "python-slugify": "privet",
+      "npm-slugify": "privet"
+    },
+    {
+      "title": "東京",
+      "wordpress": "%e6%9d%b1%e4%ba%ac",
+      "django": "",
+      "python-slugify": "dong-jing",
+      "npm-slugify": "",
+      "unsupported": [
+        "python-slugify"
+      ]
+    },
+    {
+      "title": "Café",
+      "wordpress": "cafe",
+      "django": "cafe",
+      "python-slugify": "cafe",
+      "npm-slugify": "cafe"
+    },
+    {
+      "title": "The Art of War",
+      "wordpress": "the-art-of-war",
+      "django": "the-art-of-war",
+      "python-slugify": "the-art-of-war",
+      "npm-slugify": "the-art-of-war"
+    },
+    {
+      "title": "iPhone 17 Pro",
+      "wordpress": "iphone-17-pro",
+      "django": "iphone-17-pro",
+      "python-slugify": "iphone-17-pro",
+      "npm-slugify": "iphone-17-pro"
+    },
+    {
+      "title": "Sony WH-1000XM5 (Black)",
+      "wordpress": "sony-wh-1000xm5-black",
+      "django": "sony-wh-1000xm5-black",
+      "python-slugify": "sony-wh-1000xm5-black",
+      "npm-slugify": "sony-wh-1000xm5-black"
+    },
+    {
+      "title": "Hello, World!",
+      "wordpress": "hello-world",
+      "django": "hello-world",
+      "python-slugify": "hello-world",
+      "npm-slugify": "hello-world"
+    },
+    {
+      "title": "foo_bar",
+      "wordpress": "foo_bar",
+      "django": "foo_bar",
+      "python-slugify": "foo-bar",
+      "npm-slugify": "foobar"
+    },
+    {
+      "title": "100% orange juice",
+      "wordpress": "100-orange-juice",
+      "django": "100-orange-juice",
+      "python-slugify": "100-orange-juice",
+      "npm-slugify": "100percent-orange-juice"
+    },
+    {
+      "title": "C++ programming",
+      "wordpress": "c-programming",
+      "django": "c-programming",
+      "python-slugify": "c-programming",
+      "npm-slugify": "c-programming"
+    },
+    {
+      "title": "it's a test",
+      "wordpress": "its-a-test",
+      "django": "its-a-test",
+      "python-slugify": "it-s-a-test",
+      "npm-slugify": "its-a-test"
+    },
+    {
+      "title": "multiple   spaces",
+      "wordpress": "multiple-spaces",
+      "django": "multiple-spaces",
+      "python-slugify": "multiple-spaces",
+      "npm-slugify": "multiple-spaces"
+    },
+    {
+      "title": "--leading-and-trailing--",
+      "wordpress": "leading-and-trailing",
+      "django": "leading-and-trailing",
+      "python-slugify": "leading-and-trailing",
+      "npm-slugify": "leading-and-trailing"
+    },
+    {
+      "title": "A & B and C",
+      "wordpress": "a-b-and-c",
+      "django": "a-b-and-c",
+      "python-slugify": "a-b-and-c",
+      "npm-slugify": "a-and-b-and-c"
+    },
+    {
+      "title": "über cool",
+      "wordpress": "uber-cool",
+      "django": "uber-cool",
+      "python-slugify": "uber-cool",
+      "npm-slugify": "uber-cool"
+    },
+    {
+      "title": "Æble",
+      "wordpress": "aeble",
+      "django": "ble",
+      "python-slugify": "aeble",
+      "npm-slugify": "aeble"
+    },
+    {
+      "title": "¿Qué es esto?",
+      "wordpress": "que-es-esto",
+      "django": "que-es-esto",
+      "python-slugify": "que-es-esto",
+      "npm-slugify": "que-es-esto"
+    },
+    {
+      "title": "file.name.ext",
+      "wordpress": "file-name-ext",
+      "django": "filenameext",
+      "python-slugify": "file-name-ext",
+      "npm-slugify": "filenameext"
+    },
+    {
+      "title": "ß",
+      "wordpress": "s",
+      "django": "",
+      "python-slugify": "ss",
+      "npm-slugify": "ss"
+    },
+    {
+      "title": "Café in 東京, 12",
+      "wordpress": "cafe-in-%e6%9d%b1%e4%ba%ac-12",
+      "django": "cafe-in-12",
+      "python-slugify": "cafe-in-dong-jing-12",
+      "npm-slugify": "cafe-in-12",
+      "unsupported": [
+        "python-slugify"
+      ]
+    },
+    {
+      "title": "punctuation: hello; world?",
+      "wordpress": "punctuation-hello-world",
+      "django": "punctuation-hello-world",
+      "python-slugify": "punctuation-hello-world",
+      "npm-slugify": "punctuation-hello-world"
+    },
+    {
+      "title": "underscores_and spaces",
+      "wordpress": "underscores_and-spaces",
+      "django": "underscores_and-spaces",
+      "python-slugify": "underscores-and-spaces",
+      "npm-slugify": "underscoresand-spaces"
+    },
+    {
+      "title": "This is a very long title about winter roses pruning in early June that should exercise the WordPress two hundred character encoded limit when we keep adding words about gardens, soil, and sunlight until the path is clearly longer than two hundred encoded characters in a permalink",
+      "wordpress": "this-is-a-very-long-title-about-winter-roses-pruning-in-early-june-that-should-exercise-the-wordpress-two-hundred-character-encoded-limit-when-we-keep-adding-words-about-gardens-soil-and-sunlight-un",
+      "django": "this-is-a-very-long-title-about-winter-roses-pruning-in-early-june-that-should-exercise-the-wordpress-two-hundred-character-encoded-limit-when-we-keep-adding-words-about-gardens-soil-and-sunlight-until-the-path-is-clearly-longer-than-two-hundred-encoded-characters-in-a-permalink",
+      "python-slugify": "this-is-a-very-long-title-about-winter-roses-pruning-in-early-june-that-should-exercise-the-wordpress-two-hundred-character-encoded-limit-when-we-keep-adding-words-about-gardens-soil-and-sunlight-until-the-path-is-clearly-longer-than-two-hundred-encoded-characters-in-a-permalink",
+      "npm-slugify": "this-is-a-very-long-title-about-winter-roses-pruning-in-early-june-that-should-exercise-the-wordpress-two-hundred-character-encoded-limit-when-we-keep-adding-words-about-gardens-soil-and-sunlight-until-the-path-is-clearly-longer-than-two-hundred-encoded-characters-in-a-permalink"
+    }
+  ]
+}

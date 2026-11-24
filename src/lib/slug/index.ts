@@ -5,7 +5,8 @@ export { assignDuplicates } from "./duplicates";
 export { escapeCsvField, slugHeader, toCsv, toTxt, buildExport } from "./export";
 export { foldLatinAscii } from "./letters";
 export { slugify, slugifyBatch, applyMaxLength, changeNote } from "./pipeline";
-export { DEFAULT_CONFIG, PRESETS, presetMatches, sameConfig } from "./presets";
+export { slugifyParity, PARITY_VERSIONS, PARITY_NOTES, PARITY_FIXTURE_URL, PARITY_SAMPLE_TITLES } from "./parity";
+export { DEFAULT_CONFIG, PRESETS, PARITY_PRESETS, presetMatches, sameConfig } from "./presets";
 export { defaultSettings, parseStoredSettings, parseStoredJson } from "./settings";
 export {
   ENGLISH_STOP_WORDS,
@@ -17,4 +18,4 @@ export {
   applyStopWords,
 } from "./stopwords";
 export { SETTINGS_VERSION } from "./types";
-export type { BatchRow, LetterPolicy, PresetId, Separator, SlugConfig, SlugFlags, SlugResult, StoredSettings, SupportedLocale } from "./types";
+export type { BatchRow, LetterPolicy, ParityId, PresetId, Separator, SlugConfig, SlugFlags, SlugResult, StoredSettings, SupportedLocale } from "./types";

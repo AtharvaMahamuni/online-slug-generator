@@ -15,6 +15,7 @@ describe("presets and stored settings", () => {
       ampersandToAnd: true,
       maxLength: null,
       locale: "en",
+      parity: null,
     });
     expect(PRESETS.short).toEqual({ ...PRESETS.readable, stopWords: true, maxLength: 60 });
     expect(PRESETS.preserve).toEqual({ ...PRESETS.readable, letterPolicy: "preserve", lowercase: true });
@@ -70,5 +71,27 @@ describe("presets and stored settings", () => {
   it("rejects a payload that is not an object", () => {
     expect(parseStoredSettings(null)).toEqual(defaultSettings());
     expect(parseStoredJson("not-json")).toEqual(defaultSettings());
+  });
+
+  it("defaults a missing parity field so version 1 settings still parse", () => {
+    const { parity: _ignored, ...legacy } = DEFAULT_CONFIG;
+    const parsed = parseStoredSettings({
+      version: 1,
+      config: legacy,
+      preset: "readable",
+    });
+    expect(parsed.config.parity).toBeNull();
+    expect(parsed.preset).toBe("readable");
+  });
+
+  it("loads a WordPress parity preset", () => {
+    const parsed = parseStoredSettings({
+      version: 1,
+      config: PRESETS.wordpress,
+      preset: "wordpress",
+    });
+    expect(parsed.preset).toBe("wordpress");
+    expect(parsed.config.parity).toBe("wordpress");
+    expect(slugify("Men's Trail Running Shoes", PRESETS.wordpress).slug).toBe("mens-trail-running-shoes");
   });
 });

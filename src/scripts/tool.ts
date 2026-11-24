@@ -126,6 +126,11 @@ function syncControls(): void {
   must<HTMLInputElement>("url-prefix").value = settings.urlPrefix;
   const warning = must<HTMLElement>("preset-warning");
   warning.hidden = !(settings.preset === "short" || current.stopWords || current.maxLength !== null || current.removeNumbers);
+  const note = must<HTMLElement>("preset-note");
+  const selected = must<HTMLSelectElement>("preset").selectedOptions[0];
+  const noteText = selected?.dataset.note ?? "";
+  note.hidden = !noteText;
+  note.textContent = noteText;
   updatePreview();
 }
 
@@ -141,7 +146,7 @@ function applyConfig(next: SlugConfig, preset?: PresetId): void {
 }
 
 function patchConfig(patch: Partial<SlugConfig>): void {
-  applyConfig({ ...config(), ...patch });
+  applyConfig({ ...config(), parity: null, ...patch });
 }
 
 function bindSettings(): void {
@@ -169,8 +174,10 @@ function bindSettings(): void {
   });
   must<HTMLSelectElement>("preset").addEventListener("change", () => {
     const value = must<HTMLSelectElement>("preset").value;
-    if (value === "readable" || value === "short" || value === "preserve") {
-      applyConfig({ ...PRESETS[value] }, value);
+    if (value === "custom") return;
+    if (value in PRESETS) {
+      const id = value as Exclude<PresetId, "custom">;
+      applyConfig({ ...PRESETS[id] }, id);
     }
   });
   must<HTMLInputElement>("stop-words").addEventListener("change", () => {

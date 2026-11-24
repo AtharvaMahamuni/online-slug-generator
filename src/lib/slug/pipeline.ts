@@ -1,6 +1,7 @@
 import { cleanText } from "./clean";
 import { assignDuplicates } from "./duplicates";
 import { foldLatinAscii } from "./letters";
+import { slugifyParity } from "./parity";
 import { DEFAULT_CONFIG } from "./presets";
 import { applyStopWords } from "./stopwords";
 import type { BatchRow, SlugConfig, SlugFlags, SlugResult } from "./types";
@@ -83,8 +84,21 @@ export function slugify(
   config: SlugConfig = DEFAULT_CONFIG,
   extra?: { htmlStripped?: boolean },
 ): SlugResult {
-  const separator = config.separator === "_" ? "_" : "-";
   const cleaned = cleanText(original);
+  if (config.parity) {
+    const slug = slugifyParity(original, config.parity);
+    const flags: SlugFlags = {
+      truncated: false,
+      transliterated: slug !== original && slug.length > 0,
+      stopWordsRemoved: false,
+      numbersRemoved: false,
+      htmlStripped: extra?.htmlStripped === true,
+      empty: slug.length === 0,
+    };
+    return { original, cleaned, slug, flags };
+  }
+
+  const separator = config.separator === "_" ? "_" : "-";
   let working = cleaned;
 
   if (config.ampersandToAnd) {

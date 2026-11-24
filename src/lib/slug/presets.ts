@@ -1,4 +1,4 @@
-import type { PresetId, SlugConfig } from "./types";
+import type { ParityId, PresetId, SlugConfig } from "./types";
 
 export const DEFAULT_CONFIG: SlugConfig = {
   separator: "-",
@@ -9,6 +9,7 @@ export const DEFAULT_CONFIG: SlugConfig = {
   ampersandToAnd: true,
   maxLength: null,
   locale: "en",
+  parity: null,
 };
 
 export const PRESETS: Record<Exclude<PresetId, "custom">, SlugConfig> = {
@@ -23,7 +24,14 @@ export const PRESETS: Record<Exclude<PresetId, "custom">, SlugConfig> = {
     letterPolicy: "preserve",
     lowercase: true,
   },
+  wordpress: { ...DEFAULT_CONFIG, parity: "wordpress" },
+  django: { ...DEFAULT_CONFIG, parity: "django" },
+  "python-slugify": { ...DEFAULT_CONFIG, parity: "python-slugify" },
+  "npm-slugify": { ...DEFAULT_CONFIG, parity: "npm-slugify" },
 };
+
+export const PARITY_PRESETS: ParityId[] = ["wordpress", "django", "python-slugify", "npm-slugify"];
+
 
 export function presetMatches(config: SlugConfig): PresetId {
   const keys = Object.keys(PRESETS) as Array<Exclude<PresetId, "custom">>;
@@ -42,6 +50,7 @@ export function sameConfig(a: SlugConfig, b: SlugConfig): boolean {
     a.removeNumbers === b.removeNumbers &&
     a.ampersandToAnd === b.ampersandToAnd &&
     a.maxLength === b.maxLength &&
-    a.locale === b.locale
+    a.locale === b.locale &&
+    a.parity === b.parity
   );
 }
