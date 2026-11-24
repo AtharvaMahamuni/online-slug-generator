@@ -26,25 +26,25 @@ https://onlinesluggenerator.com/guides
 
 Index of five HTML references. They stay readable with JavaScript off.
 
-## What is a URL slug?
+## What is a URL slug? Meaning and examples
 
 https://onlinesluggenerator.com/guides/what-is-a-url-slug
 
 A slug is the readable last path segment, such as how-to-prune-roses in https://example.com/guides/how-to-prune-roses. It is not the domain, the scheme, a query string, or a fragment. Google’s ecommerce URL guide (updated 10 December 2025) prefers words in the path over an id such as /product/3243. That is not a promise about length or stop words.
 
-## How to create a URL slug
+## URL slug best practices
 
 https://onlinesluggenerator.com/guides/how-to-create-url-slugs
 
 Case, hyphens, stop words, length, and numbers, in the order the tool actually uses. Empty maximum length keeps the whole slug. A number cuts at a separator when it can. Changing a slug that is already public needs a redirect. A prettier slug is not a reason to do that.
 
-## Hyphens vs underscores
+## Hyphens or underscores in URLs
 
 https://onlinesluggenerator.com/guides/hyphens-vs-underscores-in-urls
 
-Gary Illyes, in Google’s April 2024 SEO office hours (updated 18 April 2024), said hyphens separate words more clearly and that keywords in the URL barely contribute to ranking. A site that already uses underscores should stay put unless every old path is redirected.
+Gary Illyes, in Google’s April 2024 SEO office hours (updated 18 April 2024), said hyphens separate words more clearly and that keywords in the URL barely contribute to ranking. A site that already uses underscores should stay put unless every old path is redirected. Domain names cannot contain underscores.
 
-## Unicode and URL slugs
+## Unicode URL slugs
 
 https://onlinesluggenerator.com/guides/unicode-and-international-urls
 

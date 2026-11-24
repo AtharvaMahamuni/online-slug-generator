@@ -28,6 +28,22 @@ function description(source: string): string {
   return match[1] ?? "";
 }
 
+function title(source: string): string {
+  const match = source.match(/const title = "([^"]*)"/);
+  if (!match) throw new Error("Missing title");
+  return match[1] ?? "";
+}
+
+const retitled = [
+  "index.astro",
+  "bulk-slug-generator.astro",
+  "guides/index.astro",
+  "guides/what-is-a-url-slug.astro",
+  "guides/how-to-create-url-slugs.astro",
+  "guides/hyphens-vs-underscores-in-urls.astro",
+  "guides/unicode-and-international-urls.astro",
+];
+
 const guides = [
   "guides/what-is-a-url-slug.astro",
   "guides/how-to-create-url-slugs.astro",
@@ -58,6 +74,15 @@ describe("metadata", () => {
   const files = readdirSync(pages, { recursive: true })
     .map(String)
     .filter((file) => file.endsWith(".astro") && !file.endsWith("404.astro"));
+
+  it("keeps retitled English pages to 60 or fewer characters, with no dashes and no bare ampersand", () => {
+    for (const file of retitled) {
+      const value = title(read(file));
+      expect(value.length, file).toBeLessThanOrEqual(60);
+      expect(value, file).not.toMatch(/\u2013|\u2014/);
+      expect(value, file).not.toContain("&");
+    }
+  });
 
   it("uses a unique description of 120 to 160 characters on every indexable page", () => {
     const descriptions = files.map((file) => description(read(file)));

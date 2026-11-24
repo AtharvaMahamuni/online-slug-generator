@@ -1,16 +1,16 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
 
-const title = "Hyphens vs Underscores in URLs: Search Engine Guidelines";
+const title = "Hyphens or Underscores in URLs? What Google Says";
 const description =
-  "Google has said hyphens separate words more clearly than underscores. Here is what that does and does not mean for an existing site.";
+  "Use hyphens in URL paths. What Google said in 2024, why underscores join words, whether domain names can have underscores, and when not to change live URLs.";
 ---
 
 <GuideLayout
   title={title}
   description={description}
   path="/guides/hyphens-vs-underscores-in-urls"
-  h1="Hyphens and underscores in URLs"
+  h1="Hyphens or underscores in URLs?"
 >
   <p>
     Search engines like Google officially treat hyphens (<code>-</code>) as word separators, recognizing <code>clean-url</code> as two distinct words: "clean" and "url." Underscores (<code>_</code>) join terms as a single compound token (<code>clean_url</code>). For all newly created pages, hyphens are the standard for clean URLs. If an established website already ranks with underscores, leave those live addresses alone.
@@ -65,6 +65,40 @@ const description =
   <p>
     Use a hyphen everywhere else you control and have not published yet. That includes a new blog, a new documentation set, and a new catalogue. The default on this tool is the hyphen. You have to press the underscore control to leave it.
   </p>
+
+  <h2>Can domain names have underscores?</h2>
+  <p>
+    No. A registrable domain name uses letters, digits and hyphens only (the hostname rules in <a href="https://www.rfc-editor.org/info/rfc952">RFC 952</a> and <a href="https://www.rfc-editor.org/rfc/rfc1123.html#section-2.1">RFC 1123 section 2.1</a>). Underscores do appear in some DNS record names, such as <code>_dmarc.example.com</code>, but those are not web addresses people visit. In the path after the domain, an underscore is allowed but joins words; use a hyphen.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <caption>Where underscores are allowed</caption>
+      <thead>
+        <tr>
+          <th scope="col">Place</th>
+          <th scope="col">Underscores</th>
+          <th scope="col">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Domain name</th>
+          <td>No</td>
+          <td>Letters, digits and hyphens only.</td>
+        </tr>
+        <tr>
+          <th scope="row">DNS record names</th>
+          <td>Yes, in some names</td>
+          <td>A name such as <code>_dmarc.example.com</code> is a DNS record, not a site people visit.</td>
+        </tr>
+        <tr>
+          <th scope="row">URL path</th>
+          <td>Yes, but they join words</td>
+          <td>An underscore is allowed after the domain. Use a hyphen to separate words.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2>Should you replace underscores on a live site?</h2>
   <p>

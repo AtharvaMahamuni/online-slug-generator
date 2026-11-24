@@ -1,14 +1,14 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
 
-const title = "How to Create a URL Slug: Rules & Best Practices";
+const title = "URL Slug Best Practices: How to Write a Good Slug";
 const description =
-  "Make a slug from a title: lowercase, hyphens, and what to do with accents, numbers, stop words, and very long headlines.";
+  "How to write a URL slug: lower case, hyphens, stop words, length, numbers and accents, in the order a slugifier applies them, and how to change a live slug.";
 ---
 
-<GuideLayout title={title} description={description} path="/guides/how-to-create-url-slugs" h1="How to create a URL slug">
+<GuideLayout title={title} description={description} path="/guides/how-to-create-url-slugs" h1="URL slug best practices">
   <p>
-    Create a URL slug by taking the title, making it lower case, and joining the words with hyphens. Keep letters and numbers. Drop punctuation a path should not carry. “How to Prune Roses in June” becomes <code>how-to-prune-roses-in-june</code>. That is a readable path segment. It is not a ranking trick, and there is no magic character count.
+    For the definition of a slug, see <a href="/guides/what-is-a-url-slug">What is a URL slug?</a>. This page is the rule list: case, hyphens, stop words, length, numbers and accents, in the order this tool applies them, and how to change a slug that is already public.
   </p>
   <p>
     The worked case is that rose title. Trim nothing by hand. The spaces become hyphens, the capitals fall to lower case, and the words “to” and “in” stay, because stop-word removal is off unless you turn it on. Copy the result into the content system that will publish the page. Do this before the URL is public, not after other sites have linked to a draft path.
