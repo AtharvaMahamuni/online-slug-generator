@@ -559,6 +559,76 @@
       "django": "turned",
       "python-slugify": "turned",
       "npm-slugify": "turned"
+    },
+    {
+      "title": "&apos;tis",
+      "wordpress": "tis",
+      "django": "apostis",
+      "python-slugify": "apos-tis",
+      "npm-slugify": "andapostis"
+    },
+    {
+      "title": "&AMP;",
+      "wordpress": "",
+      "django": "amp",
+      "python-slugify": "amp",
+      "npm-slugify": "andamp"
+    },
+    {
+      "title": "&#X41;BC",
+      "wordpress": "bc",
+      "django": "x41bc",
+      "python-slugify": "x41-bc",
+      "npm-slugify": "andx41bc"
+    },
+    {
+      "title": "ª º ordinals",
+      "wordpress": "a-o-ordinals",
+      "django": "a-o-ordinals",
+      "python-slugify": "a-o-ordinals",
+      "npm-slugify": "a-o-ordinals"
+    },
+    {
+      "title": "₤ ₩ ₪ ₫ word",
+      "wordpress": "%e2%82%a4-%e2%82%a9-%e2%82%aa-%e2%82%ab-word",
+      "django": "word",
+      "python-slugify": "l-w-ns-d-word",
+      "npm-slugify": "lira-won-new-shequel-dong-word"
+    },
+    {
+      "title": "ƀ ƈ ƌ ƒ ǥ",
+      "wordpress": "%c6%80-%c6%88-%c6%8c-%c6%92-%c7%a5",
+      "django": "",
+      "python-slugify": "b-c-d-f-g",
+      "npm-slugify": "f"
+    },
+    {
+      "title": "Ɓ Ɗ Ƒ",
+      "wordpress": "%c9%93-%c9%97-%c6%92",
+      "django": "",
+      "python-slugify": "b-d-f",
+      "npm-slugify": ""
+    },
+    {
+      "title": "right‏to‎left",
+      "wordpress": "righttoleft",
+      "django": "righttoleft",
+      "python-slugify": "righttoleft",
+      "npm-slugify": "righttoleft"
+    },
+    {
+      "title": "foo%ef%bb%bfbar",
+      "wordpress": "foobar",
+      "django": "fooefbbbfbar",
+      "python-slugify": "foo-ef-bb-bfbar",
+      "npm-slugify": "foopercentefpercentbbpercentbfbar"
+    },
+    {
+      "title": "a%ef%bf%bcb",
+      "wordpress": "ab",
+      "django": "aefbfbcb",
+      "python-slugify": "a-ef-bf-bcb",
+      "npm-slugify": "apercentefpercentbfpercentbcb"
     }
   ]
 }

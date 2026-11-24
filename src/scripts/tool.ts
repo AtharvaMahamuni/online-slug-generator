@@ -394,9 +394,10 @@ function initSingle(): void {
     const ticket = live.dataset.ticket ?? "";
     announce = window.setTimeout(() => {
       if ((live.dataset.ticket ?? "") !== ticket) return;
-      if (slug.value === lastAnnounced) return;
-      lastAnnounced = slug.value;
-      live.textContent = previewBlocked ? "Not matched" : slug.value ? "Slug updated" : "";
+      const announcement = previewBlocked ? "Not matched" : slug.value ? "Slug updated" : "";
+      if (announcement === lastAnnounced) return;
+      lastAnnounced = announcement;
+      live.textContent = announcement;
     }, 600);
   };
 

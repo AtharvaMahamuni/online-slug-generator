@@ -72,6 +72,9 @@ describe("parity presets", () => {
       "‰ permille",
       "ŉ test",
       "ɐ ə ɛ",
+      "&apos;tis",
+      "ª º ordinals",
+      "foo%ef%bb%bfbar",
     ]));
     expect(titles.some((title) => title.includes("\ufeff"))).toBe(true);
     expect(titles.some((title) => title.includes("\u00ad"))).toBe(true);
@@ -149,6 +152,20 @@ describe("parity presets", () => {
     expect(slugify("obj\ufffchere", wordpress).slug).toBe("objhere");
     expect(slugify("5 < 6 > 4", wordpress).slug).toBe("5-6-4");
     expect(slugify("ﬁ ﬂ ﬃ", wordpress).slug).toBe("%ef%ac%81-%ef%ac%82-%ef%ac%83");
+    expect(slugify("ª º ordinals", wordpress).slug).toBe("a-o-ordinals");
+    // The encoded BOM list is required: a literal %ef%bb%bf in the title is
+    // not a raw U+FEFF character, so the pre-strip of ﻿ does not apply.
+    expect(slugify("foo%ef%bb%bfbar", wordpress).slug).toBe("foobar");
+    expect(slugify("a%ef%bf%bcb", wordpress).slug).toBe("ab");
+
+    expect(slugify("&apos;tis", python).slug).toBe("apos-tis");
+    expect(slugify("&AMP;", python).slug).toBe("amp");
+    expect(slugify("&#X41;BC", python).slug).toBe("x41-bc");
+    expect(slugify("&#x41;BC", python).slug).toBe("abc");
+    expect(slugify("₤ ₩ ₪ ₫ word", python).slug).toBe("l-w-ns-d-word");
+    expect(slugify("ƀ ƈ ƌ ƒ ǥ", python).slug).toBe("b-c-d-f-g");
+    expect(slugify("Ɓ Ɗ Ƒ", python).slug).toBe("b-d-f");
+    expect(slugify("right\u200fto\u200eleft", python).slug).toBe("righttoleft");
   });
 
 describe("home parity table", () => {

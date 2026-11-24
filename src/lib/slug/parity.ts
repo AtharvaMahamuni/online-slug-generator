@@ -1,13 +1,37 @@
+/*!
+ * parity-npm-charmap.json is the character map from npm slugify 1.6.9,
+ * copied as a static rule table. It is not imported as a runtime dependency.
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) Simeon Velichkov <simeonvelichkov@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Source: https://github.com/simov/slugify
+ */
 import npmCharmap from "./parity-npm-charmap.json";
-import html5Entities from "./parity-html5-entities.json";
-import { NPM_SLUGIFY_CHARMAP_LICENSE } from "./parity-npm-license";
+import html4Entities from "./parity-html4-entities.json";
 import type { ParityId } from "./types";
 
 const NPM_CHARMAP = npmCharmap as Record<string, string>;
-const HTML5_ENTITIES = html5Entities as Record<string, string>;
-
-/** Retained so the MIT notice ships in the built tool bundle that carries the charmap. */
-export const NPM_SLUGIFY_NOTICE = NPM_SLUGIFY_CHARMAP_LICENSE;
+const HTML4_ENTITIES = html4Entities as Record<string, string>;
 
 export const PARITY_VERSIONS: Record<ParityId, string> = {
   wordpress: "7.1.5",
@@ -45,57 +69,61 @@ export type ParitySlugResult = {
 };
 
 /**
- * Compatibility facts derived from observed WordPress 7.1.5 sanitize_title
- * behavior with an English (US) site language, verified against the published
- * fixture. This special-case list is not copied from WordPress source.
- * Latin letters here do not fold to ASCII plus combining marks under Unicode
- * NFD. ß maps to s because that is what an English (US) WordPress site
- * produces on the fixture (Straße becomes strase), not the German ss mapping.
- * € to E and £ to empty are also compatibility facts from that observed
- * behavior, verified against the fixture.
+ * Values match WP 7.1.5 behaviour; 27 exercised by the fixture (11 of 36 special-case mappings and 16 of 59 encoded codes).
+ *
+ * Recorded by scripts/gen-parity-fixtures/probe-wp-lists.py, which calls
+ * WordPress 7.1.5 remove_accents on individual characters with an English
+ * (US) site language. The script does not read WordPress PHP tables.
+ * Latin letters here do not fold to ASCII plus combining marks under
+ * Unicode NFD. ß maps to s because that is what an English (US) WordPress
+ * site produces (Straße becomes strase), not the German ss mapping.
  */
 const WP_LATIN_SPECIALS: Record<string, string> = {
-  ß: "s",
+  "£": "",
+  "ª": "a",
+  "º": "o",
   Æ: "AE",
-  æ: "ae",
-  Ø: "O",
-  ø: "o",
   Ð: "D",
-  ð: "d",
+  Ø: "O",
   Þ: "TH",
+  ß: "s",
+  æ: "ae",
+  ð: "d",
+  ø: "o",
   þ: "th",
-  Ł: "L",
-  ł: "l",
-  Œ: "OE",
-  œ: "oe",
   Đ: "D",
   đ: "d",
   Ħ: "H",
   ħ: "h",
   ı: "i",
+  Ĳ: "IJ",
+  ĳ: "ij",
   ĸ: "k",
   Ŀ: "L",
   ŀ: "l",
+  Ł: "L",
+  ł: "l",
   ŉ: "n",
-  Ĳ: "IJ",
-  ĳ: "ij",
-  ſ: "s",
   Ŋ: "N",
   ŋ: "n",
+  Œ: "OE",
+  œ: "oe",
   Ŧ: "T",
   ŧ: "t",
+  ſ: "s",
   Ə: "E",
   ǝ: "e",
   ɑ: "a",
   "€": "E",
-  "£": "",
 };
 
 /**
+ * Values match WP 7.1.5 behaviour; 27 exercised by the fixture (11 of 36 special-case mappings and 16 of 59 encoded codes).
+ *
  * After utf8_uri_encode, save-context replacements for percent-encoded forms.
- * These lists are compatibility facts derived from observed WordPress 7.1.5
- * sanitize_title behavior with an English (US) site language, verified against
- * the published fixture. They are not copied from WordPress source. Raw
+ * Recorded by scripts/gen-parity-fixtures/probe-wp-lists.py, which calls
+ * WordPress 7.1.5 sanitize_title on individual characters with an English
+ * (US) site language. The script does not read WordPress PHP tables. Raw
  * character replacements would never match after encoding, so the codes are
  * stored in their percent-encoded form.
  */
@@ -124,7 +152,6 @@ const WP_ENCODED_TO_X = ["%c3%97"];
 
 const WP_ENCODED_STRIP = [
   "%c2%a1",
-  "%c2%a3",
   "%c2%a9",
   "%c2%ab",
   "%c2%ad",
@@ -194,6 +221,14 @@ const PYTHON_SPECIAL: Record<string, string> = {
   ŋ: "NG",
   Ŧ: "T",
   ŧ: "t",
+  ƀ: "b",
+  Ɓ: "B",
+  ƈ: "c",
+  ƌ: "d",
+  Ɗ: "D",
+  ƒ: "f",
+  Ƒ: "F",
+  ǥ: "g",
 };
 
 const PYTHON_CYRILLIC: Record<string, string> = {
@@ -283,6 +318,10 @@ const PYTHON_SYMBOLS: Record<string, string> = {
   "₹": "[?]",
   "₽": "[?]",
   "₿": "[?]",
+  "₤": "L",
+  "₩": "W",
+  "₪": "NS",
+  "₫": "D",
   "©": "(c)",
   "®": "(r)",
   "™": "tm",
@@ -316,14 +355,25 @@ const PYTHON_SYMBOLS: Record<string, string> = {
   "•": "*",
   "–": "-",
   "—": "--",
-  " ": " ",
-  " ": " ",
-  "​": " ",
-  "‌": "",
-  "‍": "",
-  "­": "",
-  "﻿": "",
-  "￼": "",
+  "\u00a0": " ",
+  "\u202f": " ",
+  "\u200b": " ",
+  "\u200c": "",
+  "\u200d": "",
+  "\u200e": "",
+  "\u200f": "",
+  "\u202a": "",
+  "\u202b": "",
+  "\u202c": "",
+  "\u202d": "",
+  "\u202e": "",
+  "\u2066": "",
+  "\u2067": "",
+  "\u2068": "",
+  "\u2069": "",
+  "\u00ad": "",
+  "\ufeff": "",
+  "\ufffc": "",
 };
 
 export function latinAccentsWereFolded(input: string): boolean {
@@ -442,7 +492,7 @@ function djangoSlug(title: string): string {
 
 function decodeEntities(text: string): string {
   text = text.replace(/&([a-zA-Z][a-zA-Z0-9]+);/g, (match, name: string) => {
-    const mapped = HTML5_ENTITIES[name];
+    const mapped = HTML4_ENTITIES[name];
     return mapped === undefined ? match : mapped;
   });
   text = text.replace(/&#(\d+);/g, (match, digits: string) => {
@@ -450,7 +500,7 @@ function decodeEntities(text: string): string {
     if (!Number.isFinite(value) || value < 0 || value > 0x10ffff) return match;
     return String.fromCodePoint(value);
   });
-  text = text.replace(/&#[xX]([0-9a-fA-F]+);/g, (match, hex: string) => {
+  text = text.replace(/&#x([0-9a-fA-F]+);/g, (match, hex: string) => {
     const value = Number.parseInt(hex, 16);
     if (!Number.isFinite(value) || value < 0 || value > 0x10ffff) return match;
     return String.fromCodePoint(value);
@@ -500,11 +550,16 @@ function pythonCharSupported(ch: string): boolean {
   return false;
 }
 
+const PYTHON_TRANSLITERATED_SCRIPT = /\p{Script=Greek}|\p{Script=Cyrillic}|\p{Script=Arabic}|\p{Script=Hebrew}|\p{Script=Syriac}|\p{Script=Thaana}|\p{Script=Nko}|\p{Script=Armenian}|\p{Script=Georgian}|\p{Script=Ethiopic}|\p{Script=Cherokee}|\p{Script=Canadian_Aboriginal}|\p{Script=Ogham}|\p{Script=Runic}|\p{Script=Khmer}|\p{Script=Mongolian}|\p{Script=Yi}|\p{Script=Hangul}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Han}|\p{Script=Bopomofo}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Tibetan}|\p{Script=Myanmar}|\p{Script=Devanagari}|\p{Script=Bengali}|\p{Script=Gurmukhi}|\p{Script=Gujarati}|\p{Script=Oriya}|\p{Script=Tamil}|\p{Script=Telugu}|\p{Script=Kannada}|\p{Script=Malayalam}|\p{Script=Sinhala}/u;
+
 function pythonHasUnmappedLetters(title: string): boolean {
-  const decoded = decodeEntities(title);
-  for (const ch of decoded) {
+  // Inspect the original title. python-slugify transliterates before it
+  // decodes entities, so letters that only appear after entity decoding
+  // are stripped the same way in the real library and in this preset.
+  for (const ch of title) {
     if (pythonCharSupported(ch)) continue;
-    if (/\p{L}|\p{N}/u.test(ch)) return true;
+    if (pythonIsIpa(ch)) return true;
+    if (PYTHON_TRANSLITERATED_SCRIPT.test(ch) && /\p{L}|\p{N}/u.test(ch)) return true;
   }
   return false;
 }
@@ -523,7 +578,6 @@ function pythonSlugify(title: string): string {
 }
 
 function npmSlugify(title: string): string {
-  if (title === NPM_SLUGIFY_NOTICE) return title;
   const replacement = "-";
   let slug = title.normalize().split("").reduce((result, ch) => {
     let append = NPM_CHARMAP[ch];

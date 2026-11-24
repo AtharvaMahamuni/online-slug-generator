@@ -227,6 +227,7 @@ test("switching to the WordPress preset follows sanitize_title on the test title
   await page.locator("#title").fill("東京");
   await expect(page.locator("#slug")).toHaveValue("");
   await expect(page.locator("#change-note")).toHaveText("Not matched");
+  await expect(page.locator("#live")).toHaveText("Not matched", { timeout: 2000 });
   await expect(page.locator("#copy")).toBeDisabled();
   await page.locator("#advanced-open").click();
   await page.locator("#url-preview-toggle").check({ force: true });

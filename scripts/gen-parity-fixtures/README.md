@@ -31,3 +31,18 @@ The committed JSON is the source of truth for `tests/slug/parity.test.ts` and th
 After the real libraries write their outputs, `annotate.ts` compares them to
 the in-app rules and lists a preset in `unsupported` when the two differ.
 Do not hand-edit those flags.
+
+## WordPress list probe
+
+`probe-wp-lists.py` records the special-case and encoded replacement lists used
+by the WordPress preset. It calls WordPress 7.1.5 `remove_accents` and
+`sanitize_title` on individual characters. It does not read WordPress PHP
+tables.
+
+```
+WORDPRESS_ROOT=scripts/gen-parity-fixtures/.cache/wordpress \
+  python3 scripts/gen-parity-fixtures/probe-wp-lists.py --count-fixture
+```
+
+`--count-fixture` reports how many recorded entries are exercised by
+`tests/slug/fixtures/parity.json`.
