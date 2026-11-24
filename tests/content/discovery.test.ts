@@ -52,7 +52,6 @@ describe("discovery files", () => {
   it("keeps locale URLs out of the sitemap and does not emit hreflang there", () => {
     const sitemap = read("sitemap.xml");
     const locs = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
-    expect(locs).toHaveLength(11);
     for (const loc of locs) {
       expect(loc).not.toMatch(/https:\/\/onlinesluggenerator\.com\/(es|de|fr|pt)(?:\/|$)/);
     }

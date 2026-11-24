@@ -9,13 +9,12 @@ Contact: https://onlinesluggenerator.com/contact
 ## Pages
 
 - [URL slug generator](https://onlinesluggenerator.com/): Turn one title into a clean URL slug. Example: “How to Prune Roses in June” becomes how-to-prune-roses-in-june.
-- [Bulk URL slug generator](https://onlinesluggenerator.com/bulk-slug-generator): Paste a list or a CSV and keep the other columns. A repeated slug gains a numeric suffix.
-- [Guides](https://onlinesluggenerator.com/guides): Five references. They are HTML and do not need the tool script.
+- [Bulk URL slug generator](https://onlinesluggenerator.com/bulk-slug-generator): Paste a list or a CSV and keep the other columns. A repeated slug gains a numeric suffix. Limits: 5 MB and 10,000 rows. JSON and Excel are not accepted.
+- [Guides](https://onlinesluggenerator.com/guides): Four references. They are HTML and do not need the tool script.
 - [What is a URL slug? Meaning and examples](https://onlinesluggenerator.com/guides/what-is-a-url-slug): Definition, examples, and what a slug does not do.
 - [URL slug best practices](https://onlinesluggenerator.com/guides/how-to-create-url-slugs): Case, hyphens, stop words, length, and numbers.
 - [Hyphens or underscores in URLs](https://onlinesluggenerator.com/guides/hyphens-vs-underscores-in-urls): What Google said in April 2024, and when not to migrate. Domain names cannot contain underscores.
 - [Unicode URL slugs](https://onlinesluggenerator.com/guides/unicode-and-international-urls): Latin accent folding and scripts that stay.
-- [Bulk URL slug generation](https://onlinesluggenerator.com/guides/bulk-url-slug-generation): Files, duplicate suffixes, and exports.
 - [About](https://onlinesluggenerator.com/about): What the site refuses to do. No company biography.
 - [Privacy](https://onlinesluggenerator.com/privacy): Titles and files are not uploaded. The host can still see ordinary requests.
 - [Contact](https://onlinesluggenerator.com/contact): GitHub issues only. No email form.

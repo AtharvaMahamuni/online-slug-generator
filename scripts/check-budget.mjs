@@ -153,6 +153,34 @@ function canonicalHref(html) {
   return match ? match[1] : null;
 }
 
+function refreshTarget(html) {
+  const match = html.match(/<meta\b[^>]*\bhttp-equiv="refresh"[^>]*\bcontent="([^"]+)"/i)
+    ?? html.match(/<meta\b[^>]*\bcontent="([^"]+)"[^>]*\bhttp-equiv="refresh"/i);
+  if (!match) return null;
+  const urlMatch = match[1].match(/url\s*=\s*([^;\s]+)/i);
+  return urlMatch ? urlMatch[1].trim() : null;
+}
+
+function resolveSiteUrl(target) {
+  if (!target) return null;
+  try {
+    const url = new URL(target, "https://onlinesluggenerator.com/");
+    if (url.origin !== "https://onlinesluggenerator.com") return null;
+    const path = `${url.pathname}${url.search}${url.hash}`;
+    return path === "/" ? "https://onlinesluggenerator.com/" : `https://onlinesluggenerator.com${path}`;
+  } catch {
+    return null;
+  }
+}
+
+function movedDestination(html) {
+  if (!robotsContent(html).includes("noindex")) return null;
+  const dest = resolveSiteUrl(refreshTarget(html));
+  const canon = canonicalHref(html);
+  if (!dest || !canon || dest !== canon) return null;
+  return dest;
+}
+
 function hreflangTags(html) {
   return [...html.matchAll(/<link\b[^>]*\brel="alternate"[^>]*\bhreflang="([^"]+)"[^>]*>/gi),
           ...html.matchAll(/<link\b[^>]*\bhreflang="([^"]+)"[^>]*\brel="alternate"[^>]*>/gi)]
@@ -190,7 +218,12 @@ for (const file of htmlFiles) {
   }
   const expected = expectedCanonical(rel);
   const actual = canonicalHref(html);
-  if (actual !== expected) {
+  const movedTo = movedDestination(html);
+  if (movedTo) {
+    if (actual !== movedTo) {
+      failures.push(`${rel} moved page canonical is ${actual ?? "(missing)"}, expected ${movedTo}.`);
+    }
+  } else if (actual !== expected) {
     failures.push(`${rel} canonical is ${actual ?? "(missing)"}, expected ${expected}.`);
   }
   const pageLocale = localeFromRel(rel);

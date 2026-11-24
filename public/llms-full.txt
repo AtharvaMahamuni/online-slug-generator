@@ -18,13 +18,13 @@ One title in, one slug out. The work runs in the browser. “How to Prune Roses 
 
 https://onlinesluggenerator.com/bulk-slug-generator
 
-One title per line, or a TXT or CSV file of up to 5 MB and 10,000 data rows. Other columns stay in memory and come back in the CSV next to a slug column. Two identical results get a numeric suffix: samsung-galaxy-s26 and samsung-galaxy-s26-2. The file is read on the device. It is not uploaded.
+One title per line, or a TXT or CSV file of up to 5 MB and 10,000 data rows. JSON and Excel are not accepted. Other columns stay in memory and come back in the CSV next to a slug column. Two identical results get a numeric suffix: samsung-galaxy-s26 and samsung-galaxy-s26-2. The file is read on the device. It is not uploaded.
 
 ## Guides
 
 https://onlinesluggenerator.com/guides
 
-Index of five HTML references. They stay readable with JavaScript off.
+Index of four HTML references. They stay readable with JavaScript off.
 
 ## What is a URL slug? Meaning and examples
 
@@ -49,12 +49,6 @@ Gary Illyes, in Google’s April 2024 SEO office hours (updated 18 April 2024), 
 https://onlinesluggenerator.com/guides/unicode-and-international-urls
 
 Latin folding: Café becomes cafe, Straße becomes strasse. Keep leaves café and straße. Cyrillic and Han characters stay under both choices. Percent-encoding is explained. This version does not ship a transliteration dictionary.
-
-## Bulk URL slug generation
-
-https://onlinesluggenerator.com/guides/bulk-url-slug-generation
-
-Paste, CSV columns, the 5 MB and 10,000-row limits, duplicate suffixes, and an export that keeps a product id. JSON and Excel are not accepted.
 
 ## About
 

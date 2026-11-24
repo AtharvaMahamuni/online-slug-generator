@@ -3,7 +3,7 @@ import GuideLayout from "../../layouts/GuideLayout.astro";
 
 const title = "Hyphens or Underscores in URLs? What Google Says";
 const description =
-  "Use hyphens in URL paths. What Google said in 2024, why underscores join words, whether domain names can have underscores, and when not to change live URLs.";
+  "Use hyphens in URL paths. What Google Search Central recommends, whether domain names can have underscores, and when not to change live URLs.";
 ---
 
 <GuideLayout
@@ -13,7 +13,7 @@ const description =
   h1="Hyphens or underscores in URLs?"
 >
   <p>
-    Search engines like Google officially treat hyphens (<code>-</code>) as word separators, recognizing <code>clean-url</code> as two distinct words: "clean" and "url." Underscores (<code>_</code>) join terms as a single compound token (<code>clean_url</code>). For all newly created pages, hyphens are the standard for clean URLs. If an established website already ranks with underscores, leave those live addresses alone.
+    Google Search Central’s URL structure documentation, updated 21 October 2026, recommends hyphens in URL paths because they clearly signal a word boundary. For historical reasons, it does not recommend underscores. For new pages, use hyphens. If an established site already ranks with underscores, leave those live addresses alone. The <a href="/">slug generator</a> uses hyphens by default and offers underscores as a setting. The documentation is <a href="https://developers.google.com/search/docs/crawling-indexing/url-structure">Keep a simple URL structure</a>.
   </p>
   <p>
     The example is the same title twice. “How to Prune Roses in June” is <code>how-to-prune-roses-in-june</code> with a hyphen and <code>how_to_prune_roses_in_june</code> with an underscore. Both keep every word. Both are lower case. The difference is the mark between words, and that mark should match the rest of the site you are publishing to.
