@@ -520,10 +520,7 @@
       "wordpress": "%c9%90-%c9%99-%c9%9b",
       "django": "",
       "python-slugify": "a-e",
-      "npm-slugify": "e",
-      "unsupported": [
-        "python-slugify"
-      ]
+      "npm-slugify": "e"
     },
     {
       "title": "ŉ test",
@@ -629,6 +626,111 @@
       "django": "aefbfbcb",
       "python-slugify": "a-ef-bf-bcb",
       "npm-slugify": "apercentefpercentbfpercentbcb"
+    },
+    {
+      "title": "Kṛṣṇa and Śiva",
+      "wordpress": "k%e1%b9%9b%e1%b9%a3%e1%b9%87a-and-siva",
+      "django": "krsna-and-siva",
+      "python-slugify": "krsna-and-siva",
+      "npm-slugify": "ksa-and-siva"
+    },
+    {
+      "title": "Ṛg Veda",
+      "wordpress": "%e1%b9%9bg-veda",
+      "django": "rg-veda",
+      "python-slugify": "rg-veda",
+      "npm-slugify": "g-veda"
+    },
+    {
+      "title": "Prāṇāyāma",
+      "wordpress": "pra%e1%b9%87ayama",
+      "django": "pranayama",
+      "python-slugify": "pranayama",
+      "npm-slugify": "praayama"
+    },
+    {
+      "title": "Saṃsāra",
+      "wordpress": "sa%e1%b9%83sara",
+      "django": "samsara",
+      "python-slugify": "samsara",
+      "npm-slugify": "sasara"
+    },
+    {
+      "title": "Ḥadīth",
+      "wordpress": "%e1%b8%a5adith",
+      "django": "hadith",
+      "python-slugify": "hadith",
+      "npm-slugify": "adith"
+    },
+    {
+      "title": "Ṭhākur Ḍhākā",
+      "wordpress": "%e1%b9%adhakur-%e1%b8%8dhaka",
+      "django": "thakur-dhaka",
+      "python-slugify": "thakur-dhaka",
+      "npm-slugify": "hakur-haka"
+    },
+    {
+      "title": "Māori whānau",
+      "wordpress": "maori-whanau",
+      "django": "maori-whanau",
+      "python-slugify": "maori-whanau",
+      "npm-slugify": "maori-whanau"
+    },
+    {
+      "title": "Hawaiʻi",
+      "wordpress": "hawai%ca%bbi",
+      "django": "hawaii",
+      "python-slugify": "hawai-i",
+      "npm-slugify": "hawaii"
+    },
+    {
+      "title": "Ḱ Ḿ Ṕ",
+      "wordpress": "%e1%b8%b1-%e1%b8%bf-%e1%b9%95",
+      "django": "k-m-p",
+      "python-slugify": "k-m-p",
+      "npm-slugify": ""
+    },
+    {
+      "title": "₦ naira",
+      "wordpress": "%e2%82%a6-naira",
+      "django": "naira",
+      "python-slugify": "n-naira",
+      "npm-slugify": "naira-naira"
+    },
+    {
+      "title": "ƛ ƞ ƥ ƭ ƴ ƶ",
+      "wordpress": "%c6%9b-%c6%9e-%c6%a5-%c6%ad-%c6%b4-%c6%b6",
+      "django": "",
+      "python-slugify": "l-n-p-t-y-z",
+      "npm-slugify": ""
+    },
+    {
+      "title": "ʹ ʺ ˆ ˇ ˈ",
+      "wordpress": "%ca%b9-%ca%ba-%cb%86-%cb%87-%cb%88",
+      "django": "",
+      "python-slugify": "v",
+      "npm-slugify": ""
+    },
+    {
+      "title": "a⁦b⁩c",
+      "wordpress": "a%e2%81%a6b%e2%81%a9c",
+      "django": "abc",
+      "python-slugify": "a-b-c",
+      "npm-slugify": "abc"
+    },
+    {
+      "title": "x᠎y",
+      "wordpress": "x%e1%a0%8ey",
+      "django": "xy",
+      "python-slugify": "xy",
+      "npm-slugify": "xy"
+    },
+    {
+      "title": "Ǻ",
+      "wordpress": "%c7%bb",
+      "django": "a",
+      "python-slugify": "a",
+      "npm-slugify": ""
     }
   ]
 }

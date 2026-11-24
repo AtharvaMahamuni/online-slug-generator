@@ -75,6 +75,10 @@ describe("parity presets", () => {
       "&apos;tis",
       "ª º ordinals",
       "foo%ef%bb%bfbar",
+      "Kṛṣṇa and Śiva",
+      "Prāṇāyāma",
+      "Ḥadīth",
+      "₦ naira",
     ]));
     expect(titles.some((title) => title.includes("\ufeff"))).toBe(true);
     expect(titles.some((title) => title.includes("\u00ad"))).toBe(true);
@@ -143,8 +147,14 @@ describe("parity presets", () => {
     expect(slugify("\ufeffabc", python).slug).toBe("abc");
     expect(slugify("ŉ test", python).slug).toBe("n-test");
     expect(slugify("ŉ test", python).flags.unmatched).toBe(false);
-    expect(slugify("ɐ ə ɛ", python).flags.unmatched).toBe(true);
-    expect(slugify("ɐ ə ɛ", python).slug).toBe("");
+    expect(slugify("ɐ ə ɛ", python).flags.unmatched).toBe(false);
+    expect(slugify("ɐ ə ɛ", python).slug).toBe("a-e");
+    expect(slugify("₦ naira", python).slug).toBe("n-naira");
+    expect(slugify("ƛ ƞ ƥ ƭ ƴ ƶ", python).slug).toBe("l-n-p-t-y-z");
+    expect(slugify("ʹ ʺ ˆ ˇ ˈ", python).slug).toBe("v");
+    expect(slugify("a\u2066b\u2069c", python).slug).toBe("a-b-c");
+    expect(slugify("x\u180ey", python).slug).toBe("xy");
+    expect(slugify("a\u2066b\u2069c", python).flags.unmatched).toBe(false);
 
     const wordpress = PRESETS.wordpress;
     expect(slugify("Fußball ẞig", wordpress).slug).toBe("fusball-%c3%9fig");
@@ -153,6 +163,12 @@ describe("parity presets", () => {
     expect(slugify("5 < 6 > 4", wordpress).slug).toBe("5-6-4");
     expect(slugify("ﬁ ﬂ ﬃ", wordpress).slug).toBe("%ef%ac%81-%ef%ac%82-%ef%ac%83");
     expect(slugify("ª º ordinals", wordpress).slug).toBe("a-o-ordinals");
+    expect(slugify("Kṛṣṇa and Śiva", wordpress).slug).toBe("k%e1%b9%9b%e1%b9%a3%e1%b9%87a-and-siva");
+    expect(slugify("Prāṇāyāma", wordpress).slug).toBe("pra%e1%b9%87ayama");
+    expect(slugify("Ḥadīth", wordpress).slug).toBe("%e1%b8%a5adith");
+    expect(slugify("Kṛṣṇa", wordpress).flags.transliterated).toBe(false);
+    expect(slugify("Kṛṣṇa and Śiva", wordpress).flags.transliterated).toBe(true);
+    expect(slugify("Ǻ", wordpress).slug).toBe("%c7%bb");
     // The encoded BOM list is required: a literal %ef%bb%bf in the title is
     // not a raw U+FEFF character, so the pre-strip of ﻿ does not apply.
     expect(slugify("foo%ef%bb%bfbar", wordpress).slug).toBe("foobar");

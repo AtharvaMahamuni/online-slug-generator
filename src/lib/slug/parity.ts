@@ -28,10 +28,22 @@
  */
 import npmCharmap from "./parity-npm-charmap.json";
 import html4Entities from "./parity-html4-entities.json";
+import wpUnfolded from "./parity-wp-unfolded.json";
+import pythonCheap from "./parity-python-cheap.json";
 import type { ParityId } from "./types";
 
 const NPM_CHARMAP = npmCharmap as Record<string, string>;
 const HTML4_ENTITIES = html4Entities as Record<string, string>;
+const WP_LATIN_UNFOLDED = new Set(wpUnfolded.unfolded);
+const WP_KEEP_CASE = new Set(wpUnfolded.keepCase);
+const PYTHON_CHEAP: Record<string, string> = {};
+[...pythonCheap.keys].forEach((ch, index) => {
+  PYTHON_CHEAP[ch] = pythonCheap.values[index]!;
+});
+
+// JS NFKD maps U+A7F1 to "S"; Python 3 / Django 6.1.3 leave it, so slugify
+// then drops it as non-ASCII. Recorded against Django 6.1.3 on U+00A0..U+FFFF.
+const JS_NFKD_SKIP = new Set(["\uA7F1"]);
 
 export const PARITY_VERSIONS: Record<ParityId, string> = {
   wordpress: "7.1.5",
@@ -77,6 +89,12 @@ export type ParitySlugResult = {
  * Latin letters here do not fold to ASCII plus combining marks under
  * Unicode NFD. ß maps to s because that is what an English (US) WordPress
  * site produces (Straße becomes strase), not the German ss mapping.
+ *
+ * Latin-script letters that NFD would fold, but that remove_accents leaves
+ * unchanged, are listed in parity-wp-unfolded.json (224 letters, plus 3
+ * keep-case exceptions) and are excluded from the NFD pass so they stay
+ * percent-encoded like WordPress. IAST titles in the fixture exercise
+ * this list.
  */
 const WP_LATIN_SPECIALS: Record<string, string> = {
   "£": "",
@@ -302,7 +320,7 @@ const PYTHON_CYRILLIC: Record<string, string> = {
   і: "i",
   Ї: "I",
   ї: "i",
-  Є: "Ie",
+  Є: "E",
   є: "ie",
   Ґ: "G",
   ґ: "g",
@@ -367,10 +385,6 @@ const PYTHON_SYMBOLS: Record<string, string> = {
   "\u202c": "",
   "\u202d": "",
   "\u202e": "",
-  "\u2066": "",
-  "\u2067": "",
-  "\u2068": "",
-  "\u2069": "",
   "\u00ad": "",
   "\ufeff": "",
   "\ufffc": "",
@@ -378,6 +392,7 @@ const PYTHON_SYMBOLS: Record<string, string> = {
 
 export function latinAccentsWereFolded(input: string): boolean {
   for (const ch of input) {
+    if (WP_LATIN_UNFOLDED.has(ch)) continue;
     const decomposed = ch.normalize("NFD");
     if (decomposed === ch) continue;
     const base = decomposed[0] ?? "";
@@ -415,8 +430,17 @@ function foldWordpressLetters(input: string): string {
   let out = "";
   for (const ch of input) {
     if (Object.hasOwn(WP_LATIN_SPECIALS, ch)) out += WP_LATIN_SPECIALS[ch]!;
+    else if (WP_LATIN_UNFOLDED.has(ch)) out += ch;
     else if (/\p{Script=Latin}/u.test(ch)) out += ch.normalize("NFD").replace(/\p{M}/gu, "");
     else out += ch;
+  }
+  return out;
+}
+
+function wordpressLower(input: string): string {
+  let out = "";
+  for (const ch of input) {
+    out += WP_KEEP_CASE.has(ch) ? ch : ch.toLocaleLowerCase("en");
   }
   return out;
 }
@@ -466,7 +490,7 @@ function wordpressSlug(title: string): string {
   slug = stripTags(slug);
   slug = foldWordpressLetters(slug);
   slug = slug.replace(/%([a-fA-F0-9]{2})/g, "\u0000$1\u0000").replace(/%/g, "").replace(/\u0000([a-fA-F0-9]{2})\u0000/g, "%$1");
-  slug = slug.toLocaleLowerCase("en");
+  slug = wordpressLower(slug);
   slug = utf8UriEncode(slug, 200);
   slug = applyEncodedReplacements(slug);
   slug = slug.replaceAll("&nbsp;", "-");
@@ -480,7 +504,9 @@ function wordpressSlug(title: string): string {
 }
 
 function djangoSlug(title: string): string {
-  let slug = title.normalize("NFKD").replace(/\p{M}/gu, "");
+  let slug = "";
+  for (const ch of title) slug += JS_NFKD_SKIP.has(ch) ? ch : ch.normalize("NFKD");
+  slug = slug.replace(/\p{M}/gu, "");
   slug = [...slug].filter((ch) => ch.charCodeAt(0) < 128).join("");
   slug = slug.toLowerCase();
   slug = slug.replace(/[^A-Za-z0-9_\s-]/g, "");
@@ -512,12 +538,8 @@ function pythonMapped(ch: string): string | undefined {
   if (Object.hasOwn(PYTHON_SPECIAL, ch)) return PYTHON_SPECIAL[ch];
   if (Object.hasOwn(PYTHON_CYRILLIC, ch)) return PYTHON_CYRILLIC[ch];
   if (Object.hasOwn(PYTHON_SYMBOLS, ch)) return PYTHON_SYMBOLS[ch];
+  if (Object.hasOwn(PYTHON_CHEAP, ch)) return PYTHON_CHEAP[ch];
   return undefined;
-}
-
-function pythonIsIpa(ch: string): boolean {
-  const code = ch.codePointAt(0) ?? 0;
-  return (code >= 0x0250 && code <= 0x02af) || (code >= 0x1d00 && code <= 0x1dbf);
 }
 
 function pythonTransliterate(text: string): string {
@@ -528,7 +550,8 @@ function pythonTransliterate(text: string): string {
       out += direct;
       continue;
     }
-    for (const piece of ch.normalize("NFKD")) {
+    const source = JS_NFKD_SKIP.has(ch) ? ch : ch.normalize("NFKD");
+    for (const piece of source) {
       if (/\p{M}/u.test(piece)) continue;
       out += pythonMapped(piece) ?? piece;
     }
@@ -536,30 +559,36 @@ function pythonTransliterate(text: string): string {
   return out;
 }
 
-function pythonCharSupported(ch: string): boolean {
-  if ((ch.codePointAt(0) ?? 0) < 128) return true;
-  if (pythonMapped(ch) !== undefined) return true;
-  if (pythonIsIpa(ch)) return false;
-  if (/\p{M}/u.test(ch)) return true;
-  if (/\p{Script=Latin}/u.test(ch)) return true;
-  for (const form of ["NFD", "NFKD"] as const) {
-    const decomposed = ch.normalize(form);
-    if (decomposed !== ch && [...decomposed].every((piece) => pythonCharSupported(piece))) return true;
-  }
-  if (/\p{P}|\p{S}|\p{Z}/u.test(ch)) return true;
-  return false;
+// Common combining diacritics that text-unidecode strips. Other marks
+// (U+034F..U+035F, combining Latin letters, Hebrew/Arabic points, ...)
+// are not guessed: flag them as not matched.
+function pythonMarkKnown(ch: string): boolean {
+  const code = ch.codePointAt(0) ?? 0;
+  return (code >= 0x0300 && code <= 0x034e) || (code >= 0x0360 && code <= 0x0362);
 }
 
-const PYTHON_TRANSLITERATED_SCRIPT = /\p{Script=Greek}|\p{Script=Cyrillic}|\p{Script=Arabic}|\p{Script=Hebrew}|\p{Script=Syriac}|\p{Script=Thaana}|\p{Script=Nko}|\p{Script=Armenian}|\p{Script=Georgian}|\p{Script=Ethiopic}|\p{Script=Cherokee}|\p{Script=Canadian_Aboriginal}|\p{Script=Ogham}|\p{Script=Runic}|\p{Script=Khmer}|\p{Script=Mongolian}|\p{Script=Yi}|\p{Script=Hangul}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Han}|\p{Script=Bopomofo}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Tibetan}|\p{Script=Myanmar}|\p{Script=Devanagari}|\p{Script=Bengali}|\p{Script=Gurmukhi}|\p{Script=Gujarati}|\p{Script=Oriya}|\p{Script=Tamil}|\p{Script=Telugu}|\p{Script=Kannada}|\p{Script=Malayalam}|\p{Script=Sinhala}/u;
+function pythonCharKnown(ch: string): boolean {
+  if ((ch.codePointAt(0) ?? 0) < 128) return true;
+  if (pythonMapped(ch) !== undefined) return true;
+  if (JS_NFKD_SKIP.has(ch)) return false;
+  if (/\p{M}/u.test(ch)) return pythonMarkKnown(ch);
+  const decomposed = ch.normalize("NFKD");
+  if (decomposed !== ch && [...decomposed].every((piece) => pythonCharKnown(piece))) return true;
+  // Known filter: punctuation, math and other symbols, and separators
+  // become a dash. Currency and modifier symbols can transliterate to
+  // letters, so they are known only through the tables above.
+  if (/\p{P}|\p{Sm}|\p{So}|\p{Z}/u.test(ch)) return true;
+  return false;
+}
 
 function pythonHasUnmappedLetters(title: string): boolean {
   // Inspect the original title. python-slugify transliterates before it
   // decodes entities, so letters that only appear after entity decoding
   // are stripped the same way in the real library and in this preset.
+  // If the preset does not know a character's real output, flag it and
+  // never guess a mapping.
   for (const ch of title) {
-    if (pythonCharSupported(ch)) continue;
-    if (pythonIsIpa(ch)) return true;
-    if (PYTHON_TRANSLITERATED_SCRIPT.test(ch) && /\p{L}|\p{N}/u.test(ch)) return true;
+    if (!pythonCharKnown(ch)) return true;
   }
   return false;
 }
