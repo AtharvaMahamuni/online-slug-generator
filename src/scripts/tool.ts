@@ -132,6 +132,10 @@ function syncControls(): void {
   const noteText = selected?.dataset.note ?? "";
   note.hidden = !noteText;
   note.textContent = noteText;
+  const parityOn = current.parity !== null;
+  document.querySelectorAll<HTMLElement>("[data-parity-hide]").forEach((el) => {
+    el.hidden = parityOn;
+  });
   updatePreview();
 }
 

@@ -1,9 +1,6 @@
 import npmCharmap from "./parity-npm-charmap.json";
-import wordpressAccents from "./parity-wordpress-accents.json";
 import type { ParityId } from "./types";
 
-const WP_EXCEPTIONS = wordpressAccents.exceptions as Record<string, string>;
-const WP_FOLD = new Set([...wordpressAccents.fold]);
 const NPM_CHARMAP = npmCharmap as Record<string, string>;
 
 export const PARITY_VERSIONS: Record<ParityId, string> = {
@@ -14,9 +11,11 @@ export const PARITY_VERSIONS: Record<ParityId, string> = {
 };
 
 export const PARITY_NOTES: Record<ParityId, string> = {
-  wordpress: "matches WordPress 7.1.5 sanitize_title on our test set",
-  django: "matches Django 6.1.3 django.utils.text.slugify on our test set",
-  "python-slugify": "matches python-slugify 9.2.0 on our test set",
+  wordpress:
+    "matches WordPress 7.1.5 sanitize_title with an English (US) site language, on our test set",
+  django: "matches Django 6.1.3 django.utils.text.slugify (allow_unicode=False) on our test set",
+  "python-slugify":
+    "matches python-slugify 9.2.0 on our test set, except Han and other non-Latin scripts",
   "npm-slugify": "matches npm slugify 1.6.9 with lower, strict on our test set",
 };
 
@@ -33,6 +32,125 @@ export const PARITY_SAMPLE_TITLES = [
   "Привет",
   "東京",
 ] as const;
+
+export type ParitySlugResult = {
+  slug: string;
+  unsupported: boolean;
+};
+
+/**
+ * Latin letters that do not decompose to ASCII plus combining marks under
+ * Unicode NFKD. Used by the WordPress preset after a generic NFKD fold.
+ * ß maps to s because that is what an English (US) WordPress site produces
+ * on our test set (Straße becomes strase), not the German ss mapping.
+ * € to E and £ to empty are fixture-observed signs that also do not
+ * decompose under NFKD.
+ */
+const WP_LATIN_SPECIALS: Record<string, string> = {
+  ß: "s",
+  ẞ: "s",
+  Æ: "AE",
+  æ: "ae",
+  Ø: "O",
+  ø: "o",
+  Ð: "D",
+  ð: "d",
+  Þ: "TH",
+  þ: "th",
+  Ł: "L",
+  ł: "l",
+  Œ: "OE",
+  œ: "oe",
+  Đ: "D",
+  đ: "d",
+  Ħ: "H",
+  ħ: "h",
+  ı: "i",
+  ĸ: "k",
+  Ŀ: "L",
+  ŀ: "l",
+  ŉ: "n",
+  Ŋ: "N",
+  ŋ: "n",
+  Ŧ: "T",
+  ŧ: "t",
+  Ə: "E",
+  ǝ: "e",
+  ɑ: "a",
+  "€": "E",
+  "£": "",
+};
+
+/**
+ * After utf8_uri_encode, WordPress save-context replacements observed by
+ * running sanitize_title on en_US WordPress 7.1.5. These are percent-encoded
+ * forms, not the raw characters (the raw-character replacements would never
+ * match after encoding).
+ */
+const WP_ENCODED_TO_HYPHEN = [
+  "%c2%a0",
+  "%e2%80%80",
+  "%e2%80%81",
+  "%e2%80%82",
+  "%e2%80%83",
+  "%e2%80%84",
+  "%e2%80%85",
+  "%e2%80%86",
+  "%e2%80%87",
+  "%e2%80%88",
+  "%e2%80%89",
+  "%e2%80%8a",
+  "%e2%80%91",
+  "%e2%80%93",
+  "%e2%80%94",
+  "%e2%80%a8",
+  "%e2%80%a9",
+  "%e2%80%af",
+];
+
+const WP_ENCODED_TO_X = ["%c3%97"];
+
+const WP_ENCODED_STRIP = [
+  "%c2%a1",
+  "%c2%a3",
+  "%c2%a9",
+  "%c2%ab",
+  "%c2%ad",
+  "%c2%ae",
+  "%c2%b0",
+  "%c2%b4",
+  "%c2%bb",
+  "%c2%bf",
+  "%cb%8a",
+  "%cc%80",
+  "%cc%81",
+  "%cc%84",
+  "%cc%8c",
+  "%cd%81",
+  "%e2%80%8b",
+  "%e2%80%8c",
+  "%e2%80%8d",
+  "%e2%80%8e",
+  "%e2%80%8f",
+  "%e2%80%98",
+  "%e2%80%99",
+  "%e2%80%9a",
+  "%e2%80%9b",
+  "%e2%80%9c",
+  "%e2%80%9d",
+  "%e2%80%9e",
+  "%e2%80%9f",
+  "%e2%80%a2",
+  "%e2%80%a6",
+  "%e2%80%aa",
+  "%e2%80%ab",
+  "%e2%80%ac",
+  "%e2%80%ad",
+  "%e2%80%ae",
+  "%e2%80%b9",
+  "%e2%80%ba",
+  "%e2%84%a2",
+];
 
 const PYTHON_SPECIAL: Record<string, string> = {
   ß: "ss",
@@ -54,8 +172,8 @@ const PYTHON_SPECIAL: Record<string, string> = {
   ı: "i",
   Ħ: "H",
   ħ: "h",
-  Ŋ: "N",
-  ŋ: "ng",
+  Ŋ: "NG",
+  ŋ: "NG",
 };
 
 const PYTHON_CYRILLIC: Record<string, string> = {
@@ -135,24 +253,82 @@ const PYTHON_CYRILLIC: Record<string, string> = {
   ґ: "g",
 };
 
+// text-unidecode mappings for common signs, applied in the first transliteration pass.
+const PYTHON_SYMBOLS: Record<string, string> = {
+  "€": "EUR",
+  "£": "PS",
+  "¥": "Y=",
+  "©": "(c)",
+  "®": "(r)",
+  "™": "tm",
+  "°": "deg",
+  "×": "x",
+  "÷": "/",
+  "‘": "'",
+  "’": "'",
+  "“": '"',
+  "”": '"',
+  "„": ",,",
+  "…": "...",
+  "•": "*",
+};
+
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: "\u00a0",
+  copy: "©",
+  reg: "®",
+  trade: "™",
+  euro: "€",
+  pound: "£",
+  yen: "¥",
+  deg: "°",
+  times: "×",
+  divide: "÷",
+};
+
+export function latinAccentsWereFolded(input: string): boolean {
+  for (const ch of input) {
+    const decomposed = ch.normalize("NFKD");
+    if (decomposed === ch) continue;
+    const base = decomposed[0] ?? "";
+    if (/\p{Script=Latin}/u.test(base) && /\p{M}/u.test(decomposed.slice(1))) return true;
+  }
+  return false;
+}
+
 export function slugifyParity(title: string, preset: ParityId): string {
+  return paritySlug(title, preset).slug;
+}
+
+export function paritySlug(title: string, preset: ParityId): ParitySlugResult {
   switch (preset) {
     case "wordpress":
-      return wordpressSlug(title);
+      return { slug: wordpressSlug(title), unsupported: false };
     case "django":
-      return djangoSlug(title);
-    case "python-slugify":
-      return pythonSlugify(title);
+      return { slug: djangoSlug(title), unsupported: false };
+    case "python-slugify": {
+      const unsupported = pythonHasUnmappedLetters(title);
+      return { slug: pythonSlugify(title), unsupported };
+    }
     case "npm-slugify":
-      return npmSlugify(title);
+      return { slug: npmSlugify(title), unsupported: false };
   }
 }
 
-function removeAccentsWordpress(input: string): string {
+function stripTags(input: string): string {
+  return input.replace(/<[^>]*>/g, "");
+}
+
+function foldWordpressLetters(input: string): string {
   let out = "";
   for (const ch of input) {
-    if (Object.hasOwn(WP_EXCEPTIONS, ch)) out += WP_EXCEPTIONS[ch];
-    else if (WP_FOLD.has(ch)) out += ch.normalize("NFKD").replace(/\p{M}/gu, "");
+    if (Object.hasOwn(WP_LATIN_SPECIALS, ch)) out += WP_LATIN_SPECIALS[ch]!;
+    else if (/\p{Script=Latin}/u.test(ch)) out += ch.normalize("NFKD").replace(/\p{M}/gu, "");
     else out += ch;
   }
   return out;
@@ -191,31 +367,24 @@ function utf8UriEncode(input: string, maxLength: number): string {
   return out;
 }
 
-
-function dropEncodedPunctuation(slug: string): string {
-  return slug.replace(/(?:%[0-9a-f]{2})+/g, (encoded) => {
-    const bytes = new Uint8Array(
-      [...encoded.matchAll(/%([0-9a-f]{2})/g)].map((match) => Number.parseInt(match[1]!, 16)),
-    );
-    try {
-      const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-      if ([...text].every((ch) => /\p{L}|\p{N}/u.test(ch))) return encoded;
-    } catch {
-      return encoded;
-    }
-    return "";
-  });
+function applyEncodedReplacements(slug: string): string {
+  for (const token of WP_ENCODED_TO_HYPHEN) slug = slug.replaceAll(token, "-");
+  for (const token of WP_ENCODED_TO_X) slug = slug.replaceAll(token, "x");
+  for (const token of WP_ENCODED_STRIP) slug = slug.replaceAll(token, "");
+  return slug;
 }
 
 function wordpressSlug(title: string): string {
-  let slug = removeAccentsWordpress(title);
+  let slug = stripTags(title);
+  slug = foldWordpressLetters(slug);
   slug = slug.replace(/%([a-fA-F0-9]{2})/g, "\u0000$1\u0000").replace(/%/g, "").replace(/\u0000([a-fA-F0-9]{2})\u0000/g, "%$1");
   slug = slug.toLocaleLowerCase("en");
   slug = utf8UriEncode(slug, 200);
-  slug = dropEncodedPunctuation(slug);
-  slug = slug.replaceAll("\u00a0", "-").replaceAll("\u2013", "-").replaceAll("\u2014", "-").replaceAll("\u2011", "-");
+  slug = applyEncodedReplacements(slug);
+  slug = slug.replaceAll("&nbsp;", "-");
   slug = slug.replace(/&.+?;/g, "");
   slug = slug.replaceAll(".", "-");
+  slug = slug.replaceAll("/", "-");
   slug = slug.replace(/[^%a-z0-9 _-]/g, "");
   slug = slug.replace(/\s+/g, "-");
   slug = slug.replace(/-+/g, "-").replace(/^-+/, "").replace(/-+$/, "");
@@ -229,19 +398,56 @@ function djangoSlug(title: string): string {
   slug = slug.replace(/[^A-Za-z0-9_\s-]/g, "");
   slug = slug.trim();
   slug = slug.replace(/[-\s]+/g, "-");
-  slug = slug.replace(/^-+/, "").replace(/-+$/, "");
+  slug = slug.replace(/^[-_]+/, "").replace(/[-_]+$/, "");
   return slug;
+}
+
+function decodeEntities(text: string): string {
+  text = text.replace(/&([a-zA-Z][a-zA-Z0-9]+);/g, (match, name: string) => {
+    const mapped = NAMED_ENTITIES[name.toLowerCase()];
+    return mapped === undefined ? match : mapped;
+  });
+  text = text.replace(/&#(\d+);/g, (match, digits: string) => {
+    const value = Number(digits);
+    if (!Number.isFinite(value) || value < 0 || value > 0x10ffff) return match;
+    return String.fromCodePoint(value);
+  });
+  text = text.replace(/&#[xX]([0-9a-fA-F]+);/g, (match, hex: string) => {
+    const value = Number.parseInt(hex, 16);
+    if (!Number.isFinite(value) || value < 0 || value > 0x10ffff) return match;
+    return String.fromCodePoint(value);
+  });
+  return text;
+}
+
+function pythonMapChar(ch: string): string {
+  if (Object.hasOwn(PYTHON_SPECIAL, ch)) return PYTHON_SPECIAL[ch]!;
+  if (Object.hasOwn(PYTHON_CYRILLIC, ch)) return PYTHON_CYRILLIC[ch]!;
+  if (Object.hasOwn(PYTHON_SYMBOLS, ch)) return PYTHON_SYMBOLS[ch]!;
+  return ch;
+}
+
+function pythonHasUnmappedLetters(title: string): boolean {
+  const decoded = decodeEntities(title);
+  for (const ch of decoded.normalize("NFKD")) {
+    if (/\p{M}/u.test(ch)) continue;
+    if (ch.charCodeAt(0) < 128) continue;
+    if (Object.hasOwn(PYTHON_SPECIAL, ch) || Object.hasOwn(PYTHON_CYRILLIC, ch) || Object.hasOwn(PYTHON_SYMBOLS, ch)) {
+      continue;
+    }
+    if (/\p{Script=Latin}/u.test(ch)) continue;
+    if (/\p{P}|\p{S}|\p{Z}/u.test(ch)) continue;
+    if (/\p{L}|\p{N}/u.test(ch)) return true;
+  }
+  return false;
 }
 
 function pythonSlugify(title: string): string {
   let text = title.replace(/'+/g, "-");
   let mapped = "";
-  for (const ch of text.normalize("NFKD")) {
-    if (Object.hasOwn(PYTHON_SPECIAL, ch)) mapped += PYTHON_SPECIAL[ch]!;
-    else if (Object.hasOwn(PYTHON_CYRILLIC, ch)) mapped += PYTHON_CYRILLIC[ch]!;
-    else mapped += ch;
-  }
-  text = mapped.normalize("NFKD").replace(/\p{M}/gu, "");
+  for (const ch of text.normalize("NFKD")) mapped += pythonMapChar(ch);
+  text = decodeEntities(mapped);
+  text = text.normalize("NFKD").replace(/\p{M}/gu, "");
   text = text.toLowerCase();
   text = text.replace(/'+/g, "");
   text = text.replace(/(?<=\d),(?=\d)/g, "");

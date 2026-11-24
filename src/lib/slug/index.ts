@@ -5,7 +5,7 @@ export { assignDuplicates } from "./duplicates";
 export { escapeCsvField, slugHeader, toCsv, toTxt, buildExport } from "./export";
 export { foldLatinAscii } from "./letters";
 export { slugify, slugifyBatch, applyMaxLength, changeNote } from "./pipeline";
-export { slugifyParity, PARITY_VERSIONS, PARITY_NOTES, PARITY_FIXTURE_URL, PARITY_SAMPLE_TITLES } from "./parity";
+export { slugifyParity, paritySlug, latinAccentsWereFolded, PARITY_VERSIONS, PARITY_NOTES, PARITY_FIXTURE_URL, PARITY_SAMPLE_TITLES } from "./parity";
 export { DEFAULT_CONFIG, PRESETS, PARITY_PRESETS, presetMatches, sameConfig } from "./presets";
 export { defaultSettings, parseStoredSettings, parseStoredJson } from "./settings";
 export {

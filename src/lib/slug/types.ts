@@ -23,6 +23,7 @@ export type SlugFlags = {
   numbersRemoved: boolean;
   htmlStripped: boolean;
   empty: boolean;
+  unmatched: boolean;
 };
 
 export type SlugResult = {

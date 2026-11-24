@@ -41,7 +41,7 @@ These describe the site. They are not extra articles, and they are not in the si
 - The default separator is a hyphen. Lower case is on. Latin accents fold. Stop-word removal is off until someone turns it on.
 - Readable URL keeps “How to Prune Roses in June” as how-to-prune-roses-in-june. Short permalink makes how-prune-roses-june.
 - “Café au lait, 12 oz” becomes cafe-au-lait-12-oz. “AT&T fiber plans” becomes at-and-t-fiber-plans when the ampersand rule is on.
-- Привет and 東京 are kept. There is no transliteration dictionary.
+- The default Readable URL and Keep original script presets keep Привет and 東京. Those presets have no transliteration dictionary. The python-slugify and npm slugify presets transliterate some non-Latin letters on the published test set, and show “not matched” when they cannot.
 - A shorter slug is not presented as a ranking method. This site does not show an SEO score.
 - Presets reproduce WordPress, Django, python-slugify and npm slugify output on a published test set: https://github.com/AtharvaMahamuni/online-slug-generator/blob/main/tests/slug/fixtures/parity.json.
 - Training crawlers are disallowed in robots.txt. Search crawlers are allowed. User-triggered fetchers may ignore robots.txt.

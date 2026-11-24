@@ -228,6 +228,180 @@
       "django": "this-is-a-very-long-title-about-winter-roses-pruning-in-early-june-that-should-exercise-the-wordpress-two-hundred-character-encoded-limit-when-we-keep-adding-words-about-gardens-soil-and-sunlight-until-the-path-is-clearly-longer-than-two-hundred-encoded-characters-in-a-permalink",
       "python-slugify": "this-is-a-very-long-title-about-winter-roses-pruning-in-early-june-that-should-exercise-the-wordpress-two-hundred-character-encoded-limit-when-we-keep-adding-words-about-gardens-soil-and-sunlight-until-the-path-is-clearly-longer-than-two-hundred-encoded-characters-in-a-permalink",
       "npm-slugify": "this-is-a-very-long-title-about-winter-roses-pruning-in-early-june-that-should-exercise-the-wordpress-two-hundred-character-encoded-limit-when-we-keep-adding-words-about-gardens-soil-and-sunlight-until-the-path-is-clearly-longer-than-two-hundred-encoded-characters-in-a-permalink"
+    },
+    {
+      "title": "AC/DC Back in Black",
+      "wordpress": "ac-dc-back-in-black",
+      "django": "acdc-back-in-black",
+      "python-slugify": "ac-dc-back-in-black",
+      "npm-slugify": "acdc-back-in-black"
+    },
+    {
+      "title": "2026/27 season preview",
+      "wordpress": "2026-27-season-preview",
+      "django": "202627-season-preview",
+      "python-slugify": "2026-27-season-preview",
+      "npm-slugify": "202627-season-preview"
+    },
+    {
+      "title": "Title—Subtitle",
+      "wordpress": "title-subtitle",
+      "django": "titlesubtitle",
+      "python-slugify": "title-subtitle",
+      "npm-slugify": "titlesubtitle"
+    },
+    {
+      "title": "Wi‑Fi 7 routers",
+      "wordpress": "wi-fi-7-routers",
+      "django": "wifi-7-routers",
+      "python-slugify": "wi-fi-7-routers",
+      "npm-slugify": "wifi-7-routers"
+    },
+    {
+      "title": "non breaking space title",
+      "wordpress": "non-breaking-space-title",
+      "django": "non-breaking-space-title",
+      "python-slugify": "non-breaking-space-title",
+      "npm-slugify": "non-breaking-space-title"
+    },
+    {
+      "title": "5 × 3 = 15",
+      "wordpress": "5-x-3-15",
+      "django": "5-3-15",
+      "python-slugify": "5-x-3-15",
+      "npm-slugify": "5-3-15"
+    },
+    {
+      "title": "<b>Bold</b> title",
+      "wordpress": "bold-title",
+      "django": "bboldb-title",
+      "python-slugify": "b-bold-b-title",
+      "npm-slugify": "lessbgreaterboldlessbgreater-title"
+    },
+    {
+      "title": "😀 Party time 🎉",
+      "wordpress": "%f0%9f%98%80-party-time-%f0%9f%8e%89",
+      "django": "party-time",
+      "python-slugify": "party-time",
+      "npm-slugify": "party-time"
+    },
+    {
+      "title": "I ♥ NY",
+      "wordpress": "i-%e2%99%a5-ny",
+      "django": "i-ny",
+      "python-slugify": "i-ny",
+      "npm-slugify": "i-love-ny"
+    },
+    {
+      "title": "path/to/file",
+      "wordpress": "path-to-file",
+      "django": "pathtofile",
+      "python-slugify": "path-to-file",
+      "npm-slugify": "pathtofile"
+    },
+    {
+      "title": "%20 encoded%2Fslash",
+      "wordpress": "%20-encoded%2fslash",
+      "django": "20-encoded2fslash",
+      "python-slugify": "20-encoded-2fslash",
+      "npm-slugify": "percent20-encodedpercent2fslash"
+    },
+    {
+      "title": "John’s guide",
+      "wordpress": "johns-guide",
+      "django": "johns-guide",
+      "python-slugify": "johns-guide",
+      "npm-slugify": "johns-guide"
+    },
+    {
+      "title": "Don’t Stop Believin’",
+      "wordpress": "dont-stop-believin",
+      "django": "dont-stop-believin",
+      "python-slugify": "dont-stop-believin",
+      "npm-slugify": "dont-stop-believin"
+    },
+    {
+      "title": "Ben &amp; Jerry",
+      "wordpress": "ben-jerry",
+      "django": "ben-amp-jerry",
+      "python-slugify": "ben-jerry",
+      "npm-slugify": "ben-andamp-jerry"
+    },
+    {
+      "title": "Fish &#38; Chips",
+      "wordpress": "fish-chips",
+      "django": "fish-38-chips",
+      "python-slugify": "fish-chips",
+      "npm-slugify": "fish-and38-chips"
+    },
+    {
+      "title": "50% off &nbsp; today",
+      "wordpress": "50-off-today",
+      "django": "50-off-nbsp-today",
+      "python-slugify": "50-off-today",
+      "npm-slugify": "50percent-off-andnbsp-today"
+    },
+    {
+      "title": "Price: €100 / £50 / $20",
+      "wordpress": "price-e100-50-20",
+      "django": "price-100-50-20",
+      "python-slugify": "price-eur100-ps50-20",
+      "npm-slugify": "price-euro100-pound50-dollar20"
+    },
+    {
+      "title": "© 2026 Acme™ ®",
+      "wordpress": "2026-acme",
+      "django": "2026-acmetm",
+      "python-slugify": "c-2026-acmetm-r",
+      "npm-slugify": "c-2026-acmetm-r"
+    },
+    {
+      "title": "Temp 20°C",
+      "wordpress": "temp-20c",
+      "django": "temp-20c",
+      "python-slugify": "temp-20degc",
+      "npm-slugify": "temp-20c"
+    },
+    {
+      "title": "1,000 rows",
+      "wordpress": "1000-rows",
+      "django": "1000-rows",
+      "python-slugify": "1000-rows",
+      "npm-slugify": "1000-rows"
+    },
+    {
+      "title": "_foo_",
+      "wordpress": "_foo_",
+      "django": "foo",
+      "python-slugify": "foo",
+      "npm-slugify": "foo"
+    },
+    {
+      "title": "___under___",
+      "wordpress": "___under___",
+      "django": "under",
+      "python-slugify": "under",
+      "npm-slugify": "under"
+    },
+    {
+      "title": "Ελληνικά νέα",
+      "wordpress": "%ce%b5%ce%bb%ce%bb%ce%b7%ce%bd%ce%b9%ce%ba%ce%ac-%ce%bd%ce%ad%ce%b1",
+      "django": "",
+      "python-slugify": "ellenika-nea",
+      "npm-slugify": "ellhnika-nea",
+      "unsupported": [
+        "python-slugify"
+      ]
+    },
+    {
+      "title": "한국어 제목",
+      "wordpress": "%ed%95%9c%ea%b5%ad%ec%96%b4-%ec%a0%9c%eb%aa%a9",
+      "django": "",
+      "python-slugify": "hangugeo-jemog",
+      "npm-slugify": "",
+      "unsupported": [
+        "python-slugify"
+      ]
     }
   ]
 }

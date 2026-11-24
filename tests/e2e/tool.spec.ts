@@ -214,7 +214,16 @@ test("locale tool pages stay live and are noindex, follow with a self-canonical"
 test("switching to the WordPress preset follows sanitize_title on the test title", async ({ page }) => {
   await page.goto("/");
   await page.locator("#preset").selectOption("wordpress");
-  await expect(page.locator("#preset-note")).toHaveText("matches WordPress 7.1.5 sanitize_title on our test set");
+  await expect(page.locator("#preset-note")).toHaveText("matches WordPress 7.1.5 sanitize_title with an English (US) site language, on our test set");
   await page.locator("#title").fill("Men's Trail Running Shoes");
   await expect(page.locator("#slug")).toHaveValue("mens-trail-running-shoes");
+  await expect(page.locator("#change-note")).toBeHidden();
+  await expect(page.locator('[data-parity-hide][aria-label="Separator"]')).toBeHidden();
+  await page.locator("#title").fill("Café au lait");
+  await expect(page.locator("#slug")).toHaveValue("cafe-au-lait");
+  await expect(page.locator("#change-note")).toHaveText("Latin accents were folded to ASCII.");
+  await page.locator("#preset").selectOption("python-slugify");
+  await page.locator("#title").fill("東京");
+  await expect(page.locator("#slug")).toHaveValue("not matched");
+  await expect(page.locator("#change-note")).toHaveText("This title is not matched by the selected preset.");
 });

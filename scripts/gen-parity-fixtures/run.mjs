@@ -76,20 +76,22 @@ if (npmPkg.version !== versions["npm-slugify"]) {
   throw new Error(`npm slugify version ${npmPkg.version} does not match pin`);
 }
 
-const rows = titles.map((title, index) => {
-  const row = {
-    title,
-    wordpress: wordpress[index],
-    django: pythonOut.django[index],
-    "python-slugify": pythonOut.python_slugify[index],
-    "npm-slugify": npmSlugs[index],
-  };
-  const unsupported = [];
-  // Full Han transliteration is out of budget for the in-app python-slugify rules.
-  if (/\p{Script=Han}/u.test(title)) unsupported.push("python-slugify");
-  if (unsupported.length) row.unsupported = unsupported;
-  return row;
-});
+const rawRows = titles.map((title, index) => ({
+  title,
+  wordpress: wordpress[index],
+  django: pythonOut.django[index],
+  "python-slugify": pythonOut.python_slugify[index],
+  "npm-slugify": npmSlugs[index],
+}));
+
+const annotatePath = path.join(here, "annotate.ts");
+const rows = JSON.parse(
+  execFileSync("npx", ["vite-node", annotatePath], {
+    input: JSON.stringify(rawRows),
+    encoding: "utf8",
+    cwd: root,
+  }),
+);
 
 const fixture = {
   generated: "2026-11-24",

@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { changeNote, PRESETS, slugify } from "../../src/lib/slug";
 import { PARITY_FIXTURE_URL, PARITY_SAMPLE_TITLES, slugifyParity } from "../../src/lib/slug/parity";
-import { PRESETS, slugify } from "../../src/lib/slug";
 import type { ParityId } from "../../src/lib/slug/types";
 
 type ParityRow = {
@@ -36,24 +36,47 @@ describe("parity presets", () => {
     });
   });
 
-  it("matches every supported fixture row exactly", () => {
+  it("matches every supported fixture row exactly, and shows not matched when it cannot", () => {
     for (const row of fixture.rows) {
       for (const preset of PRESET_IDS) {
+        const raw = slugifyParity(row.title, preset);
+        const displayed = slugify(row.title, PRESETS[preset]).slug;
         if (row.unsupported?.includes(preset)) {
-          expect(slugifyParity(row.title, preset), `${preset} unsupported for ${row.title}`).not.toBe(row[preset]);
+          expect(raw, `${preset} unsupported for ${row.title}`).not.toBe(row[preset]);
+          expect(displayed, `${preset} display for ${row.title}`).toBe("not matched");
+          expect(displayed).not.toBe("");
           continue;
         }
-        expect(slugify(row.title, PRESETS[preset]).slug, `${preset}: ${row.title}`).toBe(row[preset]);
+        expect(raw, `${preset}: ${row.title}`).toBe(row[preset]);
+        expect(displayed, `${preset} display: ${row.title}`).toBe(row[preset]);
       }
     }
   });
 
-  it("marks only listed rows as unsupported, and never presents those outputs as a match", () => {
+  it("covers slash, dash, curly quote, entity, non-Han script and digit-comma rows", () => {
+    const titles = fixture.rows.map((row) => row.title);
+    expect(titles).toEqual(expect.arrayContaining([
+      "AC/DC Back in Black",
+      "2026/27 season preview",
+      "Title—Subtitle",
+      "John’s guide",
+      "Ben &amp; Jerry",
+      "1,000 rows",
+      "Ελληνικά νέα",
+    ]));
+    expect(titles.some((title) => title.includes("\u2011"))).toBe(true);
+    expect(titles.some((title) => title.includes("<b>"))).toBe(true);
+    const comma = fixture.rows.find((row) => row.title === "1,000 rows");
+    expect(comma?.["python-slugify"]).toBe("1000-rows");
+  });
+
+  it("marks unsupported from a real-versus-preset diff, including non-Han scripts", () => {
     const unsupported = fixture.rows.filter((row) => row.unsupported?.length);
     expect(unsupported.length).toBeGreaterThan(0);
+    expect(unsupported.some((row) => /\p{Script=Han}/u.test(row.title))).toBe(true);
+    expect(unsupported.some((row) => /\p{Script=Greek}/u.test(row.title))).toBe(true);
     for (const row of unsupported) {
       expect(row.unsupported).toContain("python-slugify");
-      expect(/\p{Script=Han}/u.test(row.title)).toBe(true);
     }
   });
 
@@ -67,21 +90,34 @@ describe("parity presets", () => {
       for (const preset of PRESET_IDS) {
         if (row.unsupported?.includes(preset)) {
           expect(row[preset]).not.toBe("not matched");
+          expect(slugify(title, PRESETS[preset]).slug).toBe("not matched");
           continue;
         }
         expect(slugify(title, PRESETS[preset]).slug).toBe(row[preset]);
       }
     }
   });
+
+  it("sets the Latin-accents note only when accents were folded", () => {
+    const shoes = slugify("Men's Trail Running Shoes", PRESETS.wordpress);
+    expect(shoes.slug).toBe("mens-trail-running-shoes");
+    expect(shoes.flags.transliterated).toBe(false);
+    expect(changeNote(shoes)).toBe("");
+    const cafe = slugify("Café au lait", PRESETS.wordpress);
+    expect(cafe.slug).toBe("cafe-au-lait");
+    expect(cafe.flags.transliterated).toBe(true);
+    expect(changeNote(cafe)).toBe("Latin accents were folded to ASCII.");
+  });
 });
 
 describe("home parity table", () => {
-  it("prints fixture values, Readable URL defaults, and not matched for unsupported cells", () => {
+  it("prints fixture values, Readable URL defaults, not matched, and (empty)", () => {
     const source = readFileSync(path.join(import.meta.dirname, "../../src/pages/index.astro"), "utf8");
     expect(source).toContain('id="parity-table"');
     expect(source).toContain("What WordPress, Django and other slugifiers output");
     expect(source).toContain("PARITY_FIXTURE_URL");
     expect(source).toContain("not matched");
+    expect(source).toContain("(empty)");
     expect(source).toContain("mens-trail-running-shoes-navy-size-10");
     expect(source).toContain("PARITY_SAMPLE_TITLES");
     expect(PARITY_FIXTURE_URL).toBe(

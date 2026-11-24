@@ -25,3 +25,9 @@ node scripts/gen-parity-fixtures/run.mjs
 ```
 
 The committed JSON is the source of truth for `tests/slug/parity.test.ts` and the home-page table.
+
+## Unsupported rows
+
+After the real libraries write their outputs, `annotate.ts` compares them to
+the in-app rules and lists a preset in `unsupported` when the two differ.
+Do not hand-edit those flags.

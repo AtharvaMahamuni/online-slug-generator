@@ -48,7 +48,7 @@ Gary Illyes, in Google’s April 2024 SEO office hours (updated 18 April 2024), 
 
 https://onlinesluggenerator.com/guides/unicode-and-international-urls
 
-Latin folding: Café becomes cafe, Straße becomes strasse. Keep leaves café and straße. Cyrillic and Han characters stay under both choices. Percent-encoding is explained. This version does not ship a transliteration dictionary.
+Latin folding: Café becomes cafe, Straße becomes strasse. Keep leaves café and straße. Cyrillic and Han characters stay under the default Readable URL and Keep original script presets. Percent-encoding is explained. Those presets have no transliteration dictionary.
 
 ## About
 
