@@ -769,6 +769,10 @@ select {
   min-width: 0;
 }
 
+[data-parity-hide][hidden] {
+  display: none !important;
+}
+
 .segment {
   display: inline-flex;
   border: 1px solid var(--hairline-strong);

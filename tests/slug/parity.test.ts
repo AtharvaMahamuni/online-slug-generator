@@ -1,0 +1,242 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+import { changeNote, PRESETS, slugify } from "../../src/lib/slug";
+import { PARITY_FIXTURE_URL, PARITY_SAMPLE_TITLES, slugifyParity } from "../../src/lib/slug/parity";
+import type { ParityId } from "../../src/lib/slug/types";
+
+type ParityRow = {
+  title: string;
+  wordpress: string;
+  django: string;
+  "python-slugify": string;
+  "npm-slugify": string;
+  unsupported?: string[];
+};
+
+type Fixture = {
+  versions: Record<ParityId, string>;
+  rows: ParityRow[];
+};
+
+const fixture = JSON.parse(
+  readFileSync(path.join(import.meta.dirname, "fixtures/parity.json"), "utf8"),
+) as Fixture;
+
+const PRESET_IDS: ParityId[] = ["wordpress", "django", "python-slugify", "npm-slugify"];
+
+describe("parity presets", () => {
+  it("has at least 25 published titles from the real libraries", () => {
+    expect(fixture.rows.length).toBeGreaterThanOrEqual(25);
+    expect(fixture.versions).toEqual({
+      wordpress: "7.1.5",
+      django: "6.1.3",
+      "python-slugify": "9.2.0",
+      "npm-slugify": "1.6.9",
+    });
+  });
+
+  it("matches every supported fixture row exactly, and shows not matched when it cannot", () => {
+    for (const row of fixture.rows) {
+      for (const preset of PRESET_IDS) {
+        const raw = slugifyParity(row.title, preset);
+        const displayed = slugify(row.title, PRESETS[preset]).slug;
+        if (row.unsupported?.includes(preset)) {
+          const result = slugify(row.title, PRESETS[preset]);
+          expect(displayed, `${preset} display for ${row.title}`).toBe("");
+          expect(result.flags.unmatched, `${preset} unmatched for ${row.title}`).toBe(true);
+          expect(changeNote(result)).toBe("Not matched");
+          continue;
+        }
+        expect(raw, `${preset}: ${row.title}`).toBe(row[preset]);
+        expect(displayed, `${preset} display: ${row.title}`).toBe(row[preset]);
+      }
+    }
+  });
+
+  it("covers slash, dash, curly quote, entity, non-Han script and digit-comma rows", () => {
+    const titles = fixture.rows.map((row) => row.title);
+    expect(titles).toEqual(expect.arrayContaining([
+      "AC/DC Back in Black",
+      "2026/27 season preview",
+      "Title—Subtitle",
+      "John’s guide",
+      "Ben &amp; Jerry",
+      "1,000 rows",
+      "Ελληνικά νέα",
+      "Fußball ẞig",
+      "5 < 6 > 4",
+      "&eacute;cole",
+      "§ 12",
+      "‰ permille",
+      "ŉ test",
+      "ɐ ə ɛ",
+      "&apos;tis",
+      "ª º ordinals",
+      "foo%ef%bb%bfbar",
+      "Kṛṣṇa and Śiva",
+      "Prāṇāyāma",
+      "Ḥadīth",
+      "₦ naira",
+      "2020&#8211;2024 Report",
+      "Title&#8212;Subtitle",
+      "Q&amp;A&#8212;Live",
+    ]));
+    expect(titles.some((title) => title.includes("\ufeff"))).toBe(true);
+    expect(titles.some((title) => title.includes("\u00ad"))).toBe(true);
+    expect(titles.some((title) => title.includes("\u2011"))).toBe(true);
+    expect(titles.some((title) => title.includes("<b>"))).toBe(true);
+    const comma = fixture.rows.find((row) => row.title === "1,000 rows");
+    expect(comma?.["python-slugify"]).toBe("1000-rows");
+  });
+
+  it("marks unsupported from a real-versus-preset diff, including non-Han scripts", () => {
+    const unsupported = fixture.rows.filter((row) => row.unsupported?.length);
+    expect(unsupported.length).toBeGreaterThan(0);
+    expect(unsupported.some((row) => /\p{Script=Han}/u.test(row.title))).toBe(true);
+    expect(unsupported.some((row) => /\p{Script=Greek}/u.test(row.title))).toBe(true);
+    for (const row of unsupported) {
+      expect(row.unsupported).toContain("python-slugify");
+    }
+  });
+
+  it("keeps the home table sample titles equal to the published fixture rows", () => {
+    expect(PARITY_SAMPLE_TITLES).toHaveLength(8);
+    for (const title of PARITY_SAMPLE_TITLES) {
+      const row = fixture.rows.find((item) => item.title === title);
+      expect(row, title).toBeTruthy();
+      if (!row) continue;
+      expect(slugify(title, PRESETS.readable).slug).toBe(slugify(title).slug);
+      for (const preset of PRESET_IDS) {
+        if (row.unsupported?.includes(preset)) {
+          expect(row[preset]).not.toBe("not matched");
+          const result = slugify(title, PRESETS[preset]);
+          expect(result.slug).toBe("");
+          expect(result.flags.unmatched).toBe(true);
+          continue;
+        }
+        expect(slugify(title, PRESETS[preset]).slug).toBe(row[preset]);
+      }
+    }
+  });
+
+  it("sets the Latin-accents note only when accents were folded", () => {
+    const shoes = slugify("Men's Trail Running Shoes", PRESETS.wordpress);
+    expect(shoes.slug).toBe("mens-trail-running-shoes");
+    expect(shoes.flags.transliterated).toBe(false);
+    expect(changeNote(shoes)).toBe("");
+    const cafe = slugify("Café au lait", PRESETS.wordpress);
+    expect(cafe.slug).toBe("cafe-au-lait");
+    expect(cafe.flags.transliterated).toBe(true);
+    expect(changeNote(cafe)).toBe("Latin accents were folded to ASCII.");
+  });
+});
+
+
+  it("matches the widened WordPress and python-slugify cases", () => {
+    const python = PRESETS["python-slugify"];
+    expect(slugify("&rsquo;s", python).slug).toBe("s");
+    expect(slugify("&mdash;dash", python).slug).toBe("dash");
+    expect(slugify("&ndash;", python).slug).toBe("");
+    expect(slugify("&hellip;more", python).slug).toBe("more");
+    expect(slugify("&eacute;cole", python).slug).toBe("e-cole");
+    expect(slugify("§ 12", python).flags.unmatched).toBe(true);
+    expect(slugify("¶ para", python).flags.unmatched).toBe(true);
+    expect(slugify("¢ ¥ ₹ ₽ ₿", python).flags.unmatched).toBe(true);
+    expect(slugify("‰ permille", python).flags.unmatched).toBe(true);
+    expect(slugify("soft\u00adhyphen", python).slug).toBe("softhyphen");
+    expect(slugify("soft\u00adhyphen", python).flags.unmatched).toBe(false);
+    expect(slugify("a\u200cb", python).slug).toBe("ab");
+    expect(slugify("\ufeffabc", python).slug).toBe("abc");
+    expect(slugify("ŉ test", python).flags.unmatched).toBe(true);
+    expect(slugify("ɐ ə ɛ", python).flags.unmatched).toBe(true);
+    expect(slugify("₦ naira", python).flags.unmatched).toBe(true);
+    expect(slugify("ƛ ƞ ƥ ƭ ƴ ƶ", python).flags.unmatched).toBe(true);
+    expect(slugify("a\u2066b\u2069c", python).slug).toBe("a-b-c");
+    expect(slugify("x\u180ey", python).slug).toBe("xy");
+    expect(slugify("a\u2066b\u2069c", python).flags.unmatched).toBe(false);
+    expect(slugify("John’s guide", python).slug).toBe("johns-guide");
+    expect(slugify("John’s guide", python).flags.unmatched).toBe(false);
+    expect(slugify("Launch🚀Day Recap", python).flags.unmatched).toBe(true);
+
+    const wordpress = PRESETS.wordpress;
+    expect(slugify("Fußball ẞig", wordpress).slug).toBe("fusball-%c3%9fig");
+    expect(slugify("bom\ufeffhere", wordpress).slug).toBe("bomhere");
+    expect(slugify("obj\ufffchere", wordpress).slug).toBe("objhere");
+    expect(slugify("5 < 6 > 4", wordpress).slug).toBe("5-6-4");
+    expect(slugify("ﬁ ﬂ ﬃ", wordpress).slug).toBe("%ef%ac%81-%ef%ac%82-%ef%ac%83");
+    expect(slugify("ª º ordinals", wordpress).slug).toBe("a-o-ordinals");
+    expect(slugify("Kṛṣṇa and Śiva", wordpress).slug).toBe("k%e1%b9%9b%e1%b9%a3%e1%b9%87a-and-siva");
+    expect(slugify("Prāṇāyāma", wordpress).slug).toBe("pra%e1%b9%87ayama");
+    expect(slugify("Ḥadīth", wordpress).slug).toBe("%e1%b8%a5adith");
+    expect(slugify("Kṛṣṇa", wordpress).flags.transliterated).toBe(false);
+    expect(slugify("Kṛṣṇa and Śiva", wordpress).flags.transliterated).toBe(true);
+    expect(slugify("Ǻ", wordpress).slug).toBe("%c7%bb");
+    // The encoded BOM list is required: a literal %ef%bb%bf in the title is
+    // not a raw U+FEFF character, so the pre-strip of ﻿ does not apply.
+    expect(slugify("foo%ef%bb%bfbar", wordpress).slug).toBe("foobar");
+    expect(slugify("a%ef%bf%bcb", wordpress).slug).toBe("ab");
+    expect(slugify("ΟΔΥΣΣΕΥΣ", wordpress).slug).toBe("οδυσσευς".split("").map((ch) => {
+      const bytes = new TextEncoder().encode(ch);
+      return [...bytes].map((b) => `%${b.toString(16).padStart(2, "0")}`).join("");
+    }).join(""));
+    // Final sigma: the last Σ becomes ς (U+03C2), not σ (U+03C3).
+    expect(slugify("ΟΔΥΣΣΕΥΣ", wordpress).slug.endsWith("%cf%82")).toBe(true);
+    expect(slugify("ΟΔΥΣΣΕΥΣ", wordpress).slug.endsWith("%cf%83")).toBe(false);
+    expect(slugify("ΣΟΦΟΣ", wordpress).slug.endsWith("%cf%82")).toBe(true);
+    expect(slugify("ΟΔΟΣ.", wordpress).slug.endsWith("%cf%82")).toBe(true);
+
+    expect(slugify("&apos;tis", python).slug).toBe("apos-tis");
+    expect(slugify("&AMP;", python).slug).toBe("amp");
+    expect(slugify("&#X41;BC", python).slug).toBe("x41-bc");
+    expect(slugify("&#x41;BC", python).slug).toBe("abc");
+    expect(slugify("₤ ₩ ₪ ₫ word", python).flags.unmatched).toBe(true);
+    expect(slugify("ƀ ƈ ƌ ƒ ǥ", python).flags.unmatched).toBe(true);
+    expect(slugify("Ɓ Ɗ Ƒ", python).flags.unmatched).toBe(true);
+    expect(slugify("right\u200fto\u200eleft", python).slug).toBe("righttoleft");
+    expect(slugify("right\u200fto\u200eleft", python).flags.unmatched).toBe(false);
+  });
+
+
+  it("turns WordPress dash and nbsp entities into hyphens before remaining entities are stripped", () => {
+    const wordpress = PRESETS.wordpress;
+    expect(slugify("2020&#8211;2024 Report", wordpress).slug).toBe("2020-2024-report");
+    expect(slugify("Title&#8212;Subtitle", wordpress).slug).toBe("title-subtitle");
+    expect(slugify("Q&amp;A&#8212;Live", wordpress).slug).toBe("qa-live");
+    expect(slugify("2020&ndash;2024 Report", wordpress).slug).toBe("2020-2024-report");
+    expect(slugify("Title&mdash;Subtitle", wordpress).slug).toBe("title-subtitle");
+    expect(slugify("keep&#160;together", wordpress).slug).toBe("keep-together");
+
+    const source = readFileSync(path.join(import.meta.dirname, "../../src/lib/slug/parity.ts"), "utf8");
+    const start = source.indexOf("const WP_ENTITY_TO_HYPHEN");
+    const end = source.indexOf("function djangoSlug");
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    const fn = source.slice(start, end);
+    const stripAt = fn.search(/replace\(\/&\.\+\?;\/g/);
+    const useAt = fn.indexOf("for (const token of WP_ENTITY_TO_HYPHEN)");
+    expect(stripAt, "entity strip in wordpressSlug").toBeGreaterThan(-1);
+    expect(useAt, "WP_ENTITY_TO_HYPHEN must be applied in wordpressSlug").toBeGreaterThan(-1);
+    expect(useAt, "entities must be converted to hyphens before remaining entities are stripped").toBeLessThan(stripAt);
+    for (const entity of ["&nbsp;", "&#160;", "&ndash;", "&#8211;", "&mdash;", "&#8212;"]) {
+      const at = fn.indexOf(entity);
+      expect(at, `${entity} must be in WP_ENTITY_TO_HYPHEN`).toBeGreaterThan(-1);
+      expect(at, `${entity} must be listed before entities are stripped`).toBeLessThan(stripAt);
+    }
+  });
+
+describe("home parity table", () => {
+  it("prints fixture values, Readable URL defaults, not matched, and (empty)", () => {
+    const source = readFileSync(path.join(import.meta.dirname, "../../src/pages/index.astro"), "utf8");
+    expect(source).toContain('id="parity-table"');
+    expect(source).toContain("What WordPress, Django and other slugifiers output");
+    expect(source).toContain("PARITY_FIXTURE_URL");
+    expect(source).toContain("not matched");
+    expect(source).toContain("(empty)");
+    expect(source).toContain("mens-trail-running-shoes-navy-size-10");
+    expect(source).toContain("PARITY_SAMPLE_TITLES");
+    expect(PARITY_FIXTURE_URL).toBe(
+      "https://github.com/AtharvaMahamuni/online-slug-generator/blob/main/tests/slug/fixtures/parity.json",
+    );
+  });
+});

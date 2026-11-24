@@ -109,6 +109,18 @@ function examplesFromHtmlTables(source: string, file: string): PublishedExample[
 
 function presetFromContext(context: string): { config: SlugConfig; via?: "duplicate" } {
   const lower = context.toLowerCase();
+  if (lower.includes("wordpress preset")) {
+    return { config: PRESETS.wordpress };
+  }
+  if (lower.includes("django preset")) {
+    return { config: PRESETS.django };
+  }
+  if (lower.includes("python-slugify preset")) {
+    return { config: PRESETS["python-slugify"] };
+  }
+  if (lower.includes("npm slugify preset") || lower.includes("npm-slugify preset")) {
+    return { config: PRESETS["npm-slugify"] };
+  }
   if (/duplicate|identical name appears again|second .+ becomes/.test(lower) && /-\d+$/.test(lower) === false) {
     // handled by caller when slug ends with -2
   }

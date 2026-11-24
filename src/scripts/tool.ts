@@ -37,6 +37,7 @@ type BulkRow = {
   transliterated: boolean;
   stopWordsRemoved: boolean;
   numbersRemoved: boolean;
+  unmatched: boolean;
   cleaned: string;
 };
 
@@ -99,14 +100,16 @@ function previewText(slug: string): string {
   return prefix ? `${prefix}/${slug}` : slug;
 }
 
+let previewBlocked = false;
+
 function updatePreview(): void {
   const box = document.getElementById("url-preview");
   const text = document.getElementById("url-preview-text");
   const slug = document.getElementById("slug");
   if (!box || !text) return;
-  box.hidden = !settings.urlPreview;
+  box.hidden = !settings.urlPreview || previewBlocked;
   const value = slug instanceof HTMLTextAreaElement ? slug.value : "";
-  text.textContent = previewText(value);
+  text.textContent = previewBlocked ? "" : previewText(value);
 }
 
 function syncControls(): void {
@@ -127,6 +130,15 @@ function syncControls(): void {
   must<HTMLInputElement>("url-prefix").value = settings.urlPrefix;
   const warning = must<HTMLElement>("preset-warning");
   warning.hidden = !(settings.preset === "short" || current.stopWords || current.maxLength !== null || current.removeNumbers);
+  const note = must<HTMLElement>("preset-note");
+  const selected = must<HTMLSelectElement>("preset").selectedOptions[0];
+  const noteText = selected?.dataset.note ?? "";
+  note.hidden = !noteText;
+  note.textContent = noteText;
+  const parityOn = current.parity !== null;
+  document.querySelectorAll<HTMLElement>("[data-parity-hide]").forEach((el) => {
+    el.hidden = parityOn;
+  });
   updatePreview();
 }
 
@@ -142,7 +154,7 @@ function applyConfig(next: SlugConfig, preset?: PresetId): void {
 }
 
 function patchConfig(patch: Partial<SlugConfig>): void {
-  applyConfig({ ...config(), ...patch });
+  applyConfig({ ...config(), parity: null, ...patch });
 }
 
 function bindSettings(): void {
@@ -170,8 +182,10 @@ function bindSettings(): void {
   });
   must<HTMLSelectElement>("preset").addEventListener("change", () => {
     const value = must<HTMLSelectElement>("preset").value;
-    if (value === "readable" || value === "short" || value === "preserve") {
-      applyConfig({ ...PRESETS[value] }, value);
+    if (value === "custom") return;
+    if (value in PRESETS) {
+      const id = value as Exclude<PresetId, "custom">;
+      applyConfig({ ...PRESETS[id] }, id);
     }
   });
   must<HTMLInputElement>("stop-words").addEventListener("change", () => {
@@ -355,6 +369,9 @@ function initSingle(): void {
       dirty = false;
       update.hidden = true;
     }
+    previewBlocked = result.flags.unmatched && !dirty;
+    const copyButton = must<HTMLButtonElement>("copy");
+    copyButton.disabled = previewBlocked;
     titleCount.textContent = countLabel(title.value);
     slugCount.textContent = countLabel(slug.value);
     const preserved = /[^\u0000-\u007f]/.test(writeField ? result.slug : slug.value);
@@ -377,9 +394,10 @@ function initSingle(): void {
     const ticket = live.dataset.ticket ?? "";
     announce = window.setTimeout(() => {
       if ((live.dataset.ticket ?? "") !== ticket) return;
-      if (slug.value === lastAnnounced) return;
-      lastAnnounced = slug.value;
-      live.textContent = slug.value ? "Slug updated" : "";
+      const announcement = previewBlocked ? "Not matched" : slug.value ? "Slug updated" : "";
+      if (announcement === lastAnnounced) return;
+      lastAnnounced = announcement;
+      live.textContent = announcement;
     }, 600);
   };
 
@@ -407,6 +425,10 @@ function initSingle(): void {
   slug.addEventListener("input", () => {
     dirty = slug.value !== lastAuto;
     update.hidden = !dirty;
+    if (dirty) {
+      previewBlocked = false;
+      must<HTMLButtonElement>("copy").disabled = false;
+    }
     slugCount.textContent = countLabel(slug.value);
     updatePreview();
   });
@@ -438,6 +460,7 @@ function initSingle(): void {
 }
 
 function stateWord(row: BulkRow): string {
+  if (row.unmatched) return "Not matched";
   if (row.duplicate) return "Duplicate";
   if (row.edited) return "Edited";
   if (row.truncated || row.lengthWarning) return "Truncated";
@@ -485,6 +508,7 @@ function renderRow(row: BulkRow, index: number): HTMLTableRowElement {
   button.dataset.idleLabel = "Copy";
   button.setAttribute("aria-label", `Copy row ${number}`);
   button.dataset.tip = "Copy this row's slug";
+  button.disabled = row.unmatched;
   button.addEventListener("click", () => {
     void copyText(row.slug, input, button);
   });
@@ -525,8 +549,11 @@ function syncVisibleRows(): void {
       const row = rows[start + offset];
       if (!row) return;
       if (document.activeElement !== input && input.value !== row.slug) input.value = row.slug;
-      const state = input.closest("tr")?.querySelector(".state");
+      const rowEl = input.closest("tr");
+      const state = rowEl?.querySelector(".state");
       if (state) state.textContent = stateWord(row);
+      const copyButton = rowEl?.querySelector("button");
+      if (copyButton instanceof HTMLButtonElement) copyButton.disabled = row.unmatched;
     });
 }
 
@@ -541,9 +568,10 @@ function recheckDuplicates(): void {
     const next = assigned[index];
     if (!next) return;
     row.slug = next.slug;
+    if (row.edited) row.unmatched = false;
     row.duplicate = next.duplicate;
     row.lengthWarning = next.lengthWarning;
-    row.empty = next.slug.length === 0;
+    row.empty = next.slug.length === 0 && !row.unmatched;
   });
   syncVisibleRows();
 }
@@ -579,11 +607,12 @@ async function recomputeBulk(): Promise<void> {
       row.transliterated = base.result.flags.transliterated;
       row.stopWordsRemoved = base.result.flags.stopWordsRemoved;
       row.numbersRemoved = base.result.flags.numbersRemoved;
+      row.unmatched = base.result.flags.unmatched;
     }
     row.slug = next.slug;
     row.duplicate = next.duplicate;
     row.lengthWarning = next.lengthWarning;
-    row.empty = next.slug.length === 0;
+    row.empty = next.slug.length === 0 && !row.unmatched;
   });
   renderBulk();
 }
@@ -694,6 +723,7 @@ function applyLoadedFile(reportErrors = false): void {
       transliterated: false,
       stopWordsRemoved: false,
       numbersRemoved: false,
+      unmatched: false,
       cleaned: "",
     } satisfies BulkRow;
   });
@@ -869,6 +899,7 @@ function initBulk(): void {
         transliterated: false,
         stopWordsRemoved: false,
         numbersRemoved: false,
+        unmatched: false,
         cleaned: "",
       } satisfies BulkRow;
     });

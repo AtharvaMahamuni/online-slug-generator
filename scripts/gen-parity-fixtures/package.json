@@ -1,0 +1,8 @@
+{
+  "name": "osg-gen-parity-fixtures",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "slugify": "1.6.9"
+  }
+}

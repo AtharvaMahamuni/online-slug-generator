@@ -1,6 +1,7 @@
 import { cleanText } from "./clean";
 import { assignDuplicates } from "./duplicates";
 import { foldLatinAscii } from "./letters";
+import { latinAccentsWereFolded, paritySlug } from "./parity";
 import { DEFAULT_CONFIG } from "./presets";
 import { applyStopWords } from "./stopwords";
 import type { BatchRow, SlugConfig, SlugFlags, SlugResult } from "./types";
@@ -83,8 +84,23 @@ export function slugify(
   config: SlugConfig = DEFAULT_CONFIG,
   extra?: { htmlStripped?: boolean },
 ): SlugResult {
-  const separator = config.separator === "_" ? "_" : "-";
   const cleaned = cleanText(original);
+  if (config.parity) {
+    const result = paritySlug(original, config.parity);
+    const slug = result.unsupported ? "" : result.slug;
+    const flags: SlugFlags = {
+      truncated: false,
+      transliterated: !result.unsupported && latinAccentsWereFolded(original),
+      stopWordsRemoved: false,
+      numbersRemoved: false,
+      htmlStripped: extra?.htmlStripped === true,
+      empty: !result.unsupported && result.slug.length === 0,
+      unmatched: result.unsupported,
+    };
+    return { original, cleaned, slug, flags };
+  }
+
+  const separator = config.separator === "_" ? "_" : "-";
   let working = cleaned;
 
   if (config.ampersandToAnd) {
@@ -122,6 +138,7 @@ export function slugify(
     numbersRemoved: filtered.numbersRemoved,
     htmlStripped: extra?.htmlStripped === true,
     empty: slug.length === 0,
+    unmatched: false,
   };
 
   return { original, cleaned, slug, flags };
@@ -147,7 +164,7 @@ export function slugifyBatch(
       lengthWarning: next.lengthWarning,
       flags: {
         ...row.flags,
-        empty: next.slug.length === 0,
+        empty: next.slug.length === 0 && !row.flags.unmatched,
       },
     };
   });
@@ -155,6 +172,9 @@ export function slugifyBatch(
 
 export function changeNote(result: Pick<SlugResult, "slug" | "flags"> & { preservedNonLatin?: boolean }): string {
   const notes: string[] = [];
+  if (result.flags.unmatched) {
+    return "Not matched";
+  }
   if (result.flags.htmlStripped) notes.push("HTML tags were removed");
   if (result.flags.transliterated) notes.push("Latin accents were folded to ASCII");
   if (result.flags.stopWordsRemoved) notes.push("stop words were removed");

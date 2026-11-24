@@ -1,6 +1,7 @@
 export type Separator = "-" | "_";
 export type LetterPolicy = "latin-ascii" | "preserve";
-export type PresetId = "readable" | "short" | "preserve" | "custom";
+export type ParityId = "wordpress" | "django" | "python-slugify" | "npm-slugify";
+export type PresetId = "readable" | "short" | "preserve" | ParityId | "custom";
 export type SupportedLocale = "en" | "es" | "de" | "fr" | "pt";
 
 export type SlugConfig = {
@@ -12,6 +13,7 @@ export type SlugConfig = {
   ampersandToAnd: boolean;
   maxLength: number | null;
   locale: SupportedLocale;
+  parity: ParityId | null;
 };
 
 export type SlugFlags = {
@@ -21,6 +23,7 @@ export type SlugFlags = {
   numbersRemoved: boolean;
   htmlStripped: boolean;
   empty: boolean;
+  unmatched: boolean;
 };
 
 export type SlugResult = {

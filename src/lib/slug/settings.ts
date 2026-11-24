@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG, presetMatches } from "./presets";
-import { SETTINGS_VERSION, type PresetId, type SlugConfig, type StoredSettings, type SupportedLocale } from "./types";
+import { SETTINGS_VERSION, type ParityId, type PresetId, type SlugConfig, type StoredSettings, type SupportedLocale } from "./types";
 
 export function defaultSettings(): StoredSettings {
   return {
@@ -63,12 +63,28 @@ function parseConfig(value: unknown): SlugConfig | null {
     ampersandToAnd: record.ampersandToAnd,
     maxLength,
     locale: "en",
+    parity: parseParity(record.parity),
   };
+}
+
+function parseParity(value: unknown): ParityId | null {
+  if (value === "wordpress" || value === "django" || value === "python-slugify" || value === "npm-slugify") {
+    return value;
+  }
+  return null;
 }
 
 function parsePreset(value: unknown, config: SlugConfig): PresetId {
   const matched = presetMatches(config);
-  if (value === "readable" || value === "short" || value === "preserve") {
+  if (
+    value === "readable" ||
+    value === "short" ||
+    value === "preserve" ||
+    value === "wordpress" ||
+    value === "django" ||
+    value === "python-slugify" ||
+    value === "npm-slugify"
+  ) {
     return value === matched ? value : matched;
   }
   return matched;

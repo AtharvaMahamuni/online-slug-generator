@@ -78,6 +78,18 @@ notes.push(`tool JS gzip ${jsGzip} bytes across ${toolJs.size} file(s)`);
 if (jsGzip > 30 * 1024) notes.push("Tool JS is over the 30 KB target.");
 if (jsGzip > 45 * 1024) failures.push(`Tool JS is ${jsGzip} bytes gzipped. The build fails above 45 KB.`);
 
+let licenseFound = false;
+for (const url of toolJs) {
+  const source = readDistUrl(url).toString("utf8");
+  if (source.includes("Copyright (c) Simeon Velichkov") && /MIT License/i.test(source)) {
+    licenseFound = true;
+    break;
+  }
+}
+if (!licenseFound) {
+  failures.push("The built tool JS is missing the npm slugify MIT notice.");
+}
+
 const forbidden = [
   "FAQPage",
   "HowTo",

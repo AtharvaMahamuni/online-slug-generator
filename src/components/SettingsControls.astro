@@ -1,5 +1,6 @@
 ---
 import type { SupportedLocale } from "../lib/slug";
+import { PARITY_NOTES } from "../lib/slug";
 import { DEFAULT_LOCALE } from "../i18n/ui";
 
 interface Props {
@@ -20,12 +21,12 @@ const ampersandText: Record<SupportedLocale, string> = {
 <div class="settings-bar" id="settings-bar">
   <div class="core-slot" id="core-slot">
     <div class="core-settings" id="core-settings">
-      <div class="segment" role="group" aria-label="Separator">
+      <div class="segment" role="group" aria-label="Separator" data-parity-hide="true">
         <button type="button" data-separator="-" aria-pressed="true" aria-label="Hyphen" data-tip="Separate words with a hyphen">-</button>
         <button type="button" data-separator="_" aria-pressed="false" aria-label="Underscore" data-tip="Separate words with an underscore">_</button>
       </div>
-      <button type="button" class="press" id="lowercase" aria-pressed="true" aria-label="Lowercase" data-tip="Keep the slug in lower case">Aa</button>
-      <div class="segment" role="group" aria-label="Letters">
+      <button type="button" class="press" id="lowercase" aria-pressed="true" aria-label="Lowercase" data-tip="Keep the slug in lower case" data-parity-hide="true">Aa</button>
+      <div class="segment" role="group" aria-label="Letters" data-parity-hide="true">
         <button type="button" data-letters="latin-ascii" aria-pressed="true" aria-label="Latin accents to ASCII" data-tip="Fold Latin accents, so é becomes e">Latin</button>
         <button type="button" data-letters="preserve" aria-pressed="false" aria-label="Keep original letters" data-tip="Keep letters in their original script">Keep</button>
       </div>
@@ -41,9 +42,14 @@ const ampersandText: Record<SupportedLocale, string> = {
           <option value="readable">Readable URL</option>
           <option value="short">Short permalink</option>
           <option value="preserve">Keep original script</option>
+          <option value="wordpress" data-note={PARITY_NOTES.wordpress}>WordPress</option>
+          <option value="django" data-note={PARITY_NOTES.django}>Django</option>
+          <option value="python-slugify" data-note={PARITY_NOTES["python-slugify"]}>python-slugify</option>
+          <option value="npm-slugify" data-note={PARITY_NOTES["npm-slugify"]}>npm slugify</option>
           <option value="custom">Custom</option>
         </select>
       </label>
+      <p id="preset-note" class="preset-warning" hidden></p>
     </div>
   </div>
   <button type="button" class="button-secondary advanced-open" id="advanced-open" data-tip="Stop words, numbers, the ampersand rule, and a URL preview">Advanced</button>
@@ -54,7 +60,7 @@ const ampersandText: Record<SupportedLocale, string> = {
       <p id="destructive-note">Removing stop words or numbers deletes parts of the title. Shortening cuts at a word boundary when it can. Stop words and shortening can drop words you may want.</p>
       <label class="check"><input id="stop-words" type="checkbox" /> Remove stop words</label>
       <label class="check"><input id="remove-numbers" type="checkbox" /> Remove numbers</label>
-      <label class="check"><input id="ampersand" type="checkbox" checked /> {ampersandText[locale] ?? ampersandText.en}</label>
+      <label class="check" data-parity-hide="true"><input id="ampersand" type="checkbox" checked /> {ampersandText[locale] ?? ampersandText.en}</label>
       <label class="check"><input id="url-preview-toggle" type="checkbox" /> Show URL preview</label>
       <label class="check" for="url-prefix">URL prefix
         <input id="url-prefix" class="text-input" type="text" autocomplete="off" spellcheck="false" placeholder="https://example.com/blog" />
