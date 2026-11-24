@@ -17,7 +17,13 @@ export function getLocaleFromUrl(url: URL | string): SupportedLocale {
   return DEFAULT_LOCALE;
 }
 
+// Only English is in the index for now. Locale tool screens stay live for
+// visitors but are noindex. When a second locale returns to the index, add
+// it here so hreflang alternates come back for the tool paths.
+export const INDEXED_LOCALES: SupportedLocale[] = ["en"];
+
 export function hasMultilingualAlternates(path: string): boolean {
+  if (INDEXED_LOCALES.length < 2) return false;
   const currentLocale = getLocaleFromUrl(path);
   let cleanPath = path;
   if (currentLocale !== DEFAULT_LOCALE) {

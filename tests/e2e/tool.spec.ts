@@ -194,12 +194,19 @@ test("german localized page handles umlauts and und ampersand rule", async ({ pa
   await expect(page.locator("#slug")).toHaveValue("muenchen-und-koeln");
 });
 
-test("head includes bidirectional hreflang tags for all supported languages", async ({ page }) => {
-  await page.goto("/");
-  const es = page.locator('link[rel="alternate"][hreflang="es"]');
-  const de = page.locator('link[rel="alternate"][hreflang="de"]');
-  const xDefault = page.locator('link[rel="alternate"][hreflang="x-default"]');
-  await expect(es).toHaveAttribute("href", /https:\/\/onlinesluggenerator\.com\/es$/);
-  await expect(de).toHaveAttribute("href", /https:\/\/onlinesluggenerator\.com\/de$/);
-  await expect(xDefault).toHaveAttribute("href", "https://onlinesluggenerator.com/");
+test("head has no hreflang alternates while only English is indexed", async ({ page }) => {
+  for (const path of ["/", "/bulk-slug-generator", "/es", "/de"]) {
+    await page.goto(path);
+    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+  }
+});
+
+test("locale tool pages stay live and are noindex, follow with a self-canonical", async ({ page }) => {
+  await page.goto("/es");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, follow");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://onlinesluggenerator.com/es",
+  );
+  await expect(page.locator(".tool-title")).toHaveText("Convierte texto en un slug URL limpio");
 });

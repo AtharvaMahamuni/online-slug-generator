@@ -74,6 +74,10 @@ https://onlinesluggenerator.com/contact
 
 GitHub issues on https://github.com/AtharvaMahamuni/online-slug-generator/issues. No email address. Issues are public, so a private catalogue does not belong there.
 
+## Facts a summary can quote
+
+Spanish, German, French and Portuguese tool screens exist for visitors. They are not indexed yet.
+
 ## Policy
 
 robots.txt allows Googlebot, Bingbot, OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Applebot. It disallows GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, and CCBot. /ai.txt and /robots-ai.txt repeat that policy and do not replace robots.txt. User-triggered fetchers such as ChatGPT-User, Google-Agent, and Perplexity-User may ignore robots.txt.

@@ -100,6 +100,29 @@ else if (!readFileSync(notFound, "utf8").includes('name="robots" content="noinde
   failures.push("dist/404.html is missing a noindex robots meta tag.");
 }
 
+const localePage = /(?:^|\/)(es|de|fr|pt)(?:\.html|\/)/;
+const hreflangAlternate = /rel="alternate"[^>]*hreflang=|hreflang="[^"]*"[^>]*rel="alternate"/;
+const localePages = [];
+for (const file of htmlFiles) {
+  const rel = path.relative(dist, file).split(path.sep).join("/");
+  const html = readFileSync(file, "utf8");
+  if (hreflangAlternate.test(html)) {
+    failures.push(`${rel} contains rel="alternate" hreflang.`);
+  }
+  if (localePage.test(rel)) {
+    localePages.push(rel);
+    if (!html.includes('name="robots" content="noindex, follow"')) {
+      failures.push(`${rel} is missing a noindex, follow robots meta tag.`);
+    }
+    if (!html.includes('<link rel="canonical"')) {
+      failures.push(`${rel} is missing a canonical link.`);
+    }
+  }
+}
+if (localePages.length !== 8) {
+  failures.push(`Expected 8 locale HTML pages in dist, found ${localePages.length}.`);
+}
+
 for (const line of notes) console.log(line);
 if (failures.length) {
   for (const failure of failures) console.error(failure);

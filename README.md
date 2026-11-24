@@ -64,7 +64,7 @@ Pages serves `about.html` at `/about`. The canonical form has no trailing slash.
 
 ## Multilingual & SEO Verification
 
-The site supports 5 languages (English, Spanish, German, French, Portuguese) with localized slug engines (e.g. German umlauts `ä/ö/ü` -> `ae/oe/ue`, localized ampersand mapping, curated stop words) and bidirectional `hreflang` alternates across all tool endpoints.
+The site supports 5 languages (English, Spanish, German, French, Portuguese) with localized slug engines (e.g. German umlauts `ä/ö/ü` -> `ae/oe/ue`, localized ampersand mapping, curated stop words). Spanish, German, French and Portuguese tool screens stay live for visitors and are noindex until a second locale is ready to return to the index. There are no `hreflang` alternates while only English is indexed.
 
 Run the continuous automated SEO audit:
 ```bash
