@@ -61,7 +61,7 @@ const skipLabel = kind === "tool" ? "Skip to the tool" : "Skip to content";
     {
       path !== "/404" && hasMultilingualAlternates(path) && (
         <>
-          {(Object.keys(LOCALES) as SupportedLocale[]).map((loc) => (
+          {INDEXED_LOCALES.map((loc) => (
             <link rel="alternate" hreflang={loc} href={canonical(getLocalizedPath(path, loc))} />
           ))}
           <link rel="alternate" hreflang="x-default" href={canonical(getLocalizedPath(path, "en"))} />
