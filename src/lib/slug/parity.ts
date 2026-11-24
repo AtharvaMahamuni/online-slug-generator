@@ -29,16 +29,19 @@
 import npmCharmap from "./parity-npm-charmap.json";
 import html4Entities from "./parity-html4-entities.json";
 import wpUnfolded from "./parity-wp-unfolded.json";
-import pythonCheap from "./parity-python-cheap.json";
+import pythonObserved from "./parity-python-observed.json";
 import type { ParityId } from "./types";
 
 const NPM_CHARMAP = npmCharmap as Record<string, string>;
 const HTML4_ENTITIES = html4Entities as Record<string, string>;
 const WP_LATIN_UNFOLDED = new Set(wpUnfolded.unfolded);
 const WP_KEEP_CASE = new Set(wpUnfolded.keepCase);
-const PYTHON_CHEAP: Record<string, string> = {};
-[...pythonCheap.keys].forEach((ch, index) => {
-  PYTHON_CHEAP[ch] = pythonCheap.values[index]!;
+// Values observed from python-slugify 9.2.0 output per character; no table
+// copied from text-unidecode or Unidecode. Written by
+// scripts/gen-parity-fixtures/probe-pyslugify-chars.py.
+const PYTHON_OBSERVED: Record<string, string> = {};
+[...pythonObserved.keys].forEach((ch, index) => {
+  PYTHON_OBSERVED[ch] = pythonObserved.values[index]!;
 });
 
 // JS NFKD maps U+A7F1 to "S"; Python 3 / Django 6.1.3 leave it, so slugify
@@ -211,185 +214,6 @@ const WP_ENCODED_STRIP = [
   "%ef%bf%bc",
 ];
 
-const PYTHON_SPECIAL: Record<string, string> = {
-  ß: "ss",
-  ẞ: "SS",
-  Æ: "AE",
-  æ: "ae",
-  Ø: "O",
-  ø: "o",
-  Ð: "D",
-  ð: "d",
-  Þ: "TH",
-  þ: "th",
-  Ł: "L",
-  ł: "l",
-  Đ: "D",
-  đ: "d",
-  Œ: "OE",
-  œ: "oe",
-  ı: "i",
-  Ħ: "H",
-  ħ: "h",
-  ĸ: "k",
-  Ŀ: "L*",
-  ŀ: "l*",
-  ŉ: "'n",
-  Ŋ: "NG",
-  ŋ: "NG",
-  Ŧ: "T",
-  ŧ: "t",
-  ƀ: "b",
-  Ɓ: "B",
-  ƈ: "c",
-  ƌ: "d",
-  Ɗ: "D",
-  ƒ: "f",
-  Ƒ: "F",
-  ǥ: "g",
-};
-
-const PYTHON_CYRILLIC: Record<string, string> = {
-  А: "A",
-  Б: "B",
-  В: "V",
-  Г: "G",
-  Д: "D",
-  Е: "E",
-  Ё: "E",
-  Ж: "Zh",
-  З: "Z",
-  И: "I",
-  Й: "I",
-  К: "K",
-  Л: "L",
-  М: "M",
-  Н: "N",
-  О: "O",
-  П: "P",
-  Р: "R",
-  С: "S",
-  Т: "T",
-  У: "U",
-  Ф: "F",
-  Х: "Kh",
-  Ц: "Ts",
-  Ч: "Ch",
-  Ш: "Sh",
-  Щ: "Shch",
-  Ъ: "",
-  Ы: "Y",
-  Ь: "",
-  Э: "E",
-  Ю: "Iu",
-  Я: "Ia",
-  а: "a",
-  б: "b",
-  в: "v",
-  г: "g",
-  д: "d",
-  е: "e",
-  ё: "e",
-  ж: "zh",
-  з: "z",
-  и: "i",
-  й: "i",
-  к: "k",
-  л: "l",
-  м: "m",
-  н: "n",
-  о: "o",
-  п: "p",
-  р: "r",
-  с: "s",
-  т: "t",
-  у: "u",
-  ф: "f",
-  х: "kh",
-  ц: "ts",
-  ч: "ch",
-  ш: "sh",
-  щ: "shch",
-  ъ: "",
-  ы: "y",
-  ь: "",
-  э: "e",
-  ю: "iu",
-  я: "ia",
-  І: "I",
-  і: "i",
-  Ї: "I",
-  ї: "i",
-  Є: "E",
-  є: "ie",
-  Ґ: "G",
-  ґ: "g",
-};
-
-// text-unidecode mappings for signs and format characters, applied in the first transliteration pass.
-const PYTHON_SYMBOLS: Record<string, string> = {
-  "€": "EUR",
-  "£": "PS",
-  "¥": "Y=",
-  "¢": "C/",
-  "¤": "$?",
-  "₹": "[?]",
-  "₽": "[?]",
-  "₿": "[?]",
-  "₤": "L",
-  "₩": "W",
-  "₪": "NS",
-  "₫": "D",
-  "©": "(c)",
-  "®": "(r)",
-  "™": "tm",
-  "°": "deg",
-  "×": "x",
-  "÷": "/",
-  "§": "SS",
-  "¶": "P",
-  "‰": "%0",
-  "‱": "%00",
-  "¡": "!",
-  "¿": "?",
-  "«": "<<",
-  "»": ">>",
-  "±": "+-",
-  "µ": "m",
-  "¦": "|",
-  "¬": "!",
-  "·": "*",
-  "¼": "1/4",
-  "½": "1/2",
-  "¾": "3/4",
-  "†": "+",
-  "‡": "++",
-  "‘": "'",
-  "’": "'",
-  "“": '"',
-  "”": '"',
-  "„": ",,",
-  "…": "...",
-  "•": "*",
-  "–": "-",
-  "—": "--",
-  "\u00a0": " ",
-  "\u202f": " ",
-  "\u200b": " ",
-  "\u200c": "",
-  "\u200d": "",
-  "\u200e": "",
-  "\u200f": "",
-  "\u202a": "",
-  "\u202b": "",
-  "\u202c": "",
-  "\u202d": "",
-  "\u202e": "",
-  "\u00ad": "",
-  "\ufeff": "",
-  "\ufffc": "",
-};
-
 export function latinAccentsWereFolded(input: string): boolean {
   for (const ch of input) {
     if (WP_LATIN_UNFOLDED.has(ch)) continue;
@@ -535,10 +359,7 @@ function decodeEntities(text: string): string {
 }
 
 function pythonMapped(ch: string): string | undefined {
-  if (Object.hasOwn(PYTHON_SPECIAL, ch)) return PYTHON_SPECIAL[ch];
-  if (Object.hasOwn(PYTHON_CYRILLIC, ch)) return PYTHON_CYRILLIC[ch];
-  if (Object.hasOwn(PYTHON_SYMBOLS, ch)) return PYTHON_SYMBOLS[ch];
-  if (Object.hasOwn(PYTHON_CHEAP, ch)) return PYTHON_CHEAP[ch];
+  if (Object.hasOwn(PYTHON_OBSERVED, ch)) return PYTHON_OBSERVED[ch];
   return undefined;
 }
 
@@ -559,9 +380,9 @@ function pythonTransliterate(text: string): string {
   return out;
 }
 
-// Common combining diacritics that text-unidecode strips. Other marks
-// (U+034F..U+035F, combining Latin letters, Hebrew/Arabic points, ...)
-// are not guessed: flag them as not matched.
+// Common combining diacritics that python-slugify 9.2.0 strips from
+// xx{ch}yy (U+0300..U+034E and U+0360..U+0362). Other marks are not
+// guessed: they are in the observed table, or flagged as not matched.
 function pythonMarkKnown(ch: string): boolean {
   const code = ch.codePointAt(0) ?? 0;
   return (code >= 0x0300 && code <= 0x034e) || (code >= 0x0360 && code <= 0x0362);

@@ -61,19 +61,19 @@ WORDPRESS_ROOT=scripts/gen-parity-fixtures/.cache/wordpress \
   python3 scripts/gen-parity-fixtures/probe-wp-lists.py --write --count-fixture
 ```
 
-## python-slugify cheap maps
+## python-slugify observed maps
 
-`gen-python-cheap.py` records text-unidecode outputs (the backend
-python-slugify 9.2.0 uses here) for Latin Extended-B/C/D/E, IPA and
-phonetic extensions, spacing modifiers (ʹ ʺ ˆ), currency (₦),
-directional isolates, U+180E, and a few format/variation characters.
-Keys are stored as one string so the built bundle does not emit bare
-Unicode identifiers. The preset flags any other character whose output
-it does not know, rather than guessing.
+`probe-pyslugify-chars.py` calls python-slugify 9.2.0 on individual
+characters (as `xx{ch}yy`) and records the observed mid-slug. Values
+are observed from python-slugify 9.2.0 output per character; no table
+is copied from text-unidecode or Unidecode. Keys are stored as one
+string so the built bundle does not emit bare Unicode identifiers.
+Characters the probe cannot derive cleanly, and scripts outside the
+probed ranges, are flagged as not matched.
 
 ```
 scripts/gen-parity-fixtures/.cache/venv/bin/python \
-  scripts/gen-parity-fixtures/gen-python-cheap.py
+  scripts/gen-parity-fixtures/probe-pyslugify-chars.py --write
 ```
 
 ## Single-character sweep
