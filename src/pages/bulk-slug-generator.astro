@@ -61,7 +61,7 @@ const schema = {
         {
           question: "Can confidential catalogs or enterprise data files be safely processed?",
           answer:
-            "Yes. All file reading, text splitting, character mapping, and data table rendering take place strictly inside local browser memory via the HTML5 File API. No file contents, row counts, or text strings are uploaded to any server or recorded in any cloud database. Batches up to 5 MB containing up to 10,000 data rows are processed in fractions of a second without bandwidth constraints or corporate security compliance concerns.",
+            "Yes. All file reading, text splitting, character mapping, and data table rendering take place strictly inside local browser memory via the HTML5 File API. No file contents, row counts, or text strings are uploaded to any server or recorded in any cloud database. Batches up to 5 MiB containing up to 10,000 data rows are processed in fractions of a second without bandwidth constraints or corporate security compliance concerns.",
         },
       ]}
     />
@@ -126,7 +126,7 @@ const schema = {
     <section>
       <h2>What does the tool refuse to do with a file?</h2>
       <p>
-        The file has to be 5 MB or smaller. A larger file is rejected before it is read, so a huge export does not get parsed halfway. After a successful read, only the first 10,000 data rows are kept. If the file has more, the page tells you how many were dropped. Split the export and run it in parts if you hit that line. JSON and Excel workbooks (XLSX) are not accepted. The accepted inputs are a pasted list, a TXT file, or a CSV file.
+        The file has to be 5 MiB or smaller. A larger file is rejected before it is read, so a huge export does not get parsed halfway. After a successful read, only the first 10,000 data rows are kept. If the file has more, the page tells you how many were dropped. Split the export and run it in parts if you hit that line. JSON and Excel workbooks (XLSX) are not accepted. The accepted inputs are a pasted list, a TXT file, or a CSV file.
       </p>
       <p>
         It does not upload the file. It does not send rows to an API to detect duplicates against the public web. It does not invent a Product ID if the column was blank. A missing cell becomes an empty source and, if there is nothing else in the title, an empty slug.

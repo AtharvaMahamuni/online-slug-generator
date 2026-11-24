@@ -143,13 +143,20 @@ export function defaultTitleColumn(headers: string[] | null): number {
 
 export function assessFileSize(bytes: number): { ok: true } | { ok: false; message: string } {
   if (bytes > MAX_FILE_BYTES) {
-    const mb = (bytes / (1024 * 1024)).toFixed(1);
+    const size = bytes.toLocaleString("en");
+    const limit = MAX_FILE_BYTES.toLocaleString("en");
     return {
       ok: false,
-      message: `This file is ${mb} MB. The limit is 5 MB, so it was not read.`,
+      message: `This file is ${size} bytes. The limit is 5 MiB (${limit} bytes), so it was not read.`,
     };
   }
   return { ok: true };
+}
+
+export function droppedPastLimitMessage(count: number, unit: "row" | "line"): string {
+  const noun = count === 1 ? unit : `${unit}s`;
+  const verb = count === 1 ? "was" : "were";
+  return `${count} ${noun} past 10,000 ${verb} left out.`;
 }
 
 export function limitDataRows<T>(rows: T[]): { kept: T[]; dropped: number } {

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   assessFileSize,
   defaultTitleColumn,
+  droppedPastLimitMessage,
   limitDataRows,
   looksLikeHeader,
   parseCsv,
@@ -65,7 +66,8 @@ describe("csv and export", () => {
   it("rejects an oversize file before reading it", () => {
     const result = assessFileSize(MAX_FILE_BYTES + 1);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.message).toContain("5 MB");
+    if (!result.ok) expect(result.message).toContain("5 MiB");
+    if (!result.ok) expect(result.message).not.toContain("5.0");
     expect(assessFileSize(MAX_FILE_BYTES).ok).toBe(true);
   });
 
@@ -75,6 +77,9 @@ describe("csv and export", () => {
     expect(limited.kept).toHaveLength(10_000);
     expect(limited.dropped).toBe(1);
     expect(limited.kept[0]).toBe("Title 1");
+    expect(droppedPastLimitMessage(1, "row")).toBe("1 row past 10,000 was left out.");
+    expect(droppedPastLimitMessage(2, "row")).toBe("2 rows past 10,000 were left out.");
+    expect(droppedPastLimitMessage(1, "line")).toBe("1 line past 10,000 was left out.");
   });
 
   it("round-trips Product ID and other columns into the CSV export", () => {
