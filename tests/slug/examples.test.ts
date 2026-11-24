@@ -50,7 +50,7 @@ function examplesFromExampleTables(source: string, file: string): PublishedExamp
   for (const match of source.matchAll(tableRe)) {
     const headers = parseJsStringArray(match[1]);
     const rowChunks = [...match[2].matchAll(/\[[^\]]*\]/g)].map((row) => parseJsStringArray(row[0]));
-    const titleIndex = headers.findIndex((header) => /^(title|product name)$/i.test(header));
+    const titleIndex = headers.findIndex((header) => /^(title|page title|product name)$/i.test(header));
     const readableIndex = headers.findIndex((header) => /readable url|generated slug|^slug$/i.test(header));
     const shortIndex = headers.findIndex((header) => /short permalink/i.test(header));
     const keepIndex = headers.findIndex((header) => /keep original script/i.test(header));
@@ -83,7 +83,7 @@ function examplesFromHtmlTables(source: string, file: string): PublishedExample[
       decodeEntities(cell[1].replace(/<[^>]+>/g, "").trim()),
     );
     if (headerCells.length === 0) continue;
-    const titleIndex = headerCells.findIndex((header) => /^title$/i.test(header));
+    const titleIndex = headerCells.findIndex((header) => /^(title|page title)$/i.test(header));
     if (titleIndex < 0) continue;
     const readableIndex = headerCells.findIndex((header) =>
       /^(slug|latin accents to ascii)$/i.test(header),
@@ -186,7 +186,7 @@ describe("published examples", () => {
     const rows: Array<[string, string, string]> = [
       ["How to Prune Roses in June", "how-to-prune-roses-in-june", "how-prune-roses-june"],
       ["Café au lait, 12 oz", "cafe-au-lait-12-oz", "cafe-au-lait-12-oz"],
-      ["AT&T fiber plans", "at-and-t-fiber-plans", "t-fiber-plans"],
+      ["AT&T fiber plans & pricing", "at-and-t-fiber-plans-and-pricing", "t-fiber-plans-pricing"],
     ];
     for (const [title, readable, short] of rows) {
       expect(slugify(title, PRESETS.readable).slug).toBe(readable);

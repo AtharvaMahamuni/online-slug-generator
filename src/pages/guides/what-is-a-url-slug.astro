@@ -1,21 +1,69 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
 
-const title = "What Is a URL Slug? A Clear Technical Guide";
+const title = "What Is a URL Slug? Meaning, Examples and Rules";
 const description =
-  "A URL slug is the readable last part of an address. See a before-and-after, and which characters do not belong in the path.";
+  "A URL slug is the readable last part of a web address, like how-to-prune-roses. See its meaning, real examples, allowed characters and slug vs permalink.";
 ---
 
-<GuideLayout title={title} description={description} path="/guides/what-is-a-url-slug" h1="What a URL slug is">
+<GuideLayout title={title} description={description} path="/guides/what-is-a-url-slug" h1="What is a URL slug?">
   <p>
-    A <strong>URL slug</strong> is the final, human-readable part of a web address that identifies a specific page in simple, lowercased words separated by hyphens (for example, in <code>https://onlinesluggenerator.com/guides/what-is-a-url-slug</code>, the slug is <code>what-is-a-url-slug</code>). Slugs replace cryptic database IDs or query parameters with descriptive terms for users and search engines.
+    A URL slug is the readable last part of a web address that names one page, such as <code>how-to-prune-roses</code> in <code>https://example.com/guides/how-to-prune-roses</code>. A slug is not the domain, the protocol, or a query string. The steps that turn a title into that slug are in the <a href="/guides/how-to-create-url-slugs">URL slug best practices</a> guide.
   </p>
+
+  <h2>What does slug mean in a URL?</h2>
   <p>
-    In a complete address such as <code>https://example.com/guides/how-to-prune-roses</code>, the slug is <code>how-to-prune-roses</code>. It names one page in a path a person can read aloud. A slug is not the domain, the protocol, or a query string.
+    The term comes from newspaper publishing, where a slug was a short working name for a story. On the web it is the same idea: a short, readable name for one page, written into the path rather than on a print docket. That is the origin of the word. It is not a ranking claim.
   </p>
+
+  <h2>URL slug examples</h2>
   <p>
-    Take the title “How to Prune Roses in June.” A readable slug for that title is <code>how-to-prune-roses-in-june</code>. The words stay in order. The spaces become hyphens. The capital letters become lower case. Someone who sees only the address still knows what the page is about.
+    These are ordinary pages and the slug each title produces under the default Readable URL preset.
   </p>
+  <div class="table-wrap">
+    <table>
+      <caption>Page title, URL and slug</caption>
+      <thead>
+        <tr>
+          <th scope="col">Page title</th>
+          <th scope="col">URL</th>
+          <th scope="col">Slug</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>How to Prune Roses in June</td>
+          <td><code>https://example.com/blog/how-to-prune-roses-in-june</code></td>
+          <td><code>how-to-prune-roses-in-june</code></td>
+        </tr>
+        <tr>
+          <td>Sony WH-1000XM5 (Black)</td>
+          <td><code>https://example.com/products/sony-wh-1000xm5-black</code></td>
+          <td><code>sony-wh-1000xm5-black</code></td>
+        </tr>
+        <tr>
+          <td>Trail Running Shoes</td>
+          <td><code>https://example.com/shop/trail-running-shoes</code></td>
+          <td><code>trail-running-shoes</code></td>
+        </tr>
+        <tr>
+          <td>Getting Started with the API</td>
+          <td><code>https://example.com/docs/getting-started-with-the-api</code></td>
+          <td><code>getting-started-with-the-api</code></td>
+        </tr>
+        <tr>
+          <td>City Council Approves the 2026 Budget</td>
+          <td><code>https://example.com/news/city-council-approves-the-2026-budget</code></td>
+          <td><code>city-council-approves-the-2026-budget</code></td>
+        </tr>
+        <tr>
+          <td>Café au lait, 12 oz</td>
+          <td><code>https://example.com/menu/cafe-au-lait-12-oz</code></td>
+          <td><code>cafe-au-lait-12-oz</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <p>
     The exception is a title that is already a public address. Changing <code>how_to_prune_roses</code> to a hyphenated form creates a second URL. The old one still needs a redirect, or visitors and any existing links land on an error. A cleaner shape is not a reason to abandon an address that already works.
   </p>
@@ -122,6 +170,6 @@ const description =
 
   <h2>What should you do next?</h2>
   <p>
-    If you have one title, use the <a href="/">URL slug generator</a>. Paste the title, read the slug, and copy it. If you have a list or a spreadsheet, use <a href="/bulk-slug-generator">Generate slugs for a list</a> so the other columns survive. The steps, including case, hyphens, stop words, length, and what to do when a slug is already public, are on <a href="/guides/how-to-create-url-slugs">How to create a URL slug</a>.
+    If you have one title, use the <a href="/">URL slug generator</a>. Paste the title, read the slug, and copy it. If you have a list or a spreadsheet, use <a href="/bulk-slug-generator">Generate slugs for a list</a> so the other columns survive. The steps, including case, hyphens, stop words, length, and what to do when a slug is already public, are on <a href="/guides/how-to-create-url-slugs">URL slug best practices</a>.
   </p>
 </GuideLayout>

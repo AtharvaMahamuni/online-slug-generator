@@ -4,9 +4,9 @@ import Byline from "../../components/Byline.astro";
 import JsonLd from "../../components/JsonLd.astro";
 import { canonical } from "../../lib/site";
 
-const title = "URL Slug Guides & Architecture Reference";
+const title = "URL Slug Guides: Meaning, Rules and Examples";
 const description =
-  "Five references on what a URL slug is, how to make one, hyphens, non-English characters, and generating slugs from a list or file.";
+  "Four short references on URL slugs: what a slug is, how to write one, hyphens vs underscores, and Unicode titles. Each links to the free slug generator.";
 const schema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -20,12 +20,12 @@ const schema = {
 <BaseLayout title={title} description={description} path="/guides" kind="document">
   <article class="prose" data-countable>
     <p class="crumbs"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>Guides</span></p>
-    <h1>URL Slug Reference Guides</h1>
+    <h1>URL slug guides</h1>
     <Byline />
     <p>
       These technical guides clarify the mechanics, SEO impact, and internationalization standards behind URL slug creation. They are delivered as semantic HTML and remain completely accessible without JavaScript. The interactive generator tools are available on the <a href="/">Single Slug Tool</a> and the <a href="/bulk-slug-generator">Bulk Slug Generator</a>.
     </p>
-    <h2>The five core references</h2>
+    <h2>The four core references</h2>
     <ul class="guide-cards">
       <li class="guide-card-item">
         <a class="guide-card" href="/guides/what-is-a-url-slug">
@@ -35,26 +35,20 @@ const schema = {
       </li>
       <li class="guide-card-item">
         <a class="guide-card" href="/guides/how-to-create-url-slugs">
-          <span class="guide-card-title">How to create a URL slug <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+          <span class="guide-card-title">URL slug best practices <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
           <span class="guide-card-desc">Detailed walkthrough of the sanitization pipeline: lowercase conversion, word boundaries, stop words, and length capping.</span>
         </a>
       </li>
       <li class="guide-card-item">
         <a class="guide-card" href="/guides/hyphens-vs-underscores-in-urls">
-          <span class="guide-card-title">Hyphens and underscores in URLs <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+          <span class="guide-card-title">Hyphens or underscores in URLs? <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
           <span class="guide-card-desc">Google's search indexing recommendations, crawler word delimitation, and why live URLs should rarely be renamed.</span>
         </a>
       </li>
       <li class="guide-card-item">
         <a class="guide-card" href="/guides/unicode-and-international-urls">
-          <span class="guide-card-title">International characters &amp; UTF-8 <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
+          <span class="guide-card-title">Unicode URL slugs <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
           <span class="guide-card-desc">Covers ASCII folding for Latin diacritics versus native character preservation for non-Latin writing systems.</span>
-        </a>
-      </li>
-      <li class="guide-card-item">
-        <a class="guide-card" href="/guides/bulk-url-slug-generation">
-          <span class="guide-card-title">How to generate slugs in bulk <span class="guide-card-arrow" aria-hidden="true">&rarr;</span></span>
-          <span class="guide-card-desc">Best practices for spreadsheets and CSV exports, column mapping, 10,000-row batch limits, and duplicate disambiguation.</span>
         </a>
       </li>
     </ul>

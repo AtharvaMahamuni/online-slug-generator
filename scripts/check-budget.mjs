@@ -100,11 +100,34 @@ else if (!readFileSync(notFound, "utf8").includes('name="robots" content="noinde
   failures.push("dist/404.html is missing a noindex robots meta tag.");
 }
 
-const localePage = /(?:^|\/)(es|de|fr|pt)(?:\.html|\/)/;
-const hreflangAlternate = /rel="alternate"[^>]*hreflang=|hreflang="[^"]*"[^>]*rel="alternate"/;
-const localeUrlInText = /https:\/\/onlinesluggenerator\.com\/(es|de|fr|pt)(?:\/|"|\s|$)/;
+function readSource(relative) {
+  return readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), relative), "utf8");
+}
+
+function readIndexedLocales() {
+  const src = readSource("../src/i18n/utils.ts");
+  const match = src.match(/export const INDEXED_LOCALES:\s*SupportedLocale\[\]\s*=\s*\[([^\]]*)\]/);
+  if (!match) throw new Error("Could not read INDEXED_LOCALES from src/i18n/utils.ts");
+  return [...match[1].matchAll(/"([a-z]+)"/g)].map((m) => m[1]);
+}
+
+function readSupportedLocales() {
+  const src = readSource("../src/i18n/ui.ts");
+  const block = src.match(/export const LOCALES[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!block) throw new Error("Could not read LOCALES from src/i18n/ui.ts");
+  return [...block[1].matchAll(/^\s*([a-z]{2,3}):/gm)].map((m) => m[1]);
+}
+
+const INDEXED_LOCALES = readIndexedLocales();
+const SUPPORTED_LOCALES = readSupportedLocales();
+const NONINDEXED_LOCALES = SUPPORTED_LOCALES.filter((locale) => !INDEXED_LOCALES.includes(locale));
 const factLine =
   "Spanish, German, French and Portuguese tool screens exist for visitors. They are not indexed yet.";
+
+function localeFromRel(rel) {
+  const first = rel.split("/")[0].replace(/\.html$/, "");
+  return SUPPORTED_LOCALES.includes(first) && first !== "en" ? first : null;
+}
 
 function routeFromRel(rel) {
   if (rel === "index.html") return "/";
@@ -130,13 +153,31 @@ function canonicalHref(html) {
   return match ? match[1] : null;
 }
 
-const localePages = [];
+function hreflangTags(html) {
+  return [...html.matchAll(/<link\b[^>]*\brel="alternate"[^>]*\bhreflang="([^"]+)"[^>]*>/gi),
+          ...html.matchAll(/<link\b[^>]*\bhreflang="([^"]+)"[^>]*\brel="alternate"[^>]*>/gi)]
+    .map((m) => ({ lang: m[1], tag: m[0] }));
+}
+
+function localeUrlPattern(locales) {
+  if (locales.length === 0) return null;
+  const group = locales.map((locale) => locale.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return new RegExp(`https://onlinesluggenerator\\.com/(?:${group})(?:/|"|\\s|$)`);
+}
+
 const indexableUrls = new Set();
 for (const file of htmlFiles) {
   const rel = path.relative(dist, file).split(path.sep).join("/");
   const html = readFileSync(file, "utf8");
-  if (hreflangAlternate.test(html)) {
-    failures.push(`${rel} contains rel="alternate" hreflang.`);
+  const tags = hreflangTags(html);
+  if (INDEXED_LOCALES.length < 2) {
+    if (tags.length > 0) failures.push(`${rel} contains rel="alternate" hreflang.`);
+  } else {
+    for (const tag of tags) {
+      if (tag.lang !== "x-default" && !INDEXED_LOCALES.includes(tag.lang)) {
+        failures.push(`${rel} has hreflang="${tag.lang}" which is not in INDEXED_LOCALES.`);
+      }
+    }
   }
   if (rel === "llms.html") {
     if (!robotsContent(html).includes("noindex")) {
@@ -152,18 +193,18 @@ for (const file of htmlFiles) {
   if (actual !== expected) {
     failures.push(`${rel} canonical is ${actual ?? "(missing)"}, expected ${expected}.`);
   }
-  if (localePage.test(rel)) {
-    localePages.push(rel);
+  const pageLocale = localeFromRel(rel);
+  const robots = robotsContent(html);
+  if (pageLocale && !INDEXED_LOCALES.includes(pageLocale)) {
     if (!html.includes('name="robots" content="noindex, follow"')) {
       failures.push(`${rel} is missing a noindex, follow robots meta tag.`);
     }
+  } else if (pageLocale && INDEXED_LOCALES.includes(pageLocale) && robots.includes("noindex")) {
+    failures.push(`${rel} is in INDEXED_LOCALES but has a noindex robots meta tag.`);
   }
-  if (!robotsContent(html).includes("noindex")) {
+  if (!robots.includes("noindex")) {
     indexableUrls.add(expected);
   }
-}
-if (localePages.length !== 8) {
-  failures.push(`Expected 8 locale HTML pages in dist, found ${localePages.length}.`);
 }
 
 const sitemapPath = path.join(dist, "sitemap.xml");
@@ -174,22 +215,27 @@ try {
   failures.push("dist/sitemap.xml is missing.");
 }
 if (sitemap) {
-  if (/hreflang|xmlns:xhtml/.test(sitemap)) {
+  if (INDEXED_LOCALES.length < 2 && /hreflang|xmlns:xhtml/.test(sitemap)) {
     failures.push("Sitemap contains hreflang or xmlns:xhtml.");
   }
   const locs = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
-  if (locs.length !== 11) {
-    failures.push(`Sitemap has ${locs.length} loc URLs. Expected 11.`);
-  }
+  const locSet = new Set(locs);
   for (const loc of locs) {
-    if (localeUrlInText.test(loc) || /\/(es|de|fr|pt)(?:\/|$)/.test(new URL(loc).pathname)) {
-      failures.push(`Sitemap lists locale URL ${loc}.`);
+    let pathname = loc;
+    try {
+      pathname = new URL(loc).pathname;
+    } catch {
+      failures.push(`Sitemap loc ${loc} is not a valid URL.`);
+      continue;
+    }
+    const first = pathname.split("/").filter(Boolean)[0];
+    if (first && NONINDEXED_LOCALES.includes(first)) {
+      failures.push(`Sitemap lists locale URL ${loc} which is not in INDEXED_LOCALES.`);
     }
     if (loc !== "https://onlinesluggenerator.com/" && (loc.endsWith("/") || loc.endsWith(".html"))) {
       failures.push(`Sitemap loc ${loc} has a .html or trailing-slash form.`);
     }
   }
-  const locSet = new Set(locs);
   for (const url of indexableUrls) {
     if (!locSet.has(url)) failures.push(`Indexable page ${url} is missing from the sitemap.`);
   }
@@ -200,6 +246,7 @@ if (sitemap) {
   }
 }
 
+const unpublishedLocaleUrls = localeUrlPattern(NONINDEXED_LOCALES);
 for (const name of ["llms.txt", "llms-full.txt", "llms.html"]) {
   const full = path.join(dist, name);
   let body = "";
@@ -209,21 +256,32 @@ for (const name of ["llms.txt", "llms-full.txt", "llms.html"]) {
     failures.push(`${name} is missing from dist.`);
     continue;
   }
-  if (!body.includes(factLine)) {
+  if (NONINDEXED_LOCALES.length > 0 && !body.includes(factLine)) {
     failures.push(`${name} is missing the "not indexed yet" fact line.`);
   }
-  if (localeUrlInText.test(body)) {
-    failures.push(`${name} lists a locale tool URL.`);
+  if (unpublishedLocaleUrls && unpublishedLocaleUrls.test(body)) {
+    failures.push(`${name} lists a locale tool URL that is not in INDEXED_LOCALES.`);
   }
 }
 
-const htmlHref = /href="[^"]*\.html"/;
+function hasOnSiteHtmlHref(text) {
+  for (const match of text.matchAll(/href="([^"]+)"/g)) {
+    const href = match[1];
+    const local = href.startsWith("https://onlinesluggenerator.com")
+      ? href.slice("https://onlinesluggenerator.com".length)
+      : href;
+    if (/^(?:\/|\.{0,2}\/)?[^:\s]+\.html(?:[?#]|$)/.test(local) || local.startsWith("/") && /\.html(?:[?#]|$)/.test(local)) {
+      return href;
+    }
+  }
+  return null;
+}
+
 for (const file of files) {
   if (/\.(png|ico|woff2?|ttf|eot|jpg|jpeg|webp|gif|svg)$/i.test(file)) continue;
   const rel = path.relative(dist, file).split(path.sep).join("/");
-  if (htmlHref.test(readFileSync(file, "utf8"))) {
-    failures.push(`${rel} contains an href that ends in .html.`);
-  }
+  const hit = hasOnSiteHtmlHref(readFileSync(file, "utf8"));
+  if (hit) failures.push(`${rel} contains an on-site href that ends in .html: ${hit}`);
 }
 
 for (const line of notes) console.log(line);
